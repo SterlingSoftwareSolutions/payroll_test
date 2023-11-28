@@ -1867,13 +1867,17 @@ table.dataTable thead > tr > td.sorting {
     text-align: center;
 }
 .account-box {
-	background-color: #fff;
+	background-color: #ffffff;
     border: 1px solid #ededed;
-    border-radius: 4px;
+    border-radius: 16px;
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
     margin: 0 auto;
     overflow: hidden;
-    width: 480px;
+    width: 600px;
+}
+#account-box{
+	width: 450px;
+	max-width: 80%
 }
 .account-wrapper {
 	padding: 30px;
@@ -1883,20 +1887,23 @@ table.dataTable thead > tr > td.sorting {
 	text-align: center;
 }
 .account-box .form-group {
-	margin-bottom: 25px;
+	margin-bottom: 15px;
 }
 .account-box .account-btn {
-	background: #f43b48;
+	background: #0042C2;
+	/* background: #f43b48;
 	background: -moz-linear-gradient(left, #f43b48 0%, #453a94 100%);
 	background: -webkit-linear-gradient(left, #f43b48 0%, #453a94 100%);
 	background: -ms-linear-gradient(left, #f43b48 0%, #453a94 100%);
-	background: linear-gradient(to right, #f43b48 0%, #453a94 100%);
+	background: linear-gradient(to right, #f43b48 0%, #453a94 100%); */
 	border: 0;
-    border-radius: 4px;
+    border-radius: 12px;
     display: block;
 	font-size: 22px;
 	padding: 10px 26px;
     width: 100%;
+	margin-top: 12px;
+	margin-bottom: 12px;
 }
 .account-box .account-btn:hover,
 .account-box .account-btn:focus {
@@ -1925,10 +1932,10 @@ table.dataTable thead > tr > td.sorting {
     margin-bottom: 0;
 }
 .account-footer a {
-	color: #f43b48;
+	color: #ff1818;
 }
 .account-footer a:hover {
-	color: #f43b48;
+	color: #ff1818;
 }
 
 /*-----------------
@@ -5584,11 +5591,12 @@ table.table-inbox tbody tr.checked {
 -----------------------*/
 
 .apply-btn {
-	background: #f43b48;
+	background: #2457BD;
+	/* background: #f43b48;
 	background: -moz-linear-gradient(left, #f43b48 0%, #453a94 100%);
 	background: -webkit-linear-gradient(left, #f43b48 0%, #453a94 100%);
 	background: -ms-linear-gradient(left, #f43b48 0%, #453a94 100%);
-	background: linear-gradient(to right, #f43b48 0%, #453a94 100%);
+	background: linear-gradient(to right, #f43b48 0%, #453a94 100%); */
 	border-color: transparent;
 	box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
 	color: #fff;
@@ -6054,7 +6062,8 @@ table.table-inbox tbody tr.checked {
 
 .error-page {
     align-items: center;
-    background-color: rgba(244, 59, 72, 0.2);
+    /* background-color: rgba(244, 59, 72, 0.2); */
+	background-color: #B2E1E4;
     color: #1f1f1f;
     display: flex;
 }
@@ -7957,7 +7966,39 @@ ul.comment-list li ul.children {
 	.file-side-close {
 		display: inline-block;
 	}
+	.account-box {
+		max-width: 85%;
+		margin: 0 auto 15%;
+	}
+	
+
 }
+@media only screen and (max-width: 1126.98px){
+	#account-box {
+		max-width: 80%;
+		margin: 0 auto ;
+	}
+	#account-content{
+		width: 118%;
+		padding-right: 50px;
+		margin-right: 50px;
+	}
+}
+
+@media only screen and (max-width: 1081.98px) {
+	#account-box {			
+		max-width: 80%;
+		margin: 0 auto;
+		
+	}
+	#account-content{
+		width: 118%;
+		padding-right: 50px;
+		margin-right: 50px;
+	}
+}
+
+
 @media only screen and (max-width: 991.98px) {
 	.profile-rightbar {
 		display: inline-block !important;
@@ -8449,6 +8490,7 @@ ul.comment-list li ul.children {
 		font-size: 14px;
 		min-width: inherit;
 	}
+	
 }
 /*Project Board*/
 .page-header .page-title i {
