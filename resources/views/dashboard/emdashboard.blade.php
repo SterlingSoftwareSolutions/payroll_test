@@ -30,7 +30,7 @@
                                             <i class="fa fa-hourglass-o"></i>
                                         </div>
                                         <div class="dash-card-content">
-                                            <p>Richard Miles is off sick today</p>
+                                            <p>Mr.Nimshan is off sick today</p>
                                         </div>
                                         <div class="dash-card-avatars">
                                             <div class="e-avatar"><img src="{{ URL::to('assets/img/profiles/avatar-09.jpg') }}" alt=""></div>
