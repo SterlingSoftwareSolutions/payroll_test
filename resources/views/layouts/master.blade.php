@@ -198,7 +198,7 @@
 				
 				
 				<li class="nav-item dropdown  main-drop">
-						{{-- <!-- Message Notifications -->
+						{{-- <!--TODO: Message Notifications -->
 				<li class="nav-item dropdown">
 					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
 						<i class="fa fa-comment-o"></i> <span class="badge badge-pill">8</span>
