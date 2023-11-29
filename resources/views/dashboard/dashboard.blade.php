@@ -1,5 +1,7 @@
 @extends('layouts.master')
 @section('content')
+
+
     <div class="page-wrapper">
         <!-- Page Content -->
         <div class="content container-fluid">
@@ -16,7 +18,7 @@
             </div>
             <!-- /Page Header -->
             <div class="row">
-                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+          <!----      <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
                     <div class="card dash-widget">
                         <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
                             <div class="dash-widget-info">
@@ -42,18 +44,52 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+                </div>          ---->
+
+              <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
                     <div class="card dash-widget">
                         <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
                             <div class="dash-widget-info">
-                                <h3>218</h3> <span>Employees</span>
+                                <h3>50</h3> <span>Employees</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
+
+                <!-----Add testing date & time------------------------->
+        
+         <div class="col-md-9 col-sm-9 col-lg-9 col-xl-5">
+                    <div class="card dash-widget">
+                        <div class="card-body"> 
+                            <span class="dash-widget-icon"> <i class="fa-solid fa-calendar-days" style="color: #ff0a0a;"></i>
+                            </span>
+                            <div class="dash-widget-info">
+                                    <div id="timezone-widget">
+                                        <p id="current-date"></p>
+                                        <p id="current-timezone"></p>
+                                    </div>
+
+                        <script>
+                            function updateDateTime() {
+                                const currentDate = new Date();
+                                const options = { timeZone: 'Asia/Colombo' }; 
+                                const formattedDate = currentDate.toLocaleString('en-US', options);
+
+                                document.getElementById('current-date').innerHTML = `Current Date: ${formattedDate}`;
+                                document.getElementById('current-timezone').innerHTML = `Timezone: ${options.timeZone}`;
+                            }
+                            setInterval(updateDateTime, 1000);
+                            updateDateTime();
+                        </script>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+                <!----------------------end date & time------------------------------------>
+</div>
+
+
+    <!--        <div class="row">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-6 text-center">
@@ -74,8 +110,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
+            </div>   --------------------->
+<!----            <div class="row">
                 <div class="col-md-12">
                     <div class="card-group m-b-30">
                         <div class="card">
@@ -132,10 +168,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>                                             ---------------------------->
             {{-- message --}}
-            {!! Toastr::message() !!}
-            <!-- Statistics Widget -->
+   <!-------         {!! Toastr::message() !!}
+             Statistics Widget 
             <div class="row">
                 <div class="col-md-12 col-lg-12 col-xl-4 d-flex">
                     <div class="card flex-fill dash-statistics">
@@ -212,44 +248,108 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12 col-lg-6 col-xl-4 d-flex">
-                    <div class="card flex-fill">
-                        <div class="card-body">
-                            <h4 class="card-title">Today Absent <span class="badge bg-inverse-danger ml-2">5</span></h4>
-                            <div class="leave-info-box">
-                                <div class="media align-items-center">
-                                    <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
-                                    <div class="media-body">
-                                        <div class="text-sm my-0">Martin Lewis</div>
-                                    </div>
-                                </div>
-                                <div class="row align-items-center mt-3">
-                                    <div class="col-6">
-                                        <h6 class="mb-0">4 Sep 2019</h6> <span class="text-sm text-muted">Leave Date</span> </div>
-                                    <div class="col-6 text-right"> <span class="badge bg-inverse-danger">Pending</span> </div>
-                                </div>
-                            </div>
-                            <div class="leave-info-box">
-                                <div class="media align-items-center">
-                                    <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
-                                    <div class="media-body">
-                                        <div class="text-sm my-0">Martin Lewis</div>
-                                    </div>
-                                </div>
-                                <div class="row align-items-center mt-3">
-                                    <div class="col-6">
-                                        <h6 class="mb-0">4 Sep 2019</h6> <span class="text-sm text-muted">Leave Date</span> </div>
-                                    <div class="col-6 text-right"> <span class="badge bg-inverse-success">Approved</span> </div>
-                                </div>
-                            </div>
-                            <div class="load-more text-center"> <a class="text-dark" href="javascript:void(0);">Load More</a> </div>
+                </div>  
+                
+                    -------------------------------------------->
+                
+<div class="row">
+
+    <div class="col-md-12 col-lg-6 col-xl-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <h4 class="card-title">Today Absent IT Department<span class="badge bg-inverse-danger ml-2"></span></h4>
+                <div class="leave-info-box">
+                    <div class="media align-items-center">
+                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                        <div class="media-body">
+                            <div class="text-sm my-0">Ravindu Umayanga</div>
                         </div>
                     </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-6">
+                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                        <div class="col-6 text-right"> <span class="badge bg-inverse-danger">Pending</span> </div>
+                    </div>
                 </div>
+                <div class="leave-info-box">
+                    <div class="media align-items-center">
+                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                        <div class="media-body">
+                            <div class="text-sm my-0">Dhanushka Sandaruwan</div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-6">
+                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                        <div class="col-6 text-right"> <span class="badge bg-inverse-success">Approved</span> </div>
+                    </div>
+                </div>
+                <div class="load-more text-center"> <a class="text-dark" href="javascript:void(0);">Load More</a> </div>
             </div>
+        </div>
+    </div>
+
+
+
+    
+    <div class="col-md-12 col-lg-6 col-xl-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <h4 class="card-title">Today Absent Call Center <span class="badge bg-inverse-danger ml-2"></span></h4>
+                <div class="leave-info-box">
+                    <div class="media align-items-center">
+                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                        <div class="media-body">
+                            <div class="text-sm my-0">Ravindu</div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-6">
+                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                        <div class="col-6 text-right"> <span class="badge bg-inverse-danger">Pending</span> </div>
+                    </div>
+                </div>
+                <div class="leave-info-box">
+                    <div class="media align-items-center">
+                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                        <div class="media-body">
+                            <div class="text-sm my-0">Dhanushka</div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-6">
+                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                        <div class="col-6 text-right"> <span class="badge bg-inverse-success">Approved</span> </div>
+                    </div>
+                </div>
+                <div class="load-more text-center"> <a class="text-dark" href="javascript:void(0);">Load More</a> </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+</div>
+
+  
+    
+
+
+</div>
+
+
+</div>
+
+
+
+              
+
+
             <!-- /Statistics Widget -->
-            <div class="row">
+  <!-----          <div class="row">
                 <div class="col-md-6 d-flex">
                     <div class="card card-table flex-fill">
                         <div class="card-header">
@@ -357,7 +457,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>              
             <div class="row">
                 <div class="col-md-6 d-flex">
                     <div class="card card-table flex-fill">
@@ -733,7 +833,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>       ------------------------------------->
         <!-- /Page Content -->
     </div>
 @endsection
