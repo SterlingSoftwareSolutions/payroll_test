@@ -2,7 +2,7 @@
 @section('content')
     <!-- Page Wrapper -->
     <div class="page-wrapper">
-        <!-- Page Content -->
+        <!-- Page Contentttttt -->
         <div class="content container-fluid">
             <div class="row">
                 <div class="col-md-12">
