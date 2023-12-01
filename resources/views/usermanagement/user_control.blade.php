@@ -9,7 +9,7 @@
                 <div class="row align-items-center">
                     <div class="col">
                         <h3 class="page-title">User Management</h3>
-                        <ul class="breadcrumb">
+                        <ul class="breadcrumb" >
                             <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
                             <li class="breadcrumb-item active">User</li>
                         </ul>
@@ -25,24 +25,24 @@
             <form action="{{ route('search/user/list') }}" method="POST">
                 @csrf
                 <div class="row filter-row">
-                    <div class="col-sm-6 col-md-3">  
+                    <div class="col-sm-6 col-md-4">  
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" id="name" name="name">
-                            <label class="focus-label">User Name</label>
+                            <label class="focus-label">Name</label>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3">  
+                    <div class="col-sm-6 col-md-4">  
                         <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" id="name" name="role_name">
-                            <label class="focus-label">Role Name</label>
+                            <input type="text" class="form-control floating" id="name" name="department">
+                            <label class="focus-label">Department</label>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3"> 
+                    {{-- <div class="col-sm-6 col-md-3"> 
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" id="name" name="status">
                             <label class="focus-label">Status</label>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-sm-6 col-md-3">  
                         <button type="sumit" class="btn btn-success btn-block"> Search </button>  
                     </div>
@@ -62,11 +62,11 @@
                                     <th hidden></th>
                                     <th>Email</th>
                                     <th>Position</th>
-                                    <th>Phone</th>
-                                    <th>Join Date</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Departement</th>
+                                    {{-- <th>Phone</th> --}}
+                                    {{-- <th>Join Date</th> --}}
+                                    {{-- <th>Role</th>
+                                    <th>Status</th> --}}
+                                    <th>Department</th>
                                     <th class="text-right">Action</th>
                                 </tr>
                             </thead>
@@ -84,9 +84,9 @@
                                     <td class="id">{{ $user->user_id }}</td>
                                     <td class="email">{{ $user->email }}</td>
                                     <td class="position">{{ $user->position }}</td>
-                                    <td class="phone_number">{{ $user->phone_number }}</td>
-                                    <td>{{ $user->join_date }}</td>
-                                    <td>
+                                    {{-- <td class="phone_number">{{ $user->phone_number }}</td> --}}
+                                    {{-- <td>{{ $user->join_date }}</td> --}}
+                                    {{-- <td>
                                         @if ($user->role_name=='Admin')
                                             <span class="badge bg-inverse-danger role_name">{{ $user->role_name }}</span>
                                             @elseif ($user->role_name=='Super Admin')
@@ -135,7 +135,7 @@
                                                 </a>
                                             </div>
                                         </div>
-                                    </td>
+                                    </td> --}}
                                     <td class="department">{{ $user->department }}</td>
                                     <td class="text-right">
                                         <div class="dropdown dropdown-action">
