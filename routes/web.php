@@ -319,3 +319,14 @@ Route::controller(PersonalInformationController::class)->group(function () {
     Route::post('user/information/save', 'saveRecord')->middleware('auth')->name('user/information/save');
 });
 
+// web.php
+
+Route::get('all/employee/getData', 'EmployeeController@getEmployeeData')->name('all.employee.getData');
+// web.php
+
+Route::post('/save-record', [EmployeeController::class, 'saveRecord'])->name('save.record');
+Route::get('/some-route', 'App\Http\Controllers\EmployeeController@someMethod');
+Route::get('/employees', [EmployeeController::class , 'cardAllEmployee'])->name('all.employee.card');
+
+// post route
+// Route::post('/save-record', 'EmployeeController@saveRecord')->name('save.record');
