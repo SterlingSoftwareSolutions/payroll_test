@@ -2,7 +2,7 @@
 @section('content')
 
 
-    <div class="page-wrapper">
+ <div class="page-wrapper">
         <!-- Page Content -->
         <div class="content container-fluid">
             <!-- Page Header -->
@@ -16,9 +16,9 @@
                     </div>
                 </div>
             </div>
-            <!-- /Page Header -->
-            <div class="row">
-          <!----      <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <!-- /Page Header 
+            <div class="row"> 
+               <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
                     <div class="card dash-widget">
                         <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
                             <div class="dash-widget-info">
@@ -45,47 +45,245 @@
                         </div>
                     </div>
                 </div>          ---->
+                
+                
+<div class="flex flex-row justify-around w-full gap-10 border border-black">
+ 
 
-              <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
-                    <div class="card dash-widget">
-                        <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
-                            <div class="dash-widget-info">
-                                <h3>50</h3> <span>Employees</span>
-                            </div>
-                        </div>
+  
+<div class="container text-center">
+    <div class="row row-cols-2">
+ <!--     <div class="col">
+        <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
+            <div class="card dash-widget">
+                <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
+                    <div class="dash-widget-info">
+                        <h3>50</h3> <span>Employees</span>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-----Add testing date & time------------------------->
-        
-         <div class="col-md-9 col-sm-9 col-lg-9 col-xl-5">
-                    <div class="card dash-widget">
-                        <div class="card-body"> 
-                            <span class="dash-widget-icon"> <i class="fa-solid fa-calendar-days" style="color: #ff0a0a;"></i>
-                            </span>
-                            <div class="dash-widget-info">
-                                    <div id="timezone-widget">
-                                        <p id="current-date"></p>
-                                        <p id="current-timezone"></p>
-                                    </div>
+      </div> ----->
+      <!------------------------ADD EMPLOYEE COUNT try 1--------------------->
 
-                        <script>
-                            function updateDateTime() {
-                                const currentDate = new Date();
-                                const options = { timeZone: 'Asia/Colombo' }; 
-                                const formattedDate = currentDate.toLocaleString('en-US', options);
+      <div class="col">
+        <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
+            <div class="card dash-widget">
+                <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
+                    <div class="dash-widget-info">
+                
+                        {{-- <h2>5</h2>
+                        <h2>{{ $employees }}</h2> --}}
+                      
+                      
+                        {{-- //Count: {{ $count }} --}}
+                    
+                        {{-- Size: {{ $size }} --}}
 
-                                document.getElementById('current-date').innerHTML = `Current Date: ${formattedDate}`;
-                                document.getElementById('current-timezone').innerHTML = `Timezone: ${options.timeZone}`;
-                            }
-                            setInterval(updateDateTime, 1000);
-                            updateDateTime();
-                        </script>
+                        <!-- dashboard.blade.php -->
+
+                 <!-- Assuming you have a layout file -->
+               
+                 {{-- <h2>{{  $employeeCount }}</h2>  --}}
+               
+                    {{-- @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif --}}
+
+                  {{-- {{ $data }} --}}
+
+  
+                        <span>Employees</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!----------------------------End EMPLOYEE COUNT---------------------------------->
+ 
+
+
+
+      <!-------------------end--------------------------->
+    
+
+      <div class="col">
+        <div class="">
+
+<!----            <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
+                <div class="card dash-widget">
+                     <div class="card-body"> 
+                     <span class="dash-widget-icon"> <i class="fa-solid fa-calendar-days" style="color: #ff0a0a;"></i>
+                     </span>
+                     <div class="dash-widget-info">
+                            <div id="timezone-widget">
+                                <p id="current-date"></p>
+                                <p id="current-timezone"></p>
+                            </div>
+
+                    <script>
+                      function updateDateTime() {
+                           const currentDate = new Date();
+                         const options = { timeZone: 'Asia/Colombo' }; 
+                          const formattedDate = currentDate.toLocaleString('en-US', options);
+
+                            document.getElementById('current-date').innerHTML = `Today Date: ${formattedDate}`;
+                     //    document.getElementById('current-timezone').innerHTML = `Timezone: ${options.timeZone}`;
+                           } 
+                          setInterval(updateDateTime, 1000);
+                          updateDateTime();
+                     </script>
+                       </div>
+                     </div>
+                </div>
+    </div>---------------->
+    <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
+        <div class="card dash-widget">
+            <div class="card-body"> 
+                <span class="dash-widget-icon"> <i class="fa-solid fa-calendar-days" style="color: #ff0a0a;"></i></span>
+                <div class="dash-widget-info">
+                    <div id="timezone-widget">
+                        <p id="current-date"></p>
+                        <p id="current-timezone"></p>
+                    </div>
+    
+                    <script>
+                        function updateDateTime() {
+                            const currentDate = new Date();
+                            const options = { 
+                                timeZone: 'Asia/Colombo', 
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                second: 'numeric',
+                            }; 
+    
+                            const formattedDate = currentDate.toLocaleDateString('en-US', options);
+                            const formattedTime = currentDate.toLocaleTimeString('en-US', options);
+    
+                            document.getElementById('current-date').innerHTML = `Today Date: ${formattedDate}`;
+                         //   document.getElementById('current-timezone').innerHTML = `Current Time: ${formattedTime}`;
+                        }
+    
+                        setInterval(updateDateTime, 1000);
+                        updateDateTime();
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+
+</div>
+
+
+
+      </div>
+      <div class="col">
+        <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
+            <div class="card flex-fill">
+                <div class="card-body">
+                    <h4 class="card-title">Today Absent IT Department<span class="badge bg-inverse-danger ml-2"></span></h4>
+                    <div class="leave-info-box">
+                        <div class="media align-items-center">
+                            <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                            <div class="media-body">
+                                <div class="text-sm my-0">Ravindu Umayanga</div>
                             </div>
                         </div>
+                        <div class="row align-items-center mt-3">
+                            <div class="col-6">
+                                <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                            <div class="col-6 text-right"> <span class="badge bg-inverse-danger">Pending</span> </div>
+                        </div>
                     </div>
+                    <div class="leave-info-box">
+                        <div class="media align-items-center">
+                            <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                            <div class="media-body">
+                                <div class="text-sm my-0">Dhanushka Sandaruwan</div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center mt-3">
+                            <div class="col-6">
+                                <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                            <div class="col-6 text-right"> <span class="badge bg-inverse-success">Approved</span> </div>
+                        </div>
+                    </div>
+                    <div class="load-more text-center"> <a class="text-dark" href="javascript:void(0);">Load More</a> </div>
+                </div>
+            </div>
         </div>
-                <!----------------------end date & time------------------------------------>
+      </div>
+      <div class="col">
+            <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
+        <div class="card flex-fill">
+            <div class="card-body">
+                <h4 class="card-title">Today Absent Call Department<span class="badge bg-inverse-danger ml-2"></span></h4>
+                <div class="leave-info-box">
+                    <div class="media align-items-center">
+                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                        <div class="media-body">
+                            <div class="text-sm my-0">Nimshan Nimshan</div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-6">
+                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                        <div class="col-6 text-right"> <span class="badge bg-inverse-danger">Pending</span> </div>
+                    </div>
+                </div>
+                <div class="leave-info-box">
+                    <div class="media align-items-center">
+                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
+                        <div class="media-body">
+                            <div class="text-sm my-0">Sithumini Sandaruwan</div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-3">
+                        <div class="col-6">
+                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
+                        <div class="col-6 text-right"> <span class="badge bg-inverse-success">Approved</span> </div>
+                    </div>
+                </div>
+                <div class="load-more text-center"> <a class="text-dark" href="javascript:void(0);">Load More</a> </div>
+            </div>
+        </div>
+    </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  
+
+
+  
+
+<!----------------------------------------------endddddd------------------>
+            
+ </div>
+
+<!------------------------------------end border --------------------------------------------->
+                
 </div>
 
 
@@ -252,89 +450,7 @@
                 
                     -------------------------------------------->
                 
-<div class="row">
 
-    <div class="col-md-12 col-lg-6 col-xl-4 d-flex">
-        <div class="card flex-fill">
-            <div class="card-body">
-                <h4 class="card-title">Today Absent IT Department<span class="badge bg-inverse-danger ml-2"></span></h4>
-                <div class="leave-info-box">
-                    <div class="media align-items-center">
-                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
-                        <div class="media-body">
-                            <div class="text-sm my-0">Ravindu Umayanga</div>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mt-3">
-                        <div class="col-6">
-                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
-                        <div class="col-6 text-right"> <span class="badge bg-inverse-danger">Pending</span> </div>
-                    </div>
-                </div>
-                <div class="leave-info-box">
-                    <div class="media align-items-center">
-                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
-                        <div class="media-body">
-                            <div class="text-sm my-0">Dhanushka Sandaruwan</div>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mt-3">
-                        <div class="col-6">
-                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
-                        <div class="col-6 text-right"> <span class="badge bg-inverse-success">Approved</span> </div>
-                    </div>
-                </div>
-                <div class="load-more text-center"> <a class="text-dark" href="javascript:void(0);">Load More</a> </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    
-    <div class="col-md-12 col-lg-6 col-xl-4 d-flex">
-        <div class="card flex-fill">
-            <div class="card-body">
-                <h4 class="card-title">Today Absent Call Center <span class="badge bg-inverse-danger ml-2"></span></h4>
-                <div class="leave-info-box">
-                    <div class="media align-items-center">
-                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
-                        <div class="media-body">
-                            <div class="text-sm my-0">Ravindu</div>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mt-3">
-                        <div class="col-6">
-                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
-                        <div class="col-6 text-right"> <span class="badge bg-inverse-danger">Pending</span> </div>
-                    </div>
-                </div>
-                <div class="leave-info-box">
-                    <div class="media align-items-center">
-                        <a href="profile.html" class="avatar"><img alt="" src="assets/img/user.jpg"></a>
-                        <div class="media-body">
-                            <div class="text-sm my-0">Dhanushka</div>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mt-3">
-                        <div class="col-6">
-                            <h6 class="mb-0">28 Nov 2023</h6> <span class="text-sm text-muted">Leave Date</span> </div>
-                        <div class="col-6 text-right"> <span class="badge bg-inverse-success">Approved</span> </div>
-                    </div>
-                </div>
-                <div class="load-more text-center"> <a class="text-dark" href="javascript:void(0);">Load More</a> </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
-
-</div>
-
-  
     
 
 
