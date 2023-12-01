@@ -72,37 +72,21 @@
             <div class="card dash-widget">
                 <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
                     <div class="dash-widget-info">
-                
-                        {{-- <h2>5</h2>
-                        <h2>{{ $employees }}</h2> --}}
-                      
-                      
+              
                         {{-- //Count: {{ $count }} --}}
-                    
-                        {{-- Size: {{ $size }} --}}
-
-                        <!-- dashboard.blade.php -->
-
-                 <!-- Assuming you have a layout file -->
-               
                  {{-- <h2>{{  $employeeCount }}</h2>  --}}
-               
                     {{-- @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
                         </div>
                     @endif
-
                     @if(session('error'))
                         <div class="alert alert-danger">
                             {{ session('error') }}
                         </div>
                     @endif --}}
-
-                  {{-- {{ $data }} --}}
-
-  
-                        <span>Employees</span>
+                        <span>Employees </span>
+                        <h2>{{ $employeeCount }}</h2>
                     </div>
                 </div>
             </div>
