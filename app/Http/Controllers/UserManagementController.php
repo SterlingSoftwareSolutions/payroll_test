@@ -53,6 +53,12 @@ class UserManagementController extends Controller
                 $result = User::where('name','LIKE','%'.$request->name.'%')->get();
             }
 
+            // search by Department name
+            if($request->department)
+            {
+                $result = User::where('department','LIKE','%'.$request->department.'%')->get();
+            }
+
             // search by role name
             if($request->role_name)
             {
