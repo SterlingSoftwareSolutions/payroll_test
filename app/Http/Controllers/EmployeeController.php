@@ -19,7 +19,7 @@ class EmployeeController extends Controller
     {
         $users = DB::table('users')
                     ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                    ->select('users.*', 'employees.dob', 'employees.gender')
+                    ->select('users.*',  'employees.gender')
                     ->get(); 
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
@@ -54,10 +54,22 @@ class EmployeeController extends Controller
 
     // Create a new employee
     $employee = new Employee;
+
+    $employee->f_name = $request->input('first_name');
+    $employee->l_name = $request->input('last_name');
     $employee->full_name = $request->input('full_name');
+    $employee->employee_id = $request->input('employee_id');
     $employee->email = $request->input('email');
-    $employee->c_number = $request->input('c_number');
-    $employee->j_title = $request->input('j_title');
+    $employee->dob = $request->input('dob');
+    $employee->nic = $request->input('nic');
+    $employee->c_number = $request->input('c_num');
+    $employee->J_title= $request->input('job_title');
+    $employee->d_name = $request->input('departName');
+    $employee->joinedDate = $request->input('joinedDate');
+    $employee->createdDate = $request->input('createdDate');
+    $employee->status = $request->input('status');
+    $employee->gender = $request->input('gender');
+    $employee->description = $request->input('description');
     // Set other fields
 
     // Save the employee to the database
