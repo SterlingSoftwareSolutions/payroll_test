@@ -77,20 +77,14 @@
                             @csrf
                              <div class="form-group"> 
 
-                               
+                            <label>Department ID <span class="text-danger">*</span></label><br>
+                            <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department" value="{{ $newDepartmentId }}" readonly>
 
- <label>Department ID <span class="text-danger">*</span></label><br>
-<input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department" value="{{ $newDepartmentId }}" readonly>
-
-@error('department')
-    <span class="invalid-feedback" role="alert">
-        <strong>{{ $message }}</strong>
-    </span>
-@enderror
-
-                                
-               
-                               
+                            @error('department')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
 
                                  <label>Department Name <span class="text-danger">*</span></label>
                                 <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department">
@@ -104,10 +98,6 @@
                                 <button type="submit" class="btn btn-primary submit-btn">Submit</button>
                             </div>
                         </form> 
-
-
-
-
 
                     </div>
                 </div>
