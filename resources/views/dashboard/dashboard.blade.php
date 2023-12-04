@@ -16,8 +16,9 @@
                     </div>
                 </div>
             </div>
-            <!-- /Page Header 
-            <div class="row"> 
+            <!-- /Page Header    ---->
+                {{-- TODO Project in dashboard --}}
+            {{-- <div class="row"> 
                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
                     <div class="card dash-widget">
                         <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
@@ -44,7 +45,7 @@
                             </div>
                         </div>
                     </div>
-                </div>          ---->
+                </div>          --}}
                 
                 
 <div class="flex flex-row justify-around w-full gap-10 border border-black">
@@ -53,38 +54,11 @@
   
 <div class="container text-center">
     <div class="row row-cols-2">
- <!--     <div class="col">
-        <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
-            <div class="card dash-widget">
-                <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
-                    <div class="dash-widget-info">
-                        <h3>50</h3> <span>Employees</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-      </div> ----->
-      <!------------------------ADD EMPLOYEE COUNT try 1--------------------->
-
       <div class="col">
         <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
             <div class="card dash-widget">
                 <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
                     <div class="dash-widget-info">
-              
-                        {{-- //Count: {{ $count }} --}}
-                 {{-- <h2>{{  $employeeCount }}</h2>  --}}
-                    {{-- @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    @if(session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif --}}
                         <span>Employees </span>
                         <h2>{{ $employeeCount }}</h2>
                     </div>
@@ -94,45 +68,8 @@
     </div>
 
 
-
-    <!----------------------------End EMPLOYEE COUNT---------------------------------->
- 
-
-
-
-      <!-------------------end--------------------------->
-    
-
       <div class="col">
         <div class="">
-
-<!----            <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
-                <div class="card dash-widget">
-                     <div class="card-body"> 
-                     <span class="dash-widget-icon"> <i class="fa-solid fa-calendar-days" style="color: #ff0a0a;"></i>
-                     </span>
-                     <div class="dash-widget-info">
-                            <div id="timezone-widget">
-                                <p id="current-date"></p>
-                                <p id="current-timezone"></p>
-                            </div>
-
-                    <script>
-                      function updateDateTime() {
-                           const currentDate = new Date();
-                         const options = { timeZone: 'Asia/Colombo' }; 
-                          const formattedDate = currentDate.toLocaleString('en-US', options);
-
-                            document.getElementById('current-date').innerHTML = `Today Date: ${formattedDate}`;
-                     //    document.getElementById('current-timezone').innerHTML = `Timezone: ${options.timeZone}`;
-                           } 
-                          setInterval(updateDateTime, 1000);
-                          updateDateTime();
-                     </script>
-                       </div>
-                     </div>
-                </div>
-    </div>---------------->
     <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
         <div class="card dash-widget">
             <div class="card-body"> 
