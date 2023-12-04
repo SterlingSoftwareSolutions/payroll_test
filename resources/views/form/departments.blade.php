@@ -31,6 +31,7 @@
                             <thead>
                                 <tr>
                                     <th style="width: 30px;">#</th>
+                                    <th>Department ID</th>
                                     <th>Department Name</th>
                                     <th class="text-right">Action</th>
                                 </tr>
@@ -40,7 +41,8 @@
                                 <tr>
                                     <td>{{ ++$key }}</td>
                                     <td hidden class="id">{{ $items->id }}</td>
-                                    <td class="department">{{ $items->department }}</td>
+                                    <td class="department">{{ $items->id }}</td>
+                                      <td class="department">{{ $items->department }}</td>
                                     <td class="text-right">
                                     <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
@@ -71,10 +73,26 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('form/departments/save') }}" method="POST">
+                     <form action="{{ route('form/departments/save') }}" method="POST">
                             @csrf
-                            <div class="form-group">
-                                <label>Department Name <span class="text-danger">*</span></label>
+                             <div class="form-group"> 
+
+                               
+
+ <label>Department ID <span class="text-danger">*</span></label><br>
+<input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department" value="{{ $newDepartmentId }}" readonly>
+
+@error('department')
+    <span class="invalid-feedback" role="alert">
+        <strong>{{ $message }}</strong>
+    </span>
+@enderror
+
+                                
+               
+                               
+
+                                 <label>Department Name <span class="text-danger">*</span></label>
                                 <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department">
                                 @error('department')
                                     <span class="invalid-feedback" role="alert">
@@ -85,7 +103,12 @@
                             <div class="submit-section">
                                 <button type="submit" class="btn btn-primary submit-btn">Submit</button>
                             </div>
-                        </form>
+                        </form> 
+
+
+
+
+
                     </div>
                 </div>
             </div>
