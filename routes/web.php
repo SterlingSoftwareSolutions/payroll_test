@@ -24,6 +24,7 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PersonalInformationController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -213,7 +214,8 @@ Route::controller(EmployeeController::class)->group(function () {
 Route::controller(HolidayController::class)->group(function () {
     Route::get('form/holidays/new', 'holiday')->middleware('auth')->name('form/holidays/new');
     Route::post('form/holidays/save', 'saveRecord')->middleware('auth')->name('form/holidays/save');
-    Route::post('form/holidays/update', 'updateRecord')->middleware('auth')->name('form/holidays/update');    
+    Route::post('form/holidays/update', 'updateRecord')->middleware('auth')->name('form/holidays/update');
+    Route::post('form/holidays/delete', 'deleteRecord')->middleware('auth')->name('form/holidays/delete');    
 });
 
 // ----------------------------- form leaves ------------------------------//
@@ -324,7 +326,7 @@ Route::controller(PersonalInformationController::class)->group(function () {
 Route::get('all/employee/getData', 'EmployeeController@getEmployeeData')->name('all.employee.getData');
 // web.php
 
-Route::post('/save-record', [EmployeeController::class, 'saveRecord'])->name('save.record');
+Route::post('/save-record', [EmployeeController::class, 'saveRecord'])->name('list');
 Route::get('/some-route', 'App\Http\Controllers\EmployeeController@someMethod');
 Route::get('/employees', [EmployeeController::class , 'cardAllEmployee'])->name('all.employee.card');
 
