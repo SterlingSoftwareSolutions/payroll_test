@@ -1822,19 +1822,20 @@ table.dataTable thead > tr > td.sorting {
 	margin-bottom: 20px;
 }
 .add-btn {
-    background-color: #F36161;
-    border: 1px solid #F36161;
+    background-color: hsl(140, 57%, 56%);
+    border: 1px solid hsl(140, 57%, 56%);
     border-radius: 50px;
     color: #FFFFFF;
     float: right;
     font-weight: 500;
-    min-width: 140px;
+	font-size: large;
+    min-width: 240px;
 }
 .add-btn:hover,
 .add-btn:focus,
 .add-btn:active {
-	background-color: #f10e1d;
-	border: 1px solid #f10e1d;
+	background-color: #05C46B;
+	border: 1px solid #05C46B;
     color: #fff;
 }
 .add-btn i {

@@ -117,7 +117,7 @@
                                             <td>
                                                 <h2 class="text-center">
                                                     <a href="{{ url('employee/profile/'.$employee->employee_id) }}" class="avatar"></a>
-                                                    <a href="#">{{ $employee->full_name }}<span>{{ $employee->email }}</span></a>
+                                                    <a href="#">{{ $employee->employee_id }}</a>
                                                 </h2>
                                             </td>
                                             <td class="text-center">{{ $employee->full_name}}</td>
@@ -175,9 +175,9 @@
                                     <!-- Your upload image input goes here -->
                                 </div>
                             </div>
-                        </div>          
+                            </div>          
 
-                        <style>
+                            <style>
                             .circle-image {
                                 border-radius: 50%;
                                 overflow: hidden;
@@ -193,8 +193,8 @@
                                 height: auto;
                                 display: block;
                             }
-                        </style>
-                        <script>
+                            </style>
+                            <script>
                             function previewImage() {
                                 var input = document.getElementById('image');
                                 var preview = document.getElementById('imagePreview');
@@ -213,7 +213,7 @@
                                     preview.innerHTML = '<img src="' + defaultImageUrl + '" alt="Default Image">';
                                 }
                             }
-                        </script>
+                            </script>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -341,6 +341,7 @@
                                 </div>
                                 <div class="submit-section">
                                     <button class="btn btn-primary submit-btn">Submit</button>
+                                    <button class="btn btn-primary submit-btn">Edit</button>
                                 </div>
                         </form>
                     </div>
