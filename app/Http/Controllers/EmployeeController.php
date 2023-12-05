@@ -56,10 +56,22 @@ class EmployeeController extends Controller
 
     // Create a new employee
     $employee = new Employee;
+
+    $employee->f_name = $request->input('first_name');
+    $employee->l_name = $request->input('last_name');
     $employee->full_name = $request->input('full_name');
+    $employee->employee_id = $request->input('employee_id');
     $employee->email = $request->input('email');
-    $employee->c_number = $request->input('c_number');
-    $employee->j_title = $request->input('j_title');
+    $employee->dob = $request->input('dob');
+    $employee->nic = $request->input('nic');
+    $employee->c_number = $request->input('c_num');
+    $employee->J_title= $request->input('job_title');
+    $employee->d_name = $request->input('departName');
+    $employee->joinedDate = $request->input('joinedDate');
+    $employee->createdDate = $request->input('createdDate');
+    $employee->status = $request->input('status');
+    $employee->gender = $request->input('gender');
+    $employee->description = $request->input('description');
     // Set other fields
 
     // Save the employee to the database
@@ -342,7 +354,11 @@ class EmployeeController extends Controller
     public function index()
     {
         $departments = DB::table('departments')->get();
-        return view('form.departments',compact('departments'));
+        $departments = Department::all();
+        $lastDepartment = Department::latest('id')->first();
+        $lastDepartmentId = $lastDepartment ? $lastDepartment->id : 0;
+        $newDepartmentId = $lastDepartmentId + 1;
+        return view('form.departments', compact('departments', 'newDepartmentId'));
     }
 
     /** save record department */
@@ -445,6 +461,10 @@ class EmployeeController extends Controller
     {
         $url = route('save.record'); // Include the correct namespace
     }
+
+
+
+
 
 
 }
