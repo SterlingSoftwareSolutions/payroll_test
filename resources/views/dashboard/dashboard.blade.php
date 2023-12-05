@@ -73,18 +73,6 @@
                 <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
                     <div class="dash-widget-info">
               
-                        {{-- //Count: {{ $count }} --}}
-                 {{-- <h2>{{  $employeeCount }}</h2>  --}}
-                    {{-- @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    @if(session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif --}}
                         <span>Employees </span>
                         <h2>{{ $employeeCount }}</h2>
                     </div>

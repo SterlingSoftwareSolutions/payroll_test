@@ -353,14 +353,10 @@ class EmployeeController extends Controller
     public function index()
     {
         $departments = DB::table('departments')->get();
-        // dd($departments);
-       
         $departments = Department::all();
         $lastDepartment = Department::latest('id')->first();
         $lastDepartmentId = $lastDepartment ? $lastDepartment->id : 0;
         $newDepartmentId = $lastDepartmentId + 1;
-        // dd($newDepartmentId);
-       // return view('form.departments',compact('departments'));
         return view('form.departments', compact('departments', 'newDepartmentId'));
     }
 

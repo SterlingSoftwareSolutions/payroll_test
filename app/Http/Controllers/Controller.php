@@ -16,23 +16,11 @@ class Controller extends BaseController
     {   
         
         $departments = Department::all(); // Fetch departments from the database
-        // $lastDepartmentId = Department::al();
-        // $newDepartmentId = $lastDepartmentId + 1;
-        // dd($departments);
+    
         return response()->json($departments);
     }
 
    
 
-        //         public function showDepartmentForm()
-        //     {
-        //     $lastDepartmentId = getLastDepartmentIdFromDatabase(); // Replace with actual logic
-
-
-        //     $newDepartmentId = $lastDepartmentId + 1;
-
-
-        //     return view('your.view.name', compact('newDepartmentId'));
-        // }
 
 }
