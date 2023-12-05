@@ -59,6 +59,7 @@
             <div class="card dash-widget">
                 <div class="card-body"> <span class="dash-widget-icon"><i class="fa fa-user"></i></span>
                     <div class="dash-widget-info">
+              
                         <span>Employees </span>
                         <h2>{{ $employeeCount }}</h2>
                     </div>

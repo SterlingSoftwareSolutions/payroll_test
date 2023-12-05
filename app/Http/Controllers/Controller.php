@@ -13,8 +13,14 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     public function getDepartments()
-    {
+    {   
+        
         $departments = Department::all(); // Fetch departments from the database
+    
         return response()->json($departments);
     }
+
+   
+
+
 }
