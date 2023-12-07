@@ -1,17 +1,17 @@
 @extends('layouts.app')
 @section('content')
     <div class="main-wrapper">
-        <div class="account-content">
-            <a href="{{ route('form/job/list') }}" class="btn btn-primary apply-btn">Apply Job</a>
+        <div class="account-content" id="account-content">
+            {{-- <a href="{{ route('form/job/list') }}" class="btn btn-primary apply-btn">Apply Job</a> --}}
             <div class="container">
                 <!-- Account Logo -->
                 <div class="account-logo">
-                    <a href="index.html"><img src="{{ URL::to('assets/img/logo2.png') }}" alt="Soeng Souy"></a>
+                    <a href="index.html"><img src="{{ URL::to('assets/img/logo4.png') }}" alt="Soeng Souy"></a>
                 </div>
                 {{-- message --}}
                 {!! Toastr::message() !!}
                 <!-- /Account Logo -->
-                <div class="account-box">
+                <div class="account-box" id="account-box">
                     <div class="account-wrapper">
                         <h3 class="account-title">Login</h3>
                         <p class="account-subtitle">Access to our dashboard</p>
@@ -20,7 +20,7 @@
                             @csrf
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="text" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="Enter email">
+                                <input type="text" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" >
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -33,7 +33,7 @@
                                         <label>Password</label>
                                     </div>
                                 </div>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Enter Password">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" >
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -56,7 +56,7 @@
                                 <button class="btn btn-primary account-btn" type="submit">Login</button>
                             </div>
                             <div class="account-footer">
-                                <p>Don't have an account yet? <a href="{{ route('register') }}">Register</a></p>
+                                <strong><p>Don't have an account yet? <a href="{{ route('register') }}">Register</a></p></strong>
                             </div>
                         </form>
                         <!-- /Account Form -->
