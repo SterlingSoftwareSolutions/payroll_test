@@ -11,6 +11,7 @@ use App\Models\Employee;
 use App\Models\department;
 use App\Models\User;
 use App\Models\module_permission;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class EmployeeController extends Controller
 {
@@ -353,19 +354,17 @@ class EmployeeController extends Controller
     /** page departments */
     public function index()
     {
-        $departments = DB::table('departments')->get();
         $departments = Department::all();
-        $lastDepartment = Department::latest('id')->first();
-        $lastDepartmentId = $lastDepartment ? $lastDepartment->id : 0;
-        $newDepartmentId = $lastDepartmentId + 1;
-        return view('form.departments', compact('departments', 'newDepartmentId'));
+        $next_id = IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']);
+        return view('form.departments', compact('departments', 'next_id'));
     }
+  
 
     /** save record department */
     public function saveRecordDepartment(Request $request)
     {
-        $request->validate([
-            'department'        => 'required|string|max:255',
+            $request->validate([
+            'department' => 'required|string|max:255',
         ]);
 
         DB::beginTransaction();
@@ -374,10 +373,11 @@ class EmployeeController extends Controller
             $department = department::where('department',$request->department)->first();
             if ($department === null)
             {
-                $department = new department;
-                $department->department = $request->department;
-                $department->save();
-    
+                $department = department::create([
+                    'id' => IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']),
+                    'department' => $request->department,
+                ]);
+             
                 DB::commit();
                 Toastr::success('Add new department successfully :)','Success');
                 return redirect()->route('form/departments/page');
@@ -391,18 +391,21 @@ class EmployeeController extends Controller
             Toastr::error('Add new department fail :)','Error');
             return redirect()->back();
         }
+        ;
+    
     }
+     
 
     /** update record department */
     public function updateRecordDepartment(Request $request)
     {
         DB::beginTransaction();
-        try{
+        try{      
             // update table departments
-            $department = [
-                'id'=>$request->id,
-                'department'=>$request->department,
-            ];
+            $department = [              
+                'id' => IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']),
+                'department' => $request->department,
+            ];  
             department::where('id',$request->id)->update($department);
         
             DB::commit();

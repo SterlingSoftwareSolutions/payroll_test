@@ -1,7 +1,7 @@
 
 @extends('layouts.master')
 @section('content')
-   
+
     <!-- Page Wrapper -->
     <div class="page-wrapper">
         <!-- Page Content -->
@@ -40,9 +40,8 @@
                                 @foreach ($departments as $key=>$items )
                                 <tr>
                                     <td>{{ ++$key }}</td>
-                                    <td hidden class="id">{{ $items->id }}</td>
-                                    <td class="department">{{ $items->id }}</td>
-                                      <td class="department">{{ $items->department }}</td>
+                                    <td class="id">{{ $items->id }}</td>
+                                    <td class="department">{{ $items->department }}</td>
                                     <td class="text-right">
                                     <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
@@ -61,7 +60,7 @@
             </div>
         </div>
         <!-- /Page Content -->
-        
+
         <!-- Add Department Modal -->
         <div id="add_department" class="modal custom-modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -75,36 +74,36 @@
                     <div class="modal-body">
                      <form action="{{ route('form/departments/save') }}" method="POST">
                             @csrf
-                             <div class="form-group"> 
+                             <div class="form-group">
+                              <label>Department ID <span class="text-danger">*</span></label><br> 
+                              <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department" value="{{ $next_id }}"readonly>
 
-                            <label>Department ID <span class="text-danger">*</span></label><br>
-                            <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department" value="{{ $newDepartmentId }}" readonly>
+                                        @error('department')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
 
-                            @error('department')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                                <label>Department Name <span class="text-danger">*</span></label>
+                                <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department" value="">
 
-                                 <label>Department Name <span class="text-danger">*</span></label>
-                                <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department">
-                                @error('department')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                                        @error('department')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                             </div>
                             <div class="submit-section">
                                 <button type="submit" class="btn btn-primary submit-btn">Submit</button>
                             </div>
-                        </form> 
+                        </form>
 
                     </div>
                 </div>
             </div>
         </div>
         <!-- /Add Department Modal -->
-        
+
         <!-- Edit Department Modal -->
         <div id="edit_department" class="modal custom-modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -118,10 +117,17 @@
                     <div class="modal-body">
                         <form action="{{ route('form/department/update') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="id" id="e_id" value="">
                             <div class="form-group">
+                                <label>Department ID <span class="text-danger">*</span></label><br>
+                                <input type="text" class="form-control" name="id" id="e_id" value="" readonly>
+
                                 <label>Department Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="department_edit" name="department" value="">
+                                <input class="form-control @error('department') is-invalid @enderror" type="text" id="department_edit" name="department" >
+                                @error('department')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror                         
                             </div>
                             <div class="submit-section">
                                 <button type="submit" class="btn btn-primary submit-btn">Save</button>

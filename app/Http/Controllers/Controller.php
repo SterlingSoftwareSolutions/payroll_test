@@ -16,7 +16,7 @@ class Controller extends BaseController
     {   
         
         $departments = Department::all(); // Fetch departments from the database
-    
+      
         return response()->json($departments);
     }
 
