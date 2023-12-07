@@ -22,8 +22,8 @@ class UserManagementController extends Controller
     {
         if (Auth::user()->role_name=='Admin')
         {
-            $result      = DB::table('employees')->get();
-            $role_name   = DB::table('role_type_employees')->get();
+            $result      = DB::table('users')->get();
+            $role_name   = DB::table('role_type_users')->get();
             $position    = DB::table('position_types')->get();
             $department  = DB::table('departments')->get();
             $status_user = DB::table('user_types')->get();
@@ -35,28 +35,22 @@ class UserManagementController extends Controller
         }
         
     }
-    // search employees
-    public function searchEmployees(Request $request)
+    // search user
+    public function searchUser(Request $request)
     {
-        if (Auth::employees()->role_name=='Admin')
+        if (Auth::user()->role_name=='Admin')
         {
-            $employees  = DB::table('employees')->get();
-            $result     = DB::table('employees')->get();
+            $users      = DB::table('users')->get();
+            $result     = DB::table('users')->get();
             $role_name  = DB::table('role_type_users')->get();
             $position   = DB::table('position_types')->get();
             $department = DB::table('departments')->get();
             $status_user = DB::table('user_types')->get();
 
-            // search by employee_id
-            if($request->employee_id)
-            {
-            $result = User::where('employee_id','LIKE','%'.$request->employee_id.'%')->get();
-            }
-            
             // search by name
-            if($request->f_name)
+            if($request->name)
             {
-                $result = User::where('f_name','LIKE','%'.$request->f_name.'%')->get();
+                $result = User::where('name','LIKE','%'.$request->name.'%')->get();
             }
 
             // search by Department name
@@ -80,7 +74,7 @@ class UserManagementController extends Controller
             // search by name and role name
             if($request->name && $request->role_name)
             {
-                $result = User::where('f_name','LIKE','%'.$request->f_name.'%')
+                $result = User::where('name','LIKE','%'.$request->name.'%')
                                 ->where('role_name','LIKE','%'.$request->role_name.'%')
                                 ->get();
             }
@@ -110,7 +104,7 @@ class UserManagementController extends Controller
                                 ->get();
             }
            
-            return view('usermanagement.user_control',compact('employees','role_name','position','department','status_user','result'));
+            return view('usermanagement.user_control',compact('users','role_name','position','department','status_user','result'));
         }
         else
         {
@@ -217,9 +211,11 @@ class UserManagementController extends Controller
    
     // save new user
     public function addNewUserSave(Request $request)
-    {
+{
+    try{
         $request->validate([
             'name'      => 'required|string|max:255',
+            'user_id' => 'required',
             'email'     => 'required|string|email|max:255|unique:users',
             'phone'     => 'required|min:11|numeric',
             'role_name' => 'required|string|max:255',
@@ -229,37 +225,55 @@ class UserManagementController extends Controller
             'image'     => 'required|image',
             'password'  => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
+            'join_date' => 'nullable|date_format:Y-m-d',
         ]);
-        DB::beginTransaction();
-        try{
-            $dt       = Carbon::now();
-            $todayDate = $dt->toDayDateTimeString();
-
-            $image = time().'.'.$request->image->extension();  
-            $request->image->move(public_path('assets/images'), $image);
-
-            $user = new User;
-            $user->name         = $request->name;
-            $user->email        = $request->email;
-            $user->join_date    = $todayDate;
-            $user->phone_number = $request->phone;
-            $user->role_name    = $request->role_name;
-            $user->position     = $request->position;
-            $user->department   = $request->department;
-            $user->status       = $request->status;
-            $user->avatar       = $image;
-            $user->password     = Hash::make($request->password);
-            $user->save();
-            DB::commit();
-            Toastr::success('Create new account successfully :)','Success');
-            return redirect()->route('userManagement');
-        }catch(\Exception $e){
-            DB::rollback();
-            Toastr::error('User add new account fail :)','Error');
-            return redirect()->back();
+        // Additional validation to check if passwords match
+        if ($request->password !== $request->password_confirmation) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'password' => ['The password and password confirmation do not match.'],
+            ]);
         }
+        // dd($request->all());
+        DB::beginTransaction();
+        
+        $dt       = Carbon::now();
+        $todayDate = $dt->toDayDateTimeString();
+
+        $image = time().'.'.$request->image->extension();  
+        $request->image->move(public_path('assets/images'), $image);
+
+        $user = new User;
+        $user->name         = $request->name;
+        $user->user_id      = $request->user_id;
+        $user->email        = $request->email;
+        $user->join_date    = $todayDate;
+        $user->phone_number = $request->phone;
+        $user->role_name    = $request->role_name;
+        $user->position     = $request->position;
+        $user->department   = $request->department;
+        $user->status       = $request->status;
+        $user->avatar       = $image;
+        $user->password     = Hash::make($request->password);
+        $user->created_at   = $request->created_at;
+        $user->save();
+
+        DB::commit();
+        // dd($user);
+        Toastr::success('Create new account successfully :)', 'Success');
+        return redirect()->route('userManagement');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Handle validation exception
+        DB::rollback();
+        Toastr::error('Validation error: ' . $e->getMessage(), 'Error');
+        return redirect()->back();
+    } catch (\Exception $e) {
+        // Catch any other exceptions
+        DB::rollback();
+        Toastr::error('User add new account failed : ' . $e->getMessage(), 'Error');
+        return redirect()->back();
     }
-    
+}
+
     // update
     public function update(Request $request)
     {
@@ -399,12 +413,4 @@ class UserManagementController extends Controller
         return redirect()->intended('home');
     }
 }
-
-
-
-
-
-
-
-
 
