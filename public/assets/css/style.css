@@ -1822,8 +1822,8 @@ table.dataTable thead > tr > td.sorting {
 	margin-bottom: 20px;
 }
 .add-btn {
-    background-color: #F36161;
-    border: 1px solid #F36161;
+    background-color: #05C46B;
+    border: 1px solid #05C46B;
     border-radius: 50px;
     color: #FFFFFF;
     float: right;
@@ -1833,9 +1833,9 @@ table.dataTable thead > tr > td.sorting {
 .add-btn:hover,
 .add-btn:focus,
 .add-btn:active {
-	background-color: #f10e1d;
-	border: 1px solid #f10e1d;
-    color: #fff;
+	background-color: #04ab5d;
+	border: 1px solid #04ab5d;
+    color: #FFFFFF;
 }
 .add-btn i {
 	margin-right: 5px;
@@ -2291,10 +2291,14 @@ table.dataTable thead > tr > td.sorting {
 	padding: 4px;
 }
 
-/* Add User */
+/*-----------------
+	Add User
+-----------------------*/
+
 .rows {
 	display: flex;
 	align-items: flex-start;
+	position: relative;
 }
 
 .user-profile {
@@ -2346,14 +2350,34 @@ table.dataTable thead > tr > td.sorting {
 	display: flex;
 	gap: 20px;
 }
+input.col-sm,
+select.col-sm {
+    border-color: #e3e3e3;
+    box-shadow: none;
+    font-size: 15px;
+    height: 34px;
+    padding: 8px;
+}
 
 .col-sm {
-	width: 250px;
-	margin-top: 1px;
+    width: 250px;
+    margin-top: 1px;
 }
-#col-sm {
-	width: 218px;
-	margin-top: 1px;
+
+.col-sm-input {
+    width: 250px;
+    margin-top: 1px;
+}
+.col-sm input {
+    border-color: #e3e3e3;
+    box-shadow: none;
+    font-size: 15px;
+    height: 34px !important;
+    padding: 8px;
+}
+.row .col-right {
+    position: relative;
+    margin-left: 40px !important;
 }
 .col-sm input {
 	border-color: #e3e3e3;
@@ -2384,13 +2408,87 @@ table.dataTable thead > tr > td.sorting {
 	border-color: #e3e3e3;
 	box-shadow: none;
 	font-size: 15px;
-	height: 44px;
+	height: 34px;
 	padding: 8px; /* Optional: Add padding to match the height */
+}
+#user_id {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Example shadow color and size */
+    border: 1px solid #CCCCCC; /* Example border color and width */
+}
+
+#role_name {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Example shadow color and size */
+    border: 1px solid #CCCCCC; /* Example border color and width */
+}
+
+.row {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
 }
 .row .col-right{
 	position: relative;
 	margin-left: 69px;
 }
+.rows{
+	margin-bottom: 1rem;
+	width: 100%;
+}
+@media (max-width: 991px) and (min-width: 768px) {
+    .col-sm {
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        max-width: 150px;
+    }
+
+    .col-right {
+        width: 270px;
+    }
+}
+@media (max-width:767px){
+	.col-sm {
+		max-width: 90%;
+	}
+	.col-right {
+        width: 90%;
+    }
+}
+
+
+/* Larger screens */
+@media only screen and (min-width: 768px) {
+    /* Add any styles you want for larger screens here */
+    #add_user .modal-dialog {
+        max-width: 800px; /* Adjust the maximum width as needed */
+    }
+}
+
+/* Smaller screens (up to 767.98px) */
+@media only screen and (max-width: 767.98px) {
+    #add_user .modal-dialog {
+        max-width: 95%; /* Adjust the maximum width as needed */
+    }
+
+    .modal-body {
+        padding: 10px; /* Add padding to the modal body for smaller screens */
+    }
+
+    /* Adjust font sizes or other styles as needed */
+    .modal-title,
+    .form-control,
+    .user-profile img,
+    .edit-text {
+        font-size: 14px;
+    }
+
+    /* Add more responsive styles as needed */
+}
+
 
 /*-----------------
 	17. Delete Modal

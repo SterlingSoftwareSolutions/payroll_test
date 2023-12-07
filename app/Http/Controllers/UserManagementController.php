@@ -211,9 +211,11 @@ class UserManagementController extends Controller
    
     // save new user
     public function addNewUserSave(Request $request)
-    {
+{
+    try{
         $request->validate([
             'name'      => 'required|string|max:255',
+            'user_id' => 'required',
             'email'     => 'required|string|email|max:255|unique:users',
             'phone'     => 'required|min:11|numeric',
             'role_name' => 'required|string|max:255',
@@ -223,37 +225,55 @@ class UserManagementController extends Controller
             'image'     => 'required|image',
             'password'  => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
+            'join_date' => 'nullable|date_format:Y-m-d',
         ]);
-        DB::beginTransaction();
-        try{
-            $dt       = Carbon::now();
-            $todayDate = $dt->toDayDateTimeString();
-
-            $image = time().'.'.$request->image->extension();  
-            $request->image->move(public_path('assets/images'), $image);
-
-            $user = new User;
-            $user->name         = $request->name;
-            $user->email        = $request->email;
-            $user->join_date    = $todayDate;
-            $user->phone_number = $request->phone;
-            $user->role_name    = $request->role_name;
-            $user->position     = $request->position;
-            $user->department   = $request->department;
-            $user->status       = $request->status;
-            $user->avatar       = $image;
-            $user->password     = Hash::make($request->password);
-            $user->save();
-            DB::commit();
-            Toastr::success('Create new account successfully :)','Success');
-            return redirect()->route('userManagement');
-        }catch(\Exception $e){
-            DB::rollback();
-            Toastr::error('User add new account fail :)','Error');
-            return redirect()->back();
+        // Additional validation to check if passwords match
+        if ($request->password !== $request->password_confirmation) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'password' => ['The password and password confirmation do not match.'],
+            ]);
         }
+        // dd($request->all());
+        DB::beginTransaction();
+        
+        $dt       = Carbon::now();
+        $todayDate = $dt->toDayDateTimeString();
+
+        $image = time().'.'.$request->image->extension();  
+        $request->image->move(public_path('assets/images'), $image);
+
+        $user = new User;
+        $user->name         = $request->name;
+        $user->user_id      = $request->user_id;
+        $user->email        = $request->email;
+        $user->join_date    = $todayDate;
+        $user->phone_number = $request->phone;
+        $user->role_name    = $request->role_name;
+        $user->position     = $request->position;
+        $user->department   = $request->department;
+        $user->status       = $request->status;
+        $user->avatar       = $image;
+        $user->password     = Hash::make($request->password);
+        $user->created_at   = $request->created_at;
+        $user->save();
+
+        DB::commit();
+        // dd($user);
+        Toastr::success('Create new account successfully :)', 'Success');
+        return redirect()->route('userManagement');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Handle validation exception
+        DB::rollback();
+        Toastr::error('Validation error: ' . $e->getMessage(), 'Error');
+        return redirect()->back();
+    } catch (\Exception $e) {
+        // Catch any other exceptions
+        DB::rollback();
+        Toastr::error('User add new account failed : ' . $e->getMessage(), 'Error');
+        return redirect()->back();
     }
-    
+}
+
     // update
     public function update(Request $request)
     {

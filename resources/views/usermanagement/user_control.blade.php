@@ -1,5 +1,16 @@
 @extends('layouts.master')
 @section('content')
+
+<!-- Include Bootstrap CSS and JS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<!-- Include Bootstrap DateTimePicker CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
     <!-- Page Wrapper -->
     <div class="page-wrapper">
         <!-- Page Content -->
@@ -176,62 +187,43 @@
                                         <img id="profileImage" src="{{ asset('assets/images/photo_defaults.jpg') }}" alt="">
                                         <span class="edit-text" onclick="openFileInput()">Edit</span>
                                     </div>
-                                    <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
+                                    <input type="file" name="image" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
                                 </div>
-                                
-                                <script>
-                                    function openFileInput() {
-                                        document.getElementById('fileInput').click();
-                                    }
-                                
-                                    function previewImage() {
-                                        const fileInput = document.getElementById('fileInput');
-                                        const profileImage = document.getElementById('profileImage');
-                                
-                                        const selectedFile = fileInput.files[0];
-                                
-                                        if (selectedFile) {
-                                            const reader = new FileReader();
-                                
-                                            reader.onload = function (e) {
-                                                profileImage.src = e.target.result;
-                                            };
-                                
-                                            reader.readAsDataURL(selectedFile);
-                                        }
-                                    }
-                                </script>
-                                
                                 <div class="row">
                                     <div class="col-sms">
-                                        <div class="col-sm" id="col-sm">
-                                            <label id="col-sm" for="">User Id</label><br>
-                                            <input id="col-sm" class="form-control" type="text">
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Id</label><br>
+                                            <input class="form-control col-sm" type="text" name="user_id" id="user_id">
                                         </div>
                                     </div>
+                                    
                                     <div class="col-sms">
-                                        <div class="col-sm" id="col-sm" >
-                                            <label id="col-sm" for="">User Role</label><br>
-                                            <select id="col-sm" class="form-control" name="" id="">
-                                                <option selected disabled></option>
-                                                @foreach ($role_name as $role )
-                                                <option value="{{ $role->role_type }}">{{ $role->role_type }}</option>
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Role</label><br>
+                                            <select class="form-control col-sm" name="role_name" id="role_name">
+                                                <option value="Admin">Admin</option>
+                                                @foreach ($role_name as $role)
+                                                    <option value="{{ $role->role_type }}" disabled>{{ $role->role_type }}</option>
                                                 @endforeach
-                                            </select>
-                                           
+                                            </select>                                                                                       
                                         </div>
-                                    </div>
+                                    </div>                                    
                                 </div>
                                
                                 <div class="row">
                                     <div class="col-right ">
                                         <label for="">Department</label><br>
-                                        <input class="form-control" type="text">
+                                        <select class="form-control" type="text" name="department" id="department">
+                                            <option selected disabled></option>
+                                            @foreach ($department as $departments )
+                                            <option value="{{ $departments->department }}">{{ $departments->department }}</option>
+                                            @endforeach
+                                        </select>
                                    </div>
-                               <br>
+                                   
                                    <div class="col-right ">
                                         <label for="">Position</label><br>
-                                       <select class="form-control" name="" id="">
+                                       <select class="form-control" name="position" id="position">
                                         <option selected disabled></option>
                                         @foreach ($position as $positions )
                                         <option value="{{ $positions->position }}">{{ $positions->position }}</option>
@@ -244,7 +236,7 @@
                                 <div class="col-sm-6"> 
                                     <div class="form-group">
                                         <label>Full Name</label>
-                                        <input class="form-control " type="text" id="" name="name" value="{{ old('name') }}">
+                                        <input class="form-control " type="text" id="" name="name">
                                     </div>
                                 </div>
                                 <div class="col-sm-6"> 
@@ -260,14 +252,24 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6"> 
-                                    <label>Status</label>
-                                    <select class="select" name="status" id="status">
-                                        <option selected disabled> </option>
-                                        @foreach ($status_user as $status )
-                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                    <div class="form-group">
+                                        <label>Created Date and Time</label>
+                                        <?php $dateTime = now()->format('Y-m-d H:i:s'); ?>
+                                        <div class='input-group date' id='datetimepicker'>
+                                            <input type='text' class="form-control" name="created_at" id="created_at" value="{{ old('created_at', $dateTime) }}" readonly />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        <script type="text/javascript">
+                                            $(function () {
+                                                $('#datetimepicker').datetimepicker({
+                                                    format: 'YYYY-MM-DD HH:mm:ss', // Include time in the format
+                                                });
+                                            });
+                                        </script>
+                                    </div>
+                                </div>                                                                
                             </div>
                             <div class="row"> 
                                 <div class="col-sm-6"> 
@@ -281,9 +283,22 @@
                                     <input type="password" class="form-control" name="password_confirmation" >
                                 </div>
                             </div>
-                            <div class="col-auto float-right ml-auto">
-                                <button class="btn add-btn" data-toggle="modal" data-target="#add_user"><i class="fa fa-plus"></i> Add User</button>
-                                
+                            
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <label>Status</label>
+                                    <select class="form-control" name="status" id="status">
+                                        <option selected disabled> </option>
+                                        @foreach ($status_user as $status )
+                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-auto float-right ml-auto">
+                                    <br><br>
+                                    <button class="btn add-btn" data-toggle="modal" data-target="#add_user"><i class="fa fa-plus"></i> Add User</button>
+                                    
+                                </div>
                             </div>
 
                             {{-- <div class="row"> 
@@ -532,6 +547,30 @@
             $('.e_avatar').val(_this.find('.image').text());
         });
     </script>
+
+    
+<script>
+    function openFileInput() {
+        document.getElementById('fileInput').click();
+    }
+
+    function previewImage() {
+        const fileInput = document.getElementById('fileInput');
+        const profileImage = document.getElementById('profileImage');
+
+        const selectedFile = fileInput.files[0];
+
+        if (selectedFile) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                profileImage.src = e.target.result;
+            };
+
+            reader.readAsDataURL(selectedFile);
+        }
+    }
+</script>
     @endsection
  
 @endsection
