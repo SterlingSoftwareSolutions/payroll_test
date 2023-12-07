@@ -87,7 +87,7 @@
                                     <td>
                                         <span hidden class="image">{{ $user->avatar}}</span>
                                         <h2 class="table-avatar">
-                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="avatar"><img src="{{ URL::to('/assets/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
+                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="avatar"><img src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
                                             <a href="{{ url('employee/profile/'.$user->user_id) }}" class="name">{{ $user->name }}</span></a>
                                         </h2>
                                     </td>
@@ -200,10 +200,9 @@
                                     <div class="col-sms">
                                         <div class="col-sm col-sm-input">
                                             <label for="">User Role</label><br>
-                                            <select class="form-control col-sm" name="role_name" id="role_name">
-                                                <option value="Admin">Admin</option>
+                                            <select class="form-control col-sm" name="role_name" id="role_name" disabled>
                                                 @foreach ($role_name as $role)
-                                                    <option value="{{ $role->role_type }}" disabled>{{ $role->role_type }}</option>
+                                                    <option value="{{ $role->role_type }}" >{{ $role->role_type }}</option>
                                                 @endforeach
                                             </select>                                                                                       
                                         </div>

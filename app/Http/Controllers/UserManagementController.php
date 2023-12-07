@@ -218,7 +218,7 @@ class UserManagementController extends Controller
             'user_id' => 'required',
             'email'     => 'required|string|email|max:255|unique:users',
             'phone'     => 'required|min:11|numeric',
-            'role_name' => 'required|string|max:255',
+            // 'role_name' => 'required|string|max:255',
             'position'  => 'required|string|max:255',
             'department'=> 'required|string|max:255',
             'status'    => 'required|string|max:255',
@@ -240,7 +240,7 @@ class UserManagementController extends Controller
         $todayDate = $dt->toDayDateTimeString();
 
         $image = time().'.'.$request->image->extension();  
-        $request->image->move(public_path('assets/images'), $image);
+        $request->image->move(public_path('images'), $image);
 
         $user = new User;
         $user->name         = $request->name;
@@ -248,7 +248,7 @@ class UserManagementController extends Controller
         $user->email        = $request->email;
         $user->join_date    = $todayDate;
         $user->phone_number = $request->phone;
-        $user->role_name    = $request->role_name;
+        $user->role_name    = "Admin";
         $user->position     = $request->position;
         $user->department   = $request->department;
         $user->status       = $request->status;
