@@ -22,8 +22,8 @@ class UserManagementController extends Controller
     {
         if (Auth::user()->role_name=='Admin')
         {
-            $result      = DB::table('users')->get();
-            $role_name   = DB::table('role_type_users')->get();
+            $result      = DB::table('employees')->get();
+            $role_name   = DB::table('role_type_employees')->get();
             $position    = DB::table('position_types')->get();
             $department  = DB::table('departments')->get();
             $status_user = DB::table('user_types')->get();
@@ -35,22 +35,28 @@ class UserManagementController extends Controller
         }
         
     }
-    // search user
-    public function searchUser(Request $request)
+    // search employees
+    public function searchEmployees(Request $request)
     {
-        if (Auth::user()->role_name=='Admin')
+        if (Auth::employees()->role_name=='Admin')
         {
-            $users      = DB::table('users')->get();
-            $result     = DB::table('users')->get();
+            $employees  = DB::table('employees')->get();
+            $result     = DB::table('employees')->get();
             $role_name  = DB::table('role_type_users')->get();
             $position   = DB::table('position_types')->get();
             $department = DB::table('departments')->get();
             $status_user = DB::table('user_types')->get();
 
-            // search by name
-            if($request->name)
+            // search by employee_id
+            if($request->employee_id)
             {
-                $result = User::where('name','LIKE','%'.$request->name.'%')->get();
+            $result = User::where('employee_id','LIKE','%'.$request->employee_id.'%')->get();
+            }
+            
+            // search by name
+            if($request->f_name)
+            {
+                $result = User::where('f_name','LIKE','%'.$request->f_name.'%')->get();
             }
 
             // search by Department name
@@ -74,7 +80,7 @@ class UserManagementController extends Controller
             // search by name and role name
             if($request->name && $request->role_name)
             {
-                $result = User::where('name','LIKE','%'.$request->name.'%')
+                $result = User::where('f_name','LIKE','%'.$request->f_name.'%')
                                 ->where('role_name','LIKE','%'.$request->role_name.'%')
                                 ->get();
             }
@@ -104,7 +110,7 @@ class UserManagementController extends Controller
                                 ->get();
             }
            
-            return view('usermanagement.user_control',compact('users','role_name','position','department','status_user','result'));
+            return view('usermanagement.user_control',compact('employees','role_name','position','department','status_user','result'));
         }
         else
         {

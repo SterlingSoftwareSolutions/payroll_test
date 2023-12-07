@@ -1822,13 +1822,15 @@ table.dataTable thead > tr > td.sorting {
 	margin-bottom: 20px;
 }
 .add-btn {
-    background-color: #05C46B;
+  background-color: #05C46B;
     border: 1px solid #05C46B;
+
     border-radius: 50px;
     color: #FFFFFF;
     float: right;
     font-weight: 500;
-    min-width: 140px;
+	font-size: large;
+    min-width: 240px;
 }
 .add-btn:hover,
 .add-btn:focus,
@@ -1836,6 +1838,7 @@ table.dataTable thead > tr > td.sorting {
 	background-color: #04ab5d;
 	border: 1px solid #04ab5d;
     color: #FFFFFF;
+
 }
 .add-btn i {
 	margin-right: 5px;
