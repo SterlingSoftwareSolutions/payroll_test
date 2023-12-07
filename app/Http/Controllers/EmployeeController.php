@@ -16,16 +16,17 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 class EmployeeController extends Controller
 {
     // all employee card view
-    public function cardAllEmployee(Request $request)
-    {
-        $users = DB::table('users')
-                    ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                    ->select('users.*',  'employees.gender')
-                    ->get(); 
-        $userList = DB::table('users')->get();
-        $permission_lists = DB::table('permission_lists')->get();
-        return view('form.allemployeecard',compact('users','userList','permission_lists'));
-    }
+    // public function cardAllEmployee(Request $request)
+    // {
+    //    $users = DB::table('users')
+    //                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+    //                ->select('users.*', 'employees.dob', 'employees.gender')
+    //                ->get(); 
+    //    $userList = DB::table('users')->get();
+    //    $permission_lists = DB::table('permission_lists')->get();
+    //    return view('form.allemployeecard',compact('users','userList','permission_lists'));
+    // }
+
     // all employee list
     public function listAllEmployee()
     {
@@ -35,7 +36,8 @@ class EmployeeController extends Controller
                     ->get();
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
-        return view('form.employeelist',compact('users','userList','permission_lists'));
+        $employees = Employee::all();
+        return view('form.employeelist', compact('employees'));
     }
 
     // save data employee
@@ -78,7 +80,7 @@ class EmployeeController extends Controller
     // $products = compact('employee');
 
     
-    return view('form.allemployeecard', compact('employee'))->with('success', 'Employee added successfully');
+    return view('form.employeelist', compact('employee'))->with('success', 'Employee added successfully');
     // Redirect back or return a response as needed
     // return redirect()->back()->with('success', 'Employee added successfully');
 }
@@ -100,7 +102,6 @@ class EmployeeController extends Controller
         try{
             // update table Employee
             $updateEmployee = [
-                'id'=>$request->id,
                 'employee_id'=>$request->employee_id,
                 'f_name'=>$request->f_name,
                 'l_name'=>$request->l_name,
@@ -119,13 +120,13 @@ class EmployeeController extends Controller
             ];
             // update table user
             $updateUser = [
-                'id'=>$request->id,
-                'name'=>$request->name,
+                'employee_id'=>$request->employee_id,
+                'full_name'=>$request->full_name,
                 'email'=>$request->email,
             ];
 
             // update table module_permissions
-            for($i=0;$i<count($request->id_permission);$i++)
+            for($i=0;$i<count($request->employee_id_permission);$i++)
             {
                 $UpdateModule_permissions = [
                     'employee_id' => $request->employee_id,
@@ -141,12 +142,12 @@ class EmployeeController extends Controller
                 module_permission::where('id',$request->id_permission[$i])->update($UpdateModule_permissions);
             }
 
-            User::where('id',$request->id)->update($updateUser);
-            Employee::where('id',$request->id)->update($updateEmployee);
+            User::where('id',$request->employee_id)->update($updateUser);
+            Employee::where('employye_id',$request->employye_id)->update($updateEmployee);
         
             DB::commit();
             Toastr::success('updated record successfully :)','Success');
-            return redirect()->route('all/employee/card');
+            return redirect()->route('all/employee/list');
         }catch(\Exception $e){
             DB::rollback();
             Toastr::error('updated record fail :)','Error');
@@ -164,7 +165,7 @@ class EmployeeController extends Controller
 
             DB::commit();
             Toastr::success('Delete record successfully :)','Success');
-            return redirect()->route('all/employee/card');
+            return redirect()->route('all/employee/list');
 
         }catch(\Exception $e){
             DB::rollback();

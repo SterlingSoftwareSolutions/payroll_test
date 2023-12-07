@@ -18,6 +18,7 @@ class CreateDepartmentsTable extends Migration
             $table->string('department')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**
