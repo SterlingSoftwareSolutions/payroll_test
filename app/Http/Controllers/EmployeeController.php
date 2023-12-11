@@ -34,9 +34,11 @@ class EmployeeController extends Controller
                     ->join('employees', 'users.user_id', '=', 'employees.employee_id')
                     ->select('users.*', 'employees.dob', 'employees.gender')
                     ->get();
+                
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
         $employees = Employee::all();
+        
         return view('form.employeelist', compact('employees'));
     }
 
@@ -93,6 +95,7 @@ class EmployeeController extends Controller
             ->where('employees.employee_id','=',$employee_id)
             ->get();
         $employees = DB::table('employees')->where('employee_id',$employee_id)->get();
+       
         return view('form.edit.editemployee',compact('employees','permission'));
     }
     // update record employee
@@ -355,7 +358,7 @@ class EmployeeController extends Controller
     public function index()
     {
         $departments = Department::all();
-      
+       
         $next_id = IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']);
         return view('form.departments', compact('departments', 'next_id'));
         

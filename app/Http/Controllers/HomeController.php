@@ -29,7 +29,8 @@ class HomeController extends Controller
     public function index()
     {
         $employeeCount = Employee::count();
-        return view('dashboard.dashboard', compact('employeeCount'));
+        $employees = Employee::all();
+        return view('dashboard.dashboard', compact('employeeCount','employees'));
     }
     // employee dashboard
     public function emDashboard()

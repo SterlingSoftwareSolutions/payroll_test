@@ -20,7 +20,7 @@ class CreateEmployeesTable extends Migration
             $table->string('l_name')->nullable();
             $table->string('full_name')->nullable();
             $table->string('email')->nullable();
-            $table->string('dob')->nullable();
+            $table->date('dob')->nullable();
             $table->string('nic')->nullable();
             $table->string('c_number')->nullable();
             $table->string('j_title')->nullable();
