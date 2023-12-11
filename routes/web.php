@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SettingController;
@@ -227,11 +228,22 @@ Route::controller(LeavesController::class)->group(function () {
     Route::post('form/leaves/edit/delete','deleteLeave')->middleware('auth')->name('form/leaves/edit/delete');    
 });
 
+
+// ATTENDACNE ROUTES
+Route::controller(AttendanceController::class)->group(function () {
+    Route::get('form/attendance/new', 'attendance')->middleware('auth')->name('form.attendance.new');
+    Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
+    Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
+
+});
+
+
+// ATTENDACNE ROUTES
+
 // ----------------------------- form attendance  ------------------------------//
 Route::controller(LeavesController::class)->group(function () {
     Route::get('form/leavesettings/page', 'leaveSettings')->middleware('auth')->name('form/leavesettings/page');
     Route::get('attendance/page', 'attendanceIndex')->middleware('auth')->name('attendance/page');
-    Route::get('attendance/employee/page', 'AttendanceEmployee')->middleware('auth')->name('attendance/employee/page');
     Route::get('form/shiftscheduling/page', 'shiftScheduLing')->middleware('auth')->name('form/shiftscheduling/page');
     Route::get('form/shiftlist/page', 'shiftList')->middleware('auth')->name('form/shiftlist/page');    
 });
