@@ -95,8 +95,8 @@
                                     <td class="id">{{ $user->user_id }}</td>
                                     <td class="email">{{ $user->email }}</td>
                                     <td class="position">{{ $user->position }}</td>
-                                    {{-- <td class="phone_number">{{ $user->phone_number }}</td> --}}
-                                    {{-- <td>{{ $user->join_date }}</td> --}}
+                                    <td class="phone_number" hidden>{{ $user->phone_number }}</td>
+                                    <td class="join_date" hidden>{{ $user->join_date }}</td>
                                     {{-- <td>
                                         @if ($user->role_name=='Admin')
                                             <span class="badge bg-inverse-danger role_name">{{ $user->role_name }}</span>
@@ -109,8 +109,8 @@
                                             @elseif ($user->role_name=='Employee')
                                             <span class="badge bg-inverse-dark role_name">{{ $user->role_name }}</span>
                                         @endif
-                                    </td>
-                                    <td>
+                                    </td> --}}
+                                    <td hidden>
                                         <div class="dropdown action-label">
                                             @if ($user->status=='Active')
                                                 <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
@@ -146,7 +146,7 @@
                                                 </a>
                                             </div>
                                         </div>
-                                    </td> --}}
+                                    </td>
                                     <td class="department">{{ $user->department }}</td>
                                     <td class="text-right">
                                         <div class="dropdown dropdown-action">
@@ -390,6 +390,126 @@
 				
         <!-- Edit User Modal -->
         <div id="edit_user" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <br>
+                    <div class="modal-body">
+                        <form action="{{ route('update') }}" method="POST" enctype="multipart/form-data">
+                             <div class="rows">
+                                <div class="group" id="uploadGroup">
+                                    <div class="user-profile">
+                                        <span hidden class="image"></span>
+                                        <a  href="{{ url('employee/profile/'.$user->user_id) }}" id="e_image"><img  src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
+                                        <span class="edit-text" onclick="openFileInput()">Edit</span>
+                                    </div>
+                                    <input type="file" name="avatar" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
+                                </div>
+                                <div class="row">
+                                    <div class="col-sms">
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Id</label><br>
+                                            @csrf
+                                            <input class="form-control col-sm" type="text"  name="user_id" id="e_id"readonly>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sms">
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Role</label><br>
+                                            <select class="form-control col-sm" name="role_name" id="role_name" disabled>
+                                                @foreach ($role_name as $role)
+                                                    <option value="{{ $role->role_type }}" >{{ $role->role_type }}</option>
+                                                @endforeach
+                                            </select>                                                                                       
+                                        </div>
+                                    </div>                                    
+                                </div>
+                               
+                                <div class="row">
+                                    <div class="col-right ">
+                                        <label for="">Department</label>
+                                        <select class="select" name="department" id="e_department">
+                                            @foreach ($department as $departments )
+                                            <option value="{{ $departments->department }}">{{ $departments->department }}</option>
+                                            @endforeach
+                                        </select>
+                                   </div>
+                                   
+                                   <div class="col-right ">
+                                        <label for="">Position</label><br>
+                                        <select class="select" name="position" id="e_position">
+                                            @foreach ($position as $positions )
+                                            <option value="{{ $positions->position }}">{{ $positions->position }}</option>
+                                            @endforeach
+                                        </select>
+                                   </div>
+                               </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input class="form-control" type="text" name="name" id="e_name" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"> 
+                                    <label>Email</label>
+                                    <input class="form-control" type="text" name="email" id="e_email" value=""/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Phone</label>
+                                        <input class="form-control" type="text" id="e_phone_number" name="phone" value=""/>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Created Date and Time</label>
+                                    <input class="form-control" type="text" id="e_join_date" name="join" value="" readonly/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="password" class="form-control" name="password" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"> 
+                                    <label>Repeat Password</label>
+                                    <input type="password" class="form-control" name="password_confirmation" >
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <label>Status</label>
+                                    <select class="select" name="status_user" id="e_status">
+                                        @foreach ($status_user as $status )
+                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-auto float-right ml-auto">
+                                    <br><br>
+                                <button type="submit" class="btn add-btn">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- <div id="edit_user" class="modal custom-modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -473,7 +593,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- /Edit Salary Modal -->
 				
         <!-- Delete User Modal -->
@@ -517,7 +637,10 @@
             $('#e_name').val(_this.find('.name').text());
             $('#e_email').val(_this.find('.email').text());
             $('#e_phone_number').val(_this.find('.phone_number').text());
-            $('#e_image').val(_this.find('.image').text());
+            $('#e_join_date').val(_this.find('.join_date').text());
+            // $('#e_join_date').val(_this.find('.join_date').text());
+
+            $('#e_image').val(_this.find('.avatar').text());
 
             var name_role = (_this.find(".role_name").text());
             var _option = '<option selected value="' + name_role+ '">' + _this.find('.role_name').text() + '</option>'
@@ -533,7 +656,7 @@
 
             var statuss = (_this.find(".statuss").text());
             var _option = '<option selected value="' +statuss+ '">' + _this.find('.statuss').text() + '</option>'
-            $( _option).appendTo("#e_status");
+            $( _option).appendTo("#e_status");var statuss = (_this.find(".statuss").text());
             
         });
     </script>
