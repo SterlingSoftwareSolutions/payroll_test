@@ -26,4 +26,8 @@ class Employee extends Model
         'gender',
         'description',
     ];
+
+    protected $casts=[
+        'dob' => 'date',
+    ];
 }
