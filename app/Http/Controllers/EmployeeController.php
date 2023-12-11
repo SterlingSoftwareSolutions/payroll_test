@@ -355,8 +355,10 @@ class EmployeeController extends Controller
     public function index()
     {
         $departments = Department::all();
+      
         $next_id = IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']);
         return view('form.departments', compact('departments', 'next_id'));
+        
     }
   
 
