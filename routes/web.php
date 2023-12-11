@@ -248,12 +248,9 @@ Route::controller(PayrollController::class)->group(function () {
 
 // ----------------------------- reports  ------------------------------//
 Route::controller(ExpenseReportsController::class)->group(function () {
-    // Route::get('form/expense/reports/page', 'index')->middleware('auth')->name('form/expense/reports/page');
-    Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form/attendance/report/page');
-    Route::get('form/attendance/report/pdf/page', 'reports.attendance-report-pdf')->middleware('auth')->name('form/attendance/report/pdf/page');
-   //add department view in attendant form
-    Route::get('form/attendance/report/page', 'showDepartmentView')->middleware('auth')->name('form/attendance/report/page');
-
+    Route::get('form/expense/reports/page', 'index')->middleware('auth')->name('form/expense/reports/page');
+    Route::get('form/invoice/reports/page', 'invoiceReports')->middleware('auth')->name('form/invoice/reports/page');
+    Route::get('form/daily/reports/page', 'dailyReport')->middleware('auth')->name('form/daily/reports/page');
     Route::get('form/leave/reports/page','leaveReport')->middleware('auth')->name('form/leave/reports/page');
 });
 

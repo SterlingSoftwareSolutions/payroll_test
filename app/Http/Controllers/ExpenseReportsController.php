@@ -1,57 +1,37 @@
 <?php
 
 namespace App\Http\Controllers;
-use DB;
 
-use App\Models\department;
 use Illuminate\Http\Request;
-use App\Http\Controllers\EmployeeController;
-use App\Models\Employee;
+use DB;
 
 class ExpenseReportsController extends Controller
 {
     // view page
     public function index()
     {
-        $departments = department::all();
-        // dd($departments);
-        return view('reports.attendance-report', compact('departments'));
+        return view('reports.expensereport');
     }
 
-   
-    // attendance report pdf page
-    public function attendanceReportPdf()
+    // view page
+    public function invoiceReports()
     {
-        return view('reports.attendance-report-pdf');
+        return view('reports.invoicereports');
     }
-
-    public function showDepartmentView()
+    
+    // daily report page
+    public function dailyReport()
     {
-        $departments = department::all();
-        return view('reports.attendance-report', compact('departments'));
+        return view('reports.dailyreports');
     }
-
-
-   
-
-
-
-
-
-
-
-
-
-
-
 
     // leave reports page
-    // public function leaveReport()
-    // {
-    //     $leaves = DB::table('leaves_admins')
-    //                 ->join('users', 'users.user_id', '=', 'leaves_admins.user_id')
-    //                 ->select('leaves_admins.*', 'users.*')
-    //                 ->get();
-    //     return view('reports.leavereports',compact('leaves'));
-    // }
+    public function leaveReport()
+    {
+        $leaves = DB::table('leaves_admins')
+                    ->join('users', 'users.user_id', '=', 'leaves_admins.user_id')
+                    ->select('leaves_admins.*', 'users.*')
+                    ->get();
+        return view('reports.leavereports',compact('leaves'));
+    }
 }
