@@ -1514,7 +1514,7 @@ table.dataTable thead > tr > td.sorting {
 -----------------------*/
 
 .sidebar {
-    background-color: #34444c;
+    background-color: #34444C;
     border-right: 1px solid transparent;
     bottom: 0;
     left: 0;
@@ -2402,15 +2402,25 @@ table.dataTable thead > tr > td.sorting {
 	color: #fff;
 }
 .submit-section {
-	text-align: center;
+	text-align: end;
 	margin-top: 40px;
 }
+
 .submit-btn {
     border-radius: 50px;
     font-size: 18px;
     font-weight: 600;
     min-width: 200px;
     padding: 10px 20px;
+	background-color: #05C46B;
+	border-color: #05C46B;
+	
+}
+.submit-btn:hover,
+.submit-btn:focus,
+.submit-btn:active {
+	background-color: #03a358;
+	border-color: #03a358;
 }
 .form-scroll {
     max-height: 400px;
