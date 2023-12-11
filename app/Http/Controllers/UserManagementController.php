@@ -277,6 +277,7 @@ class UserManagementController extends Controller
     // update
     public function update(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try{
             $user_id       = $request->user_id;
@@ -286,7 +287,8 @@ class UserManagementController extends Controller
             $position     = $request->position;
             $phone        = $request->phone;
             $department   = $request->department;
-            $status       = $request->status;
+            $status       = $request->status_user;
+            $password     = Hash::make($request->password);
 
             $dt       = Carbon::now();
             $todayDate = $dt->toDayDateTimeString();
@@ -309,18 +311,25 @@ class UserManagementController extends Controller
                     $image->move(public_path('/assets/images/'), $image_name);
                 }
             }
+            // Additional validation to check if passwords match
+        if ($request->password !== $request->password_confirmation) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'password' => ['The password and password confirmation do not match.'],
+            ]);
+        }
             
             $update = [
 
                 'user_id'       => $user_id,
                 'name'         => $name,
-                'role_name'    => $role_name,
+                'role_name'    => "Admin",
                 'email'        => $email,
                 'position'     => $position,
                 'phone_number' => $phone,
                 'department'   => $department,
                 'status'       => $status,
                 'avatar'       => $image_name,
+                'password'     => $password,
             ];
 
             $activityLog = [
@@ -339,9 +348,15 @@ class UserManagementController extends Controller
             Toastr::success('User updated successfully :)','Success');
             return redirect()->route('userManagement');
 
-        }catch(\Exception $e){
+        }catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation exception
             DB::rollback();
-            Toastr::error('User update fail :)','Error');
+            Toastr::error('Validation error: ' . $e->getMessage(), 'Error');
+            return redirect()->back();
+        } catch (\Exception $e) {
+            // Catch any other exceptions
+            DB::rollback();
+            Toastr::error('User update fail : ' . $e->getMessage(), 'Error');
             return redirect()->back();
         }
     }
