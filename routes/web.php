@@ -94,7 +94,9 @@ Route::controller(LockScreen::class)->group(function () {
 // ------------------------------ register ---------------------------------//
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'register')->name('register');
-    Route::post('/register','storeUser')->name('register');    
+    Route::post('/register','storeUser')->name('register'); 
+  
+  
 });
 
 // ----------------------------- forget password ----------------------------//
