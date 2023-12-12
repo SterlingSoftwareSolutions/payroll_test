@@ -234,7 +234,7 @@ Route::controller(AttendanceController::class)->group(function () {
     Route::get('form/attendance/new', 'attendance')->middleware('auth')->name('form.attendance.new');
     Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
     Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
-
+    Route::post('form/attendance/update', 'updateRecordAttendance')->middleware('auth')->name('form/attendance/update');
 });
 
 

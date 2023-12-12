@@ -17,8 +17,8 @@
                 </div>
 
                 <div class="col-auto float-right ml-auto">
-                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_attendance" id="add_attendence"><i
-                            class="fa fa-plus"></i> Add Attendance</a>
+                    <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_attendance"
+                        id="add_attendence"><i class="fa fa-plus"></i> Add Attendance</a>
 
                 </div>
             </div>
@@ -91,6 +91,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Attendance Id</th>
+                                <th>Employee Name</th>
                                 <th>Date</th>
                                 <th>Punch In</th>
                                 <th>Punch Out</th>
@@ -102,101 +104,132 @@
 
                         <tbody>
                             @if(!empty($attendance))
-                            @foreach ($attendance as $attendances)
-                            <tr>
-                                <td>
-                                    <h2 class="text-center">
-                                        <a href="{{ url('employee/profile/'.$employee->employee_id) }}"
-                                            class="avatar"></a>
-                                        <a href="#">{{ $employee->full_name }}<span> </span></a>
-                                    </h2>
-                                </td>
-                                <td class="text-left">{{ $employee->id}}</td>
-                                <td class="text-left">{{ $employee->email }}</td>
-                                <td class="text-left">{{ $employee->c_number}}</td>
-                                <td class="text-left">{{ $employee->j_title}} </td>
-                                <td class="text-right">
-                                </td>
+                            @foreach ($attendance as $key=>$items)
+                            <tr class="attendance-completed">
+                                    <td>{{ ++$key }}</td>
+                                    <td class="text-left">{{ $items->id }}</td>
+                                    @foreach ($employees as $employee)
+                                    @if ($employee->id == $items->employee_id)
+                                    <td class="text-left">{{ $employee->full_name }}</td>
+                                    @endif
+                                    @endforeach
+                                    <td class="text-left">{{ $items->date}}</td>
+                                    <td class="text-left">{{ $items->punch_in}}</td>
+                                    <td class="text-left">{{ $items->punch_out}}</td>
+                                    {{-- Calculate Work Hours --}}
+                                    @php
+                                    $punchIn = new DateTime($items->punch_in);
+                                    $punchOut = new DateTime($items->punch_out);
+                                    $workHours = $punchOut->diff($punchIn)->format('%H:%I');
+                                    @endphp
 
-                                <!-- Edit Leave Modal -->
-                                <div id="edit_leave" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
-                                        <!-- Modal content-->
-                                        <div class="modal-content">
-                                            <!-- Add your edit form content here -->
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Edit Leave</h4>
-                                                <button type="button" class="close"
-                                                    data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <!-- Your edit form goes here -->
+                                    <td class="text-left">{{ $workHours }}</td>
+
+                                    {{-- Calculate Overtime --}}
+                                    @php
+                                    $regularWorkingHours = new DateTime('10:00');
+                                    $workHours = new DateTime($punchOut->diff($punchIn)->format('%H:%I'));
+                                    $overtime = $workHours > $regularWorkingHours ?
+                                    $workHours->diff($regularWorkingHours)->format('%H:%I') : '00:00';
+                                    @endphp
+                                    <td class="text-left">{{ $overtime }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown dropdown-action">
+                                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                <i class="material-icons">more_vert</i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item userUpdate" data-toggle="modal" data-id="{{ $items->attendance_id }}"
+                                                    data-employee-id="{{ $items->employee_id }}" data-date="{{ $items->date }}"
+                                                    data-punch-in="{{ $items->punch_in }}" data-punch-out="{{ $items->punch_out }}"
+                                                    data-target="#edit_attendance">
+                                                    <i class="fa fa-pencil m-r-5"></i> Edit
+                                                </a>
                                             </div>
                                         </div>
+                                    </td>
+                                </tr>
+
+                                @endforeach
+                                @endif
+                                <!-- Edit Attendance Modal -->
+                                <div class="modal custom-modal fade" id="edit_attendance" role="dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Edit Attendance</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{{ route('form/attendance/update') }}" method="POST">
+                                                        @csrf
+                                                            <div class="col-sm">
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Attendance ID <span class="text-danger">*</span></label>
+                                                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                                                        id="attendance_id" name="attendance_id" value="{{$next_id}}" disabled>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm">
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Select Employee <span
+                                                                            class="text-danger">*</span></label>
+                                                                    <datalist id="employees">
+                                                                        @for($i = 0; $i < $employees->count(); $i++)
+                                                                            <option value="{{$employees[$i]->id}}">{{$employees[$i]->full_name}}
+                                                                            </option>
+                                                                            @endfor
+                                                                    </datalist>
+                                                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="empolyee_name" type="text" name="employee_id">
+                                                                    @error('employee_id')<span class="text-danger">{{$message}}</span>@enderror
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Select Date <span class="text-danger">*</span></label>
+                                                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="date" type="date" name="date">
+                                                                    @error('date')<span class="text-danger">{{$message}}</span>@enderror
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Punch In time <span
+                                                                            class="text-danger">*</span></label>
+                                                                    <div>
+                                                                        <input class="form-control" style="width: 100%;" tabindex="-1"
+                                                                            aria-hidden="true" id="punch_in" name="punch_in" type="time">
+                                                                        @error('punch_in')<span class="text-danger">{{$message}}</span>@enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Punch Out time <span
+                                                                            class="text-danger">*</span></label>
+                                                                    <div>
+                                                                        <input class="form-control" style="width: 100%;" tabindex="-1"
+                                                                            aria-hidden="true" id="punch_out" name="punch_out" type="time">
+                                                                        @error('punch_out')<span class="text-danger">{{$message}}</span>@enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- ... existing form fields ... -->
+
+                                                            <div class="submit-section">
+                                                                <button type="submit" class="btn btn-primary submit-btn">Save</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                     </div>
-                                </div>
-
-                                <!-- Delete Approve Modal -->
-                                <div id="delete_approve" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
-                                        <!-- Modal content-->
-                                        <div class="modal-content">
-                                            <!-- Add your delete confirmation content here -->
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Delete Leave</h4>
-                                                <button type="button" class="close"
-                                                    data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <!-- Your delete confirmation content goes here -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- View Leave Modal -->
-                                <div id="view" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
-                                        <!-- Modal content-->
-                                        <div class="modal-content">
-                                            <!-- Add your view content here -->
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">View Leave</h4>
-                                                <button type="button" class="close"
-                                                    data-dismiss="modal">&times;</button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <!-- Your view content goes here -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <script>
-                                    // Handle click event for Edit button
-                                    $('.leaveUpdate').on('click', function () {
-                                        var employeeId = $(this).data('id');
-                                        // Use the employeeId to fetch data and populate the edit modal
-                                        // For example: $.ajax({ url: 'get_employee_data.php', data: { id: employeeId }, success: function(data) { /* Populate the edit modal with data */ } });
-                                    });
-
-                                    // Handle click event for Delete button
-                                    $('.leaveDelete').on('click', function () {
-                                        var employeeId = $(this).data('id');
-                                        // Use the employeeId to show a confirmation message in the delete modal
-                                        // For example: $('#delete_approve .modal-body').html('Are you sure you want to delete leave with ID ' + employeeId + '?');
-                                    });
-
-                                    // Handle click event for View button
-                                    $('.leaveView').on('click', function () {
-                                        var employeeId = $(this).data('id');
-                                        // Use the employeeId to fetch data and populate the view modal
-                                        // For example: $.ajax({ url: 'get_employee_data.php', data: { id: employeeId }, success: function(data) { /* Populate the view modal with data */ } });
-                                    });
-                                </script>
+                                        <!-- /Edit Attendance Modal -->
 
                             </tr>
-                            @endforeach
-                            @endif
+
                         </tbody>
                     </table>
                 </div>
@@ -231,11 +264,13 @@
                                             class="text-danger">*</span></label>
                                     <datalist id="employees">
                                         @for($i = 0; $i < $employees->count(); $i++)
-                                            <option value="{{$employees[$i]->id}}">{{$employees[$i]->full_name}}</option>
-                                        @endfor
+                                            <option value="{{$employees[$i]->id}}">{{$employees[$i]->full_name}}
+                                            </option>
+                                            @endfor
                                     </datalist>
-                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                        id="empolyee_name" type="text" name="employee_id">
+                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;"
+                                        tabindex="-1" aria-hidden="true" id="empolyee_name" type="text"
+                                        name="employee_id">
                                     @error('employee_id')<span class="text-danger">{{$message}}</span>@enderror
                                 </div>
                             </div>
@@ -265,7 +300,7 @@
                                     <div>
                                         <input class="form-control" style="width: 100%;" tabindex="-1"
                                             aria-hidden="true" id="punch_out" name="punch_out" type="time">
-                                            @error('punch_out')<span class="text-danger">{{$message}}</span>@enderror
+                                        @error('punch_out')<span class="text-danger">{{$message}}</span>@enderror
                                     </div>
                                 </div>
                             </div>
@@ -381,8 +416,8 @@
             });
         }
 
-        @if($errors->any())
-        document.getElementById("add_attendence").click();
+        @if ($errors -> any())
+            document.getElementById("add_attendence").click();
         @endif
 
     </script>

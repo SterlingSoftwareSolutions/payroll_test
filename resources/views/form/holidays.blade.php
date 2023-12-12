@@ -39,7 +39,7 @@
                                     <th>Name </th>
                                     <th>Holiday Date</th>
                                     <th>Day</th>
-                                    <th>Action</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
