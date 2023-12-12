@@ -61,7 +61,7 @@
                 <div class="col-sm-6 col-md-3"> 
                     <div class="form-group form-focus">
                         <select class="form-control floating" id="monthDropdown">
-                            <option value="">Select Month</option>
+                            <option value=""></option>
                             <option value="1">January</option>
                             <option value="2">February</option>
                             <option value="3">March</option>
