@@ -17,6 +17,7 @@ class AttendanceController extends Controller
 
 public function attendance()
 {
+    
     $attendance = Attendance::all();
     $next_id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' =>'A']);
     $employees = Employee::all();
@@ -28,11 +29,10 @@ public function store(Request $request)
     // Validate the form data
     $request->validate([
         'employee_id' => 'required|numeric|exists:employees,id',
-        'date' => 'required|date',
+        'date' => 'required|date|date_format:Y-m-d',
         'punch_in' => 'required|date_format:H:i',
         'punch_out' => 'required|date_format:H:i',
     ]);
-
     DB::beginTransaction();
     try {
     
@@ -50,8 +50,42 @@ public function store(Request $request)
         
     } catch(\Exception $e) {
         DB::rollback();
-        Toastr::error('Add Holiday fail :)','Error');
+        Toastr::error('Add Attendance fail :)','Error');
         return redirect()->back();
+    }
+}
+/** update record attendance */
+public function updateAttendance(Request $request)
+{
+    DB::beginTransaction();
+    try {
+        $id             = $request->id;
+        $employeeId     = $request->employee_id; // Update field name
+        $attendanceDate = $request->date; // Update field name
+        $punchIn        = $request->punch_in; // Update field name
+        $punchOut       = $request->punch_out; // Update field name
+
+        // Update the attendance record
+        $update = [
+            'employee_id'  => $employeeId,
+            'date'         => $attendanceDate,
+            'punch_in'     => $punchIn,
+            'punch_out'    => $punchOut,
+            'attendance'   => $request->attendance,
+        ];
+
+        Attendance::where('id', $id)->update($update);
+        DB::commit();
+        // Use Toastr for flash messages
+        Toastr::success('Record updated successfully :)', 'Success');
+        return redirect()->route('form.attendance.page');
+    
+    } catch (\Exception $e) {
+        DB::rollback();
+        // Use Toastr for flash messages
+        Toastr::error('Failed to update record :(', 'Error');
+        return redirect()->back();
+    
     }
 }
 }

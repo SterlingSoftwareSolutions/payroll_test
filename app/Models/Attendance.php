@@ -11,7 +11,6 @@ class Attendance extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'employee_id',
         'date',
         'punch_in',
@@ -25,8 +24,4 @@ class Attendance extends Model
             $model->id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' =>'A']);
         });
     }
-
-    protected $casts = [
-        'date' => 'date',
-    ];
 }
