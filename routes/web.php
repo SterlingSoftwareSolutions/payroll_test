@@ -262,7 +262,7 @@ Route::controller(PayrollController::class)->group(function () {
 Route::controller(ExpenseReportsController::class)->group(function () {
     // Route::get('form/expense/reports/page', 'index')->middleware('auth')->name('form/expense/reports/page');
     Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form/attendance/report/page');
-    Route::get('form/attendance/report/pdf/page', 'reports.attendance-report-pdf')->middleware('auth')->name('form/attendance/report/pdf/page');
+    Route::get('form/attendance/report/pdf/page', 'attendanceReportPdf')->middleware('auth')->name('form/attendance/report/pdf/page');
    //add department view in attendant form
     Route::get('form/attendance/report/page', 'showDepartmentView')->middleware('auth')->name('form/attendance/report/page');
 
