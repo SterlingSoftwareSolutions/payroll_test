@@ -193,7 +193,7 @@
                                     <div class="col-sms">
                                         <div class="col-sm col-sm-input">
                                             <label for="">User Id</label><br>
-                                            <input class="form-control col-sm" type="text" name="user_id" id="user_id">
+                                            <input class="form-control col-sm" type="text" name="user_id" id="user_id" value="{{ $nextUserId }}" readonly>
                                         </div>
                                     </div>
                                     
@@ -212,7 +212,7 @@
                                 <div class="row">
                                     <div class="col-right ">
                                         <label for="">Department</label><br>
-                                        <select class="form-control" type="text" name="department" id="department">
+                                        <select class="form-control"  name="department" id="department">
                                             <option selected disabled></option>
                                             @foreach ($department as $departments )
                                             <option value="{{ $departments->department }}">{{ $departments->department }}</option>
