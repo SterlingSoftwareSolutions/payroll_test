@@ -27,7 +27,21 @@ class UserManagementController extends Controller
             $position    = DB::table('position_types')->get();
             $department  = DB::table('departments')->get();
             $status_user = DB::table('user_types')->get();
-            return view('usermanagement.user_control',compact('result','role_name','position','department','status_user'));
+            $maxId = \App\Models\User::max('id');
+
+            if ($maxId) {
+            $user = \App\Models\User::find($maxId);
+    
+            if ($user) {
+            $userId = $user->user_id;
+            $nextUserId = 'U' . str_pad((int)substr($userId, 2) + 1, 6, '0', STR_PAD_LEFT);
+            } else {
+            $nextUserId = 'U000001';
+            }
+            } else {
+            $nextUserId = 'U000001';
+            }
+            return view('usermanagement.user_control',compact('result','role_name','position','department','status_user','nextUserId'));
         }
         else
         {
