@@ -30,4 +30,16 @@ class Employee extends Model
     protected $casts=[
         'dob' => 'date',
     ];
+
+
+    // public function department()
+    // {
+    //     return $this->belongsTo(Department::class, 'employee_id');
+    // }
+    
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }

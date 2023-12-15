@@ -187,6 +187,11 @@ Route::controller(EmployeeController::class)->group(function () {
     Route::post('all/employee/search', 'employeeSearch')->name('all/employee/search');
     Route::post('all/employee/list/search', 'employeeListSearch')->name('all/employee/list/search');
 
+    Route::get('all/employee/list/department', 'listByDepartment')->middleware('auth')->name('all/employee/list/department');
+    Route::post('all/employee/list/department', 'listByDepartment')->middleware('auth')->name('all/employee/list/department');
+
+
+
     Route::get('form/departments/page', 'index')->middleware('auth')->name('form/departments/page');    
     Route::post('form/departments/save', 'saveRecordDepartment')->middleware('auth')->name('form/departments/save');    
     Route::post('form/department/update', 'updateRecordDepartment')->middleware('auth')->name('form/department/update');    
@@ -237,6 +242,22 @@ Route::controller(AttendanceController::class)->group(function () {
     Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
     Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
     Route::post('form/attendance/update', 'updateRecordAttendance')->middleware('auth')->name('form/attendance/update');
+
+
+
+    //attendance report search
+    Route::get('form/attendance/search/page', 'getDataByYearMonth')->middleware('auth')->name('form.attendance.search.page');
+
+    // Route::get('search/attendance', 'attendanceSearch')->middleware('auth')->name('search.attendance');
+
+    // Route::get('/search', [AttendanceController::class, 'showSearchForm']);
+    // Route::post('/search', [AttendanceController::class, 'search'])->name('search');
+    // Route::get('/attendance/search', [AttendanceController::class, 'search'])->name('attendance.search');
+
+//     Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form/attendance/report/page');
+//     Route::get('form/attendance/report/pdf/page', 'attendanceReportPdf')->middleware('auth')->name('form/attendance/report/pdf/page');
+//    //add department view in attendant form
+//     Route::get('form/attendance/report/page', 'showDepartmentView')->middleware('auth')->name('form/attendance/report/page');
 });
 
 
@@ -260,13 +281,14 @@ Route::controller(PayrollController::class)->group(function () {
     Route::get('form/payroll/items', 'payrollItems')->middleware('auth')->name('form/payroll/items');    
 });
 
-// ----------------------------- reports  ------------------------------//
+// ----------------------------- Reports  ------------------------------//
 Route::controller(ExpenseReportsController::class)->group(function () {
-    // Route::get('form/expense/reports/page', 'index')->middleware('auth')->name('form/expense/reports/page');
+    Route::get('form/expense/reports/page', 'index')->middleware('auth')->name('form/expense/reports/page');
     Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form/attendance/report/page');
+
     Route::get('form/attendance/report/pdf/page', 'attendanceReportPdf')->middleware('auth')->name('form/attendance/report/pdf/page');
    //add department view in attendant form
-    Route::get('form/attendance/report/page', 'showDepartmentView')->middleware('auth')->name('form/attendance/report/page');
+    // Route::get('form/attendance/report/page', 'showDepartmentView')->middleware('auth')->name('form/attendance/report/page');
 
     Route::get('form/leave/reports/page','leaveReport')->middleware('auth')->name('form/leave/reports/page');
 });

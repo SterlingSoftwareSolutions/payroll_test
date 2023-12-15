@@ -158,10 +158,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                     <br><h4>Employee Details</h4>
+                     {{-- <br><h4>Employee Details</h4>
                         <form action="{{ route('save.record') }}" method="POST">
                             @csrf
-                    
+                     --}}
                             <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use DB;
@@ -30,6 +31,7 @@ class HomeController extends Controller
     {
         $employeeCount = Employee::count();
         $employees = Employee::all();
+
         return view('dashboard.dashboard', compact('employeeCount','employees'));
     }
     // employee dashboard

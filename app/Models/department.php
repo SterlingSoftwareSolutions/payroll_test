@@ -16,4 +16,14 @@ class department extends Model
     protected $casts = [
         'id' => 'string'
     ];
+
+    public function attendance()        //defined a relationship for display attendance list
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'department_id','id');
+    }
 }

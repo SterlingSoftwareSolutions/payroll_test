@@ -16,6 +16,13 @@
                     </ul>
                 </div>
 
+
+                <div class="dash-widget-info">
+
+                    <span>Attendances </span>
+                    <h2>{{ $attendanceCount }}</h2>
+                </div>
+
                 <div class="col-auto float-right ml-auto">
                     <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_attendance"
                         id="add_attendence"><i class="fa fa-plus"></i> Add Attendance</a>

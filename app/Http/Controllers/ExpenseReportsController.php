@@ -3,18 +3,38 @@
 namespace App\Http\Controllers;
 use DB;
 
+use App\Models\Employee;
+use App\Models\Attendance;
 use App\Models\department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EmployeeController;
-use App\Models\Employee;
 
 class ExpenseReportsController extends Controller
 {
     // view page
     public function index()
     {
+        $attendanceCount = Attendance::count();
+        $attendance = Attendance::all();
         $departments = department::all();
-        return view('reports.attendance-report', compact('departments'));
+        $employees = Employee::all();
+       
+
+
+
+        $query = department::query();
+        //dd($query);
+        // $departments = $query->with(['attendance', 'department'])->get();
+        // dd($departments);
+        // foreach ($departments as $key => $department) {
+        //     $pickupTime = Carbon::parse($booking['pickup_time']);
+        //     $dropoffTime = Carbon::parse($booking['dropoff_time']);
+        //     // Calculate the difference in days
+        //     $daysCount = $dropoffTime->diffInDays($pickupTime);
+        //     $booking['bookingDaysCount'] = $daysCount;
+        // }
+        
+        return view('reports.attendance-report', compact('departments','attendanceCount','attendance', 'employees'));
     }
 
    
@@ -24,33 +44,24 @@ class ExpenseReportsController extends Controller
         return view('reports.attendance-report-pdf');
     }
 
-    public function showDepartmentView()
-    {
-        $departments = department::all();
-        return view('reports.attendance-report', compact('departments'));
-    }
 
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-    // leave reports page
-    // public function leaveReport()
+    // public function getDataByYearMonth(Request $request)
     // {
-    //     $leaves = DB::table('leaves_admins')
-    //                 ->join('users', 'users.user_id', '=', 'leaves_admins.user_id')
-    //                 ->select('leaves_admins.*', 'users.*')
-    //                 ->get();
-    //     return view('reports.leavereports',compact('leaves'));
+    //     $departments = department::select('department')->distinct()->get();
+       
+
+    //     $selectedDepartment = $request->input('department', null);
+    //     $selectedYear = $request->input('year', date('Y'));
+    //     $selectedMonth = $request->input('month', date('m'));
+
+    //     $dataQuery = department::when($selectedDepartment, function ($query) use ($selectedDepartment) {
+    //         return $query->where('department', $selectedDepartment);
+    //     })
+    //     ->whereYear('created_at', '=', $selectedYear)
+    //     ->whereMonth('created_at', '=', $selectedMonth);
+
+    //     $data = $dataQuery->get();
+
+    //     return view('reports.attendance-report', compact('data', 'departments', 'selectedDepartment', 'selectedYear', 'selectedMonth'));
     // }
 }

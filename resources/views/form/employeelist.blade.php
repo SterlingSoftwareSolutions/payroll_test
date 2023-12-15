@@ -47,7 +47,7 @@
                     </div>
                     <!-- Include this section where you want the dropdown to appear -->
                     <div class="col-sm-6 col-md-3"> 
-                        <div class="form-group form-focus">
+                        {{-- <div class="form-group form-focus">
                             <select class="form-control floating" id="departmentDropdown">
                                 <option value="1">IT</option>
                                 <option value="2">Local</option>
@@ -55,7 +55,20 @@
                             </select>
                             <label class="focus-label">Department</label>
                         </div>
-                    </div>
+                    </div> --}}
+
+
+{{-- 
+                    <div class="form-group form-focus">
+                       
+                        <select class="select form-control floating" name="department">
+                            <option value=""> -- Select Department-- </option>
+                            @foreach ($departments as $department)
+                            <option value="{{ $department->id }}">{{ $department->department }}</option>
+                            @endforeach
+                        </select>
+
+                    </div> --}}
 
                     <!-- Include this script at the end of your Blade view -->
                     <script>
@@ -83,14 +96,14 @@
                         });
                     </script>
 
-                    <div class="col-sm-6 col-md-3">  
+                    {{-- <div class="col-sm-6 col-md-3">  
                         <button type="sumit" class="btn btn-success btn-block"> Search </button>  
-                    </div>
+                    </div> --}}
                 </div>
             </form>
 
       <!-- Page Content -->
-      <h3 class="page-title">All Employee</h3>
+      <h3 class="page-title">All Emp    loyee</h3>
       {{-- message --}}
             {!! Toastr::message() !!}
             <div class="row">
@@ -221,191 +234,194 @@
                     </div>
                     <div class="modal-body">
                      <br><h4>Employee Details</h4>
-                        <form action="{{ route('list') }}" method="POST">
-                            @csrf
-                    
-                            <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <div class="circle-image" id="imagePreview"></div>
-                                    <input type="file" class="form-control-file" id="image" name="image" accept="image/*" onchange="previewImage()">
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <div class="form-group" style="margin-bottom: 20px;"> <!-- Adjust the margin as needed -->
-                                    <!-- Your upload image input goes here -->
-                                </div>
-                            </div>
-                            </div>          
-
-                            <style>
-                            .circle-image {
-                                border-radius: 50%;
-                                overflow: hidden;
-                                width: 100px; /* Adjust the size of the circle as needed */
-                                height: 100px; /* Adjust the size of the circle as needed */
-                                background-color: #eee; /* Optional: Add a background color to the circle */
-                                float: left; /* Align the circle to the left side */
-                                margin-right: 20px; /* Optional: Add some spacing between the input and the circle */
-                            }
-
-                            .circle-image img {
-                                width: 100%;
-                                height: auto;
-                                display: block;
-                            }
-                            </style>
-                            <script>
-                            function previewImage() {
-                                var input = document.getElementById('image');
-                                var preview = document.getElementById('imagePreview');
-
-                                if (input.files && input.files[0]) {
-                                    var reader = new FileReader();
-
-                                    reader.onload = function (e) {
-                                        preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
-                                    };
-
-                                    reader.readAsDataURL(input.files[0]);
-                                } else {
-                                    // Display a default user account image
-                                    var defaultImageUrl = 'https://example.com/default-user-image.png'; // Replace with the actual URL of the default image
-                                    preview.innerHTML = '<img src="' + defaultImageUrl + '" alt="Default Image">';
-                                }
-                            }
-                            </script>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="id" name="id">
-                                        
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="f_name" name="f_name">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Larst Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="l_name" name="l_name">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Full Name <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="full_name" name="full_name">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">  
-                                    <div class="form-group">
-                                        <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="email" name="email">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">DOB <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="dob" name="dob">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">  
-                                    <div class="form-group">
-                                        <label class="col-form-label">NIC <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="nic" name="nic">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label">Contact No <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="c_number" name="c_number">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">  
-                                    <div class="form-group">
-                                        <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="j_title" name="j_title">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">  
-                                    <div class="form-group">
-                                        <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
-                                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name">
-                                            <option value="">IT</option>
-                                            <option value="">Local</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Joined Date <span class="text-danger">*</span></label>
-                                        <div class="cal-icon">
-                                            <input class="form-control datetimepicker" type="text" id="joinedDate" name="joinedDate">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Created Date <span class="text-danger">*</span></label>
-                                        <div class="cal-icon">
-                                            <input class="form-control datetimepicker" type="text" id="createdDate" name="createdDate">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <script>
-                                    // Get the current local date and time
-                                    var currentDate = new Date();
-
-                                    // Format the date as "yyyy-mm-dd hh:mm:ss"
-                                    var formattedDate = currentDate.getFullYear() + "-" +
-                                        ("0" + (currentDate.getMonth() + 1)).slice(-2) + "-" +
-                                        ("0" + currentDate.getDate()).slice(-2) + " " +
-                                        ("0" + currentDate.getHours()).slice(-2) + ":" +
-                                        ("0" + currentDate.getMinutes()).slice(-2) + ":" +
-                                        ("0" + currentDate.getSeconds()).slice(-2);
-
-                                    // Set the value of the input field to the formatted date
-                                    document.getElementById("createdDate").value = formattedDate;   
-                                </script>
-                                <div class="col-sm-6">  
-                                    <div class="form-group">
-                                        <label class="col-form-label">Status <span class="text-danger">*</span></label>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="status" name="status">
-                                    </div>
-                                </div>
-                                <style>
-                                    .text-box {
-                                        border: 1px solid #ccc;
-                                        padding: 5px;
-                                        margin: 10px 0;
-                                        width: 200px;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                    }
-                                </style>
-                                                                   
-                            </div>
-                            <!-- ... existing form fields ... -->
+                            <form action="{{ route('list') }}" method="POST">
+                                @csrf
+                        
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="col-form-label">Description</label>
-                                            <textarea class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="description" name="description"></textarea>
-                                        </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="circle-image" id="imagePreview"></div>
+                                        <input type="file" class="form-control-file" id="image" name="image" accept="image/*" onchange="previewImage()">
                                     </div>
                                 </div>
-                                <div class="submit-section">
-                                    <button class="btn btn-primary submit-btn">Submit</button>
-                                    <button class="btn btn-primary submit-btn">Edit</button>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group" style="margin-bottom: 20px;"> <!-- Adjust the margin as needed -->
+                                        <!-- Your upload image input goes here -->
+                                    </div>
                                 </div>
-                        </form>
+                                </div>          
+
+                                <style>
+                                .circle-image {
+                                    border-radius: 50%;
+                                    overflow: hidden;
+                                    width: 100px; /* Adjust the size of the circle as needed */
+                                    height: 100px; /* Adjust the size of the circle as needed */
+                                    background-color: #eee; /* Optional: Add a background color to the circle */
+                                    float: left; /* Align the circle to the left side */
+                                    margin-right: 20px; /* Optional: Add some spacing between the input and the circle */
+                                }
+
+                                .circle-image img {
+                                    width: 100%;
+                                    height: auto;
+                                    display: block;
+                                }
+                                </style>
+                                <script>
+                                function previewImage() {
+                                    var input = document.getElementById('image');
+                                    var preview = document.getElementById('imagePreview');
+
+                                    if (input.files && input.files[0]) {
+                                        var reader = new FileReader();
+
+                                        reader.onload = function (e) {
+                                            preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+                                        };
+
+                                        reader.readAsDataURL(input.files[0]);
+                                    } else {
+                                        // Display a default user account image
+                                        var defaultImageUrl = 'https://example.com/default-user-image.png'; // Replace with the actual URL of the default image
+                                        preview.innerHTML = '<img src="' + defaultImageUrl + '" alt="Default Image">';
+                                    }
+                                }
+                                </script>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="id" name="id">
+                                            
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="f_name" name="f_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Larst Name <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="l_name" name="l_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Full Name <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="full_name" name="full_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">  
+                                        <div class="form-group">
+                                            <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="email" name="email">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">DOB <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="dob" name="dob">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">  
+                                        <div class="form-group">
+                                            <label class="col-form-label">NIC <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="nic" name="nic">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Contact No <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="c_number" name="c_number">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">  
+                                        <div class="form-group">
+                                            <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="j_title" name="j_title">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">  
+                                        <div class="form-group">
+                                            <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
+                                        
+                                            <select class="select form-control floating" name="department">
+                                                <option value=""> -- Select Department-- </option>
+                                                @foreach ($departments as $department)
+                                                <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Joined Date <span class="text-danger">*</span></label>
+                                            <div class="cal-icon">
+                                                <input class="form-control datetimepicker" type="text" id="joinedDate" name="joinedDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Created Date <span class="text-danger">*</span></label>
+                                            <div class="cal-icon">
+                                                <input class="form-control datetimepicker" type="text" id="createdDate" name="createdDate">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        // Get the current local date and time
+                                        var currentDate = new Date();
+
+                                        // Format the date as "yyyy-mm-dd hh:mm:ss"
+                                        var formattedDate = currentDate.getFullYear() + "-" +
+                                            ("0" + (currentDate.getMonth() + 1)).slice(-2) + "-" +
+                                            ("0" + currentDate.getDate()).slice(-2) + " " +
+                                            ("0" + currentDate.getHours()).slice(-2) + ":" +
+                                            ("0" + currentDate.getMinutes()).slice(-2) + ":" +
+                                            ("0" + currentDate.getSeconds()).slice(-2);
+
+                                        // Set the value of the input field to the formatted date
+                                        document.getElementById("createdDate").value = formattedDate;   
+                                    </script>
+                                    <div class="col-sm-6">  
+                                        <div class="form-group">
+                                            <label class="col-form-label">Status <span class="text-danger">*</span></label>
+                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="status" name="status">
+                                        </div>
+                                    </div>
+                                    <style>
+                                        .text-box {
+                                            border: 1px solid #ccc;
+                                            padding: 5px;
+                                            margin: 10px 0;
+                                            width: 200px;
+                                            white-space: nowrap;
+                                            overflow: hidden;
+                                        }
+                                    </style>
+                                                                    
+                                </div>
+                                <!-- ... existing form fields ... -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Description</label>
+                                                <textarea class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="description" name="description"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="submit-section">
+                                        <button class="btn btn-primary submit-btn">Submit</button>
+                                        <button class="btn btn-primary submit-btn">Edit</button>
+                                    </div>
+                            </form>
                     </div>
                 </div>
             </div>
