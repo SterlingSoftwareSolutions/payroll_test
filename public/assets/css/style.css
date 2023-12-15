@@ -2524,6 +2524,10 @@ select.col-sm {
 	margin-bottom: 1rem;
 	width: 100%;
 }
+.btn-edit{
+	background-color: transparent;
+	border: transparent;
+}
 @media (max-width: 991px) and (min-width: 768px) {
     .col-sm {
         -ms-flex-preferred-size: 0;

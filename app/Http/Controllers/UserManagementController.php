@@ -226,6 +226,7 @@ class UserManagementController extends Controller
     // save new user
     public function addNewUserSave(Request $request)
 {
+    // dd($request);
     try{
         $request->validate([
             'name'      => 'required|string|max:255',
@@ -291,89 +292,73 @@ class UserManagementController extends Controller
     // update
     public function update(Request $request)
     {
-        // dd($request->all());
         DB::beginTransaction();
-        try{
-            $user_id       = $request->user_id;
-            $name         = $request->name;
-            $email        = $request->email;
-            $role_name    = $request->role_name;
-            $position     = $request->position;
-            $phone        = $request->phone;
-            $department   = $request->department;
-            $status       = $request->status_user;
-            $password     = Hash::make($request->password);
-
-            $dt       = Carbon::now();
-            $todayDate = $dt->toDayDateTimeString();
-            $image_name = $request->hidden_image;
-            $image = $request->file('images');
-            if($image_name =='photo_defaults.jpg')
-            {
-                if($image != '')
-                {
-                    $image_name = rand() . '.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('/assets/images/'), $image_name);
+    
+        try {
+            $user_id = $request->user_id;
+            $name = $request->name;
+            $email = $request->email;
+            $role_name = $request->role_name;
+            $position = $request->position;
+            $phone = $request->phone;
+            $department = $request->department;
+            $status = $request->status_user;
+            $password = Hash::make($request->password);
+    
+            // Handle image upload
+            if ($request->hasFile('images')) {
+                $image = $request->file('images');
+                $image_name = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('images'), $image_name);
+    
+                // Delete the existing image if it's not the default one
+                if ($request->current_avatar != 'photo_defaults.jpg' && $request->current_avatar) {
+                    $existingImagePath = public_path('images') . '/' . $request->current_avatar;
+                    
+                    if (file_exists($existingImagePath) && is_file($existingImagePath)) {
+                        unlink($existingImagePath);
+                    }
                 }
+            } else {
+                $image_name = $request->current_avatar;
             }
-            else{
-                
-                if($image != '')
-                {
-                    unlink('assets/images/'.$image_name);
-                    $image_name = rand() . '.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('/assets/images/'), $image_name);
-                }
-            }
-            // Additional validation to check if passwords match
-        if ($request->password !== $request->password_confirmation) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'password' => ['The password and password confirmation do not match.'],
-            ]);
-        }
-            
+    
             $update = [
-
-                'user_id'       => $user_id,
-                'name'         => $name,
-                'role_name'    => "Admin",
-                'email'        => $email,
-                'position'     => $position,
+                'user_id' => $user_id,
+                'name' => $name,
+                'role_name' => "Admin",
+                'email' => $email,
+                'position' => $position,
                 'phone_number' => $phone,
-                'department'   => $department,
-                'status'       => $status,
-                'avatar'       => $image_name,
-                'password'     => $password,
+                'department' => $department,
+                'status' => $status,
+                'avatar' => $image_name,
+                'password' => $password,
             ];
-
+    
             $activityLog = [
-                'user_name'    => $name,
-                'email'        => $email,
+                'user_name' => $name,
+                'email' => $email,
                 'phone_number' => $phone,
-                'status'       => $status,
-                'role_name'    => $role_name,
-                'modify_user'  => 'Update',
-                'date_time'    => $todayDate,
+                'status' => $status,
+                'role_name' => $role_name,
+                'modify_user' => 'Update',
+                'date_time' => now(), // Carbon instance for the current time
             ];
-
+    
             DB::table('user_activity_logs')->insert($activityLog);
-            User::where('user_id',$request->user_id)->update($update);
+            User::where('user_id', $user_id)->update($update);
             DB::commit();
-            Toastr::success('User updated successfully :)','Success');
+            Toastr::success('User updated successfully :)', 'Success');
             return redirect()->route('userManagement');
-
-        }catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation exception
-            DB::rollback();
-            Toastr::error('Validation error: ' . $e->getMessage(), 'Error');
-            return redirect()->back();
         } catch (\Exception $e) {
-            // Catch any other exceptions
             DB::rollback();
-            Toastr::error('User update fail : ' . $e->getMessage(), 'Error');
+            Toastr::error('User update failed: ' . $e->getMessage(), 'Error');
             return redirect()->back();
         }
     }
+    
+
     // delete
     public function delete(Request $request)
     {

@@ -65,102 +65,62 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table class="table table-striped custom-table datatable">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>User ID</th>
-                                    <th hidden></th>
-                                    <th>Email</th>
-                                    <th>Position</th>
-                                    {{-- <th>Phone</th> --}}
-                                    {{-- <th>Join Date</th> --}}
-                                    {{-- <th>Role</th>
-                                    <th>Status</th> --}}
-                                    <th>Department</th>
-                                    <th class="text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($result as $key=>$user )
-                                <tr>
-                                    <td>
-                                        <span hidden class="image">{{ $user->avatar}}</span>
-                                        <h2 class="table-avatar">
-                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="avatar"><img src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
-                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="name">{{ $user->name }}</span></a>
-                                        </h2>
-                                    </td>
-                                    <td hidden class="ids">{{ $user->id }}</td>
-                                    <td class="id">{{ $user->user_id }}</td>
-                                    <td class="email">{{ $user->email }}</td>
-                                    <td class="position">{{ $user->position }}</td>
-                                    <td class="phone_number" hidden>{{ $user->phone_number }}</td>
-                                    <td class="join_date" hidden>{{ $user->join_date }}</td>
-                                    {{-- <td>
-                                        @if ($user->role_name=='Admin')
-                                            <span class="badge bg-inverse-danger role_name">{{ $user->role_name }}</span>
-                                            @elseif ($user->role_name=='Super Admin')
-                                            <span class="badge bg-inverse-warning role_name">{{ $user->role_name }}</span>
-                                            @elseif ($user->role_name=='Normal User')
-                                            <span class="badge bg-inverse-info role_name">{{ $user->role_name }}</span>
-                                            @elseif ($user->role_name=='Client')
-                                            <span class="badge bg-inverse-success role_name">{{ $user->role_name }}</span>
-                                            @elseif ($user->role_name=='Employee')
-                                            <span class="badge bg-inverse-dark role_name">{{ $user->role_name }}</span>
-                                        @endif
-                                    </td> --}}
-                                    <td hidden>
-                                        <div class="dropdown action-label">
-                                            @if ($user->status=='Active')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-success"></i>
-                                                    <span class="statuss">{{ $user->status }}</span>
+                        <form id="editForm" action="{{ url('edit/user') }}" method="post">
+                            @csrf
+                            <table class="table table-striped custom-table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>User ID</th>
+                                        <th hidden></th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Department</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($result as $key=>$user )
+                                    <tr>
+                                        <td>
+                                            <span hidden class="image">{{ $user->avatar}}</span>
+                                            <h2 class="table-avatar">
+                                                <a href="{{ url('employee/profile/'.$user->user_id) }}" class="avatar">
+                                                    <img class="avatar " src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}">
                                                 </a>
-                                                @elseif ($user->status=='Inactive')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-info"></i>
-                                                    <span class="statuss">{{ $user->status }}</span>
+                                                <a href="{{ url('employee/profile/'.$user->user_id) }}" class="name">{{ $user->name }}</a>
+                                            </h2>
+                                        </td>
+                                        <td hidden class="ids">{{ $user->id }}</td>
+                                        <td class="id">{{ $user->user_id }}</td>
+                                        <td hidden class="join_date">{{ $user->join_date }}</td>
+                                        <td hidden class="phone_number">{{ $user->phone_number }}</td>
+                                        <td hidden class="statuss">{{ $user->status}}</td>
+                                        <td class="email">{{ $user->email }}</td>
+                                        <td class="position">{{ $user->position }}</td>
+                                        <td class="department">{{ $user->department }}</td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
                                                 </a>
-                                                @elseif ($user->status=='Disable')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-danger"></i>
-                                                    <span class="statuss">{{ $user->status }}</span>
-                                                </a>
-                                                @elseif ($user->status=='')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-dark"></i>
-                                                    <span class="statuss">N/A</span>
-                                                </a>
-                                            @endif
-                                            
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#">
-                                                    <i class="fa fa-dot-circle-o text-success"></i> Active
-                                                </a>
-                                                <a class="dropdown-item" href="#">
-                                                    <i class="fa fa-dot-circle-o text-warning"></i> Inactive
-                                                </a>
-                                                <a class="dropdown-item" href="#">
-                                                    <i class="fa fa-dot-circle-o text-danger"></i> Disable
-                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item userUpdate" data-toggle="modal" data-id="{{ $user->id }}" data-target="#edit_user">
+                                                        <i class="fa fa-pencil m-r-5"></i> <button class="btn-edit" style="background-color: transparent; border: transparent;">Edit</button>
+
+                                                    </a>
+                                                    <a class="dropdown-item userDelete" href="#" data-toggle="modal" data-id="{{ $user->id }}" data-target="#delete_user">
+                                                        <i class="fa fa-trash-o m-r-5"></i> Delete
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="department">{{ $user->department }}</td>
-                                    <td class="text-right">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item userUpdate" data-toggle="modal" data-id="'.$user->id.'" data-target="#edit_user"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                <a class="dropdown-item userDelete" href="#" data-toggle="modal" ata-id="'.$user->id.'" data-target="#delete_user"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </form>
+                        
                     </div>
                 </div>
             </div>
@@ -405,10 +365,35 @@
                                 <div class="group" id="uploadGroup">
                                     <div class="user-profile">
                                         <span hidden class="image"></span>
-                                        <a  href="{{ url('employee/profile/'.$user->user_id) }}" id="e_image"><img  src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
-                                        <span class="edit-text" onclick="openFileInput()">Edit</span>
+                                        <img src="" alt="" id="profileImages">
+                                        <input name="images" type="file" id="fileInputs" style="display: none;" accept="image/*" onchange="handleImagePreview()">
+                                        <span class="edit-text" onclick="openImageDialog()">Edit</span>
                                     </div>
-                                    <input type="file" name="avatar" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
+                                    
+                                    <script>
+                                        function openImageDialog() {
+                                            document.getElementById('fileInputs').click();
+                                        }
+                                    
+                                        function handleImagePreview() {
+                                            const fileInputs = document.getElementById('fileInputs');
+                                            const profileImages = document.getElementById('profileImages');
+                                    
+                                            const selectedFile = fileInputs.files[0];
+                                    
+                                            if (selectedFile) {
+                                                const reader = new FileReader();
+                                    
+                                                reader.onload = function (e) {
+                                                    profileImages.src = e.target.result;
+                                                };
+                                    
+                                                reader.readAsDataURL(selectedFile);
+                                            }
+                                        }
+                                    </script>
+                                                                        
+                                    <input type="file" name="avatar" id="fileInputs" style="display: none;" accept="image/*" onchange="handleImagePreview()">
                                 </div>
                                 <div class="row">
                                     <div class="col-sms">
@@ -435,10 +420,13 @@
                                     <div class="col-right ">
                                         <label for="">Department</label>
                                         <select class="select" name="department" id="e_department">
-                                            @foreach ($department as $departments )
-                                            <option value="{{ $departments->department }}">{{ $departments->department }}</option>
+                                            @foreach ($department as $departments)
+                                                <option value="{{ $departments->department }}" 
+                                                    @if ($departments->department == $user->department) selected @endif>
+                                                    {{ $departments->department }}
+                                                </option>
                                             @endforeach
-                                        </select>
+                                        </select>                                        
                                    </div>
                                    
                                    <div class="col-right ">
@@ -630,36 +618,64 @@
     @section('script')
     {{-- update js --}}
     <script>
-        $(document).on('click','.userUpdate',function()
-        {
-            var _this = $(this).parents('tr');
-            $('#e_id').val(_this.find('.id').text());
-            $('#e_name').val(_this.find('.name').text());
-            $('#e_email').val(_this.find('.email').text());
-            $('#e_phone_number').val(_this.find('.phone_number').text());
-            $('#e_join_date').val(_this.find('.join_date').text());
-            // $('#e_join_date').val(_this.find('.join_date').text());
+      $(document).ready(function () {
+    // Add a click event listener to the Edit button
+    $(document).on('click','.userUpdate',function() {
+        // Get the values from the current row
+        var row = $(this).closest('tr');
+        var name = row.find('.name').text();
+        var userId = row.find('.id').text();
+        var email = row.find('.email').text();
+        var position = row.find('.position').text();
+        var department = row.find('.department').text();
+        var phone_number = row.find('.phone_number').text();
+        var statuss = row.find(".statuss").text();
+        var join_date = row.find('.join_date').text();
 
-            $('#e_image').val(_this.find('.avatar').text());
+        console.log("name :" + name + "  ID :" + userId + " email :" + email + " position :" + position + " department :" + department + " phone number :" + phone_number + " status :" + statuss + " join_date :" + join_date);
 
-            var name_role = (_this.find(".role_name").text());
-            var _option = '<option selected value="' + name_role+ '">' + _this.find('.role_name').text() + '</option>'
-            $( _option).appendTo("#e_role_name");
+        var userProfileImage = row.find('.avatar img');
+        if (userProfileImage.length > 0) {
+            var imageSrc = userProfileImage.attr('src');
+            if (imageSrc) {
+                var url = new URL(imageSrc);
+                var pathWithoutBaseURL = url.pathname;
 
-            var position = (_this.find(".position").text());
-            var _option = '<option selected value="' +position+ '">' + _this.find('.position').text() + '</option>'
-            $( _option).appendTo("#e_position");
+                console.log(pathWithoutBaseURL);
+                $('#edit_user #profileImages').attr('src', pathWithoutBaseURL);
+            } else {
+                console.log('Image source not found.');
+            }
+        } else {
+            console.log('Image element not found.');
+        }
 
-            var department = (_this.find(".department").text());
-            var _option = '<option selected value="' +department+ '">' + _this.find('.department').text() + '</option>'
-            $( _option).appendTo("#e_department");
+        // Populate the form fields in the modal
+        $('#edit_user #e_name').val(name);
+        $('#edit_user #e_id').val(userId);
+        $('#edit_user #e_email').val(email);
+        $('#edit_user #e_position').val(position);
+        $('#edit_user #e_department').val(department);
+        $('#edit_user #e_status').val(statuss);
+        $('#edit_user #e_phone_number').val(phone_number);
+        $('#edit_user #e_join_date').val(join_date);
+        var departmentOption = '<option selected value="' + department + '">' + department + '</option>';
+        $(departmentOption).appendTo("#e_department");
 
-            var statuss = (_this.find(".statuss").text());
-            var _option = '<option selected value="' +statuss+ '">' + _this.find('.statuss').text() + '</option>'
-            $( _option).appendTo("#e_status");var statuss = (_this.find(".statuss").text());
-            
-        });
+        var positionOption = '<option selected value="' + position + '">' + position + '</option>';
+        $(positionOption).appendTo("#e_position");
+
+        var _option = '<option selected value="' + statuss + '">' + statuss + '</option>';
+        $(_option).appendTo("#e_status");
+
+        
+
+        $('#edit_user').modal('show');
+    });
+});
+
     </script>
+    
     {{-- delete js --}}
     <script>
         $(document).on('click','.userDelete',function()
