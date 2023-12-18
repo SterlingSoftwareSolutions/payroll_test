@@ -25,6 +25,7 @@ class Employee extends Model
         'status',
         'gender',
         'description',
+        
     ];
 
     protected $casts=[
@@ -38,8 +39,15 @@ class Employee extends Model
     // }
     
 
+    // public function department()
+    // {
+    //    // return $this->belongsTo(Department::class);
+       
+    //     return $this->belongsTo(Department::class,'department_id');
+
+    // }
     public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(department::class, 'department_id', 'id');
     }
 }

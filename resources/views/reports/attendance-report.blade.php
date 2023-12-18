@@ -48,11 +48,10 @@
 
         <!-- Search Filter -->
         {{-- <form action="{{ route('all/employee/search') }}" method="POST"> --}}
-            @csrf
+            {{-- @csrf --}}
             <div class="row filter-row">
 <!---------------------------------------------------------------->
  
-                <!---------------------------------------------------------------------------->
                 <div class="col-sm-6 col-md-3">  
                     <div class="form-group form-focus">
                         <select class="select form-control floating" name="department">
@@ -183,7 +182,7 @@
                 </div>  
     </div>
 
-
+{{-- 
     <div class="form-group form-focus border border-info">
         <form action="{{ route('all/employee/list/department') }}" method="post">
             @csrf
@@ -195,7 +194,7 @@
             </select>
             <button type="submit">Show Employees</button>
         </form>
-    </div>
+    </div> --}}
     
     {{-- @if(isset($selectedDepartment))
         <h2>Employees  {{ $selectedDepartment->department }} </h2>
@@ -225,79 +224,34 @@
         {{ dd($selectedDepartment, $employees) }}
     </pre>
 @endif  --}}
-
-
 {{-- 
+
+
 @if(isset($selectedDepartment))
-    <h2>Employees {{ $selectedDepartment->department }} Department</h2>
+    <h2>Employees {{ $selectedDepartment->department }}</h2>
     <ul>
         @foreach($employees as $employee)
             @if($employee->department_id == $selectedDepartment->id)
-                <li>Employee ID: {{ $employee->employee_id }} - Name: {{ $employee->name }}</li>
+                <li>Employee ID: {{ $employees->employee_id }} - Name: {{ $employees->full_name }}</li>
             @endif
         @endforeach
-    </ul> --}}
+    </ul> 
 
-    {{-- Debugging --}}
-    {{-- <pre> --}}
-        {{-- {{ dd($selectedDepartment, $employees) }} --}}
-        {{-- {{ dd($employees) }} --}}
-        {{-- {{ dd($selectedDepartment) }}
+  
+    <pre> 
+        {{ dd($selectedDepartment, $employees) }}
+         {{ dd($employees) }} --}}
+         {{ dd($selectedDepartment) }} 
     </pre>
-@endif --}}
-
-{{-- 
-@if(isset($selectedDepartment))
-    <h2>Employees {{ $selectedDepartment->department }} Department</h2>
-    <div class="card-deck">
-        @foreach($employees as $employee)
-            @if($employee->department_id == $selectedDepartment->id)
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Employee ID: {{ $employee->employee_id }}</h5>
-                        <p class="card-text">Name: {{ $employee->name }}</p>
-                        <!-- Add more details as needed -->
-                    </div>
-                </div>
-            @endif
-        @endforeach
-    </div> --}}
-    {{-- Debugging --}}
-    {{-- <pre> --}}
-        {{-- {{ dd($selectedDepartment, $employees) }}
-    </pre> --}}
-{{-- @endif --}}
+@endif
 
 
-@if(isset($selectedDepartment))
-    <h2>Employees {{ $selectedDepartment->department }} Department</h2>
-    <div class="card-deck">
-        @foreach($employees as $employee)
-            @if($employee->department_id == $selectedDepartment->id)
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Employee ID: {{ $employee->employee_id }}</h5>
-                        <p class="card-text">Name: {{ $employee->name }}</p>
-                        {{-- <p class="card-text">Department ID: {{ $employee->department_id }}</p> --}}
-                    </div>
-                </div>
-            @endif
-        @endforeach
-    </div>
-    {{-- Debugging --}}
-     <pre>
-        {{-- {{ dd($selectedDepartment, $employees) }} --}}
-    </pre> 
-@endif 
+@foreach ($employees as $employee)
+    <div>{{ $employee->name }} - {{ $employee->position }}</div>
+@endforeach
 
 
-
-
-
-
-    
-
-                    
+                     --}}
  
                 </div>
             </div>
@@ -326,3 +280,45 @@
                     format: 'MM'
                 });
 </script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Handle department selection change
+        $('select[name="department"]').change(function() {
+            var selectedDepartment = $(this).val();
+
+            // Make an AJAX request to fetch employees based on the selected department
+            $.ajax({
+                url: '/get-employees', // Adjust the URL to your route
+                method: 'GET',
+                data: { department: selectedDepartment },
+                success: function(response) {
+                    // Update the employee list container with the received HTML
+                    $('#employee-list-container').html(response);
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+// JavaScript in your Blade file
+$.ajax({
+    url: '/get-employees',
+    method: 'GET',
+    data: { department: selectedDepartment },
+    success: function(response) {
+        $('#employee-list-container').html(response);
+    },
+    error: function(error) {
+        console.error(error);
+    }
+});

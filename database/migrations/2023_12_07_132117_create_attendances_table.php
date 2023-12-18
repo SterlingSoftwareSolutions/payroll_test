@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     *   $table->foreignId('department_id')->references('id')->on('departments');
      * Run the migrations.
      *
      * @return void
@@ -15,7 +16,8 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->string('id')->unique()->primary();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            // $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+          
             $table->date('date');
             $table->time('punch_in');
             $table->time('punch_out');

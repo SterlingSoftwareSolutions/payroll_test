@@ -30,6 +30,9 @@ class CreateEmployeesTable extends Migration
             $table->string('status')->nullable();
             $table->string('gender')->nullable();            
             $table->string('description')->nullable();
+            //$table->foreignId('department_id')->constrained('id')->on('departments');
+            $table->unsignedBigInteger('department_id');
+            $table->foreign('department_id')->references('id')->on('departments');
             $table->timestamps();
         });
     }

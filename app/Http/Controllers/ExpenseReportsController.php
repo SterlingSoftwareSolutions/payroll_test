@@ -12,20 +12,27 @@ use App\Http\Controllers\EmployeeController;
 class ExpenseReportsController extends Controller
 {
     // view page
-    public function index()
+    public function index(Request $request)
     {
-        $attendanceCount = Attendance::count();
+         $attendanceCount = Attendance::count();
         $attendance = Attendance::all();
-        $departments = department::all();
+        $departments = Department::all();
+       // dd($departments);
         $employees = Employee::all();
-       
+        $selectedDepartment = Department::find($request->department);
+        // Check if the department is found before accessing the relationship
+        if ($selectedDepartment) {
+            $hasEmployees = $selectedDepartment->employees()->exists();
+        } else {
+            $hasEmployees = false;
+        }
 
+      // $departments = department::with('employees')->get();
 
+     // $departments = department::with('employees', 'attendances')->get();
 
-        $query = department::query();
-        //dd($query);
-        // $departments = $query->with(['attendance', 'department'])->get();
-        // dd($departments);
+        //$query = department::query();
+  
         // foreach ($departments as $key => $department) {
         //     $pickupTime = Carbon::parse($booking['pickup_time']);
         //     $dropoffTime = Carbon::parse($booking['dropoff_time']);
@@ -34,7 +41,7 @@ class ExpenseReportsController extends Controller
         //     $booking['bookingDaysCount'] = $daysCount;
         // }
         
-        return view('reports.attendance-report', compact('departments','attendanceCount','attendance', 'employees'));
+        return view('reports.attendance-report', compact('departments','attendanceCount','attendance', 'employees','hasEmployees','selectedDepartment'));
     }
 
    

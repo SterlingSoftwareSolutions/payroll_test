@@ -24,4 +24,9 @@ class Attendance extends Model
             $model->id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' =>'A']);
         });
     }
+
+    public function department()
+    {
+        return $this->belongsTo(department::class);
+    }
 }

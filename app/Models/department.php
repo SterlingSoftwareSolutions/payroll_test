@@ -22,8 +22,19 @@ class department extends Model
         return $this->hasMany(Attendance::class);
     }
 
+    // public function employees()
+    // {
+    //    // return $this->hasMany(Employee::class, 'department_id','id');
+    //     return $this->hasMany(Employee::class,'department_id');
+
+    // }
     public function employees()
     {
-        return $this->hasMany(Employee::class, 'department_id','id');
+        return $this->hasMany(Employee::class,'d_name', 'id');
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 }

@@ -48,15 +48,55 @@ class EmployeeController extends Controller
     {
         $departments = Department::all();
         $employees = Employee::all();
-       $employeesCount =  employee::count();
-       
-        $selectedDepartment = Department::find($request->department);
-        //dd($selectedDepartment);
-        // $query = Employee::where('department_id', $selectedDepartment->id);
-        
+        $departmentId = $request->input('department');
 
-        return view('reports.attendance-report', compact('employees', 'departments', 'selectedDepartment','employeesCount'));
+                // Controller method
+        $departmentName = $request->input('department');
+        $employees = Employee::where('d_name', $departmentName)->get();
+
+ 
+    // $selectedDepartment = Department::find($request->department);
+  
+
+        // foreach ($departments as $department) {
+        //     $departmentId = $department->id;
+        // }
+        // $query = Employee::where('department_id', $selectedDepartment->id);
+        return view('reports.attendance-report', compact('employees', 'departments'));
     }
+
+
+
+
+
+
+    // public function listByDepartment(Request $request)
+    // {
+    //     $departments = Department::all();
+    //     $employees = Employee::all();
+    //     $employeesCount = Employee::count();
+
+    //     if ($request->has('department')) {
+    //         $selectedDepartment = Department::find($request->department);
+    //             if ($selectedDepartment) {
+    //             $employeesInDepartment = $selectedDepartment->employees;
+    //             foreach ($employeesInDepartment as $employee) {
+    //                 echo $employee->name;
+    //             }
+    //         }
+    //     }
+    //         return view('reports.attendance-report', compact('employees', 'departments', 'selectedDepartment', 'employeesCount'));
+    // }
+
+
+
+
+
+
+
+
+
+
 
     // save data employee
 
@@ -362,6 +402,10 @@ class EmployeeController extends Controller
     public function index()
     {
         $departments = Department::all();
+        // dd($departments);
+        $employees = Employee::all();
+        //dd($employees);
+
         $next_id = IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']);
         return view('form.departments', compact('departments', 'next_id'));
     }

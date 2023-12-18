@@ -97,8 +97,11 @@ class AttendanceController extends Controller
    
     public function getDataByYearMonth(Request $request)
     {
+        $employees = Employee::all();
+        $departments = Department::all();
+        //dd($departments);
         $departments = department::select('department')->distinct()->get();
-      // dd($departments);
+    
 
         $department = $request->input('department', null);
         $selectedYear = $request->input('year', date('Y'));
@@ -115,31 +118,5 @@ class AttendanceController extends Controller
         return view('reports.attendance-report', compact('data', 'departments', 'department', 'selectedYear', 'selectedMonth'));
     }
 
-    // public function search(Request $request) {
-    //     $department = $request->input('department');
-    //     $date = $request->input('date');
-    //     $attendance = Attendance::all();
-
-       
-     
-    //     $attendance = Attendance::where('department_id', $department)
-    //                                ->whereYear('date_column', now()->year)
-    //                                ->whereMonth('date_column', now()->month)
-    //                                ->get();
-     
-    //     // ...
-    //     try {
-    //         $departments = Department::with('attendance')->get();
-    //         Log::info('Departments with attendance fetched successfully');
-    //         return response()->json($departments);
-    //     } catch (\Exception $e) {
-    //         Log::error('Error fetching departments with attendance: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Failed to fetch data'], 500);
-    //     }
-     
-    //     return response()->json($attendance);
-    //  }
-
-
-
+  
 }
