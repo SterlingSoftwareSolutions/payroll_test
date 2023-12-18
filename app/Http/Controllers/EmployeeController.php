@@ -38,8 +38,9 @@ class EmployeeController extends Controller
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
         $employees = Employee::all();
+        $departments = department::all();
         
-        return view('form.employeelist', compact('employees'));
+        return view('form.employeelist', compact('employees','departments'));
     }
 
     // save data employee
@@ -81,8 +82,8 @@ class EmployeeController extends Controller
     $employee->save();
     // $products = compact('employee');
 
-    
-    return view('form.employeelist', compact('employee'))->with('success', 'Employee added successfully');
+    return redirect()->route('all/employee/list');
+    // return view('form.employeelist', compact('employee'))->with('success', 'Employee added successfully');
     // Redirect back or return a response as needed
     // return redirect()->back()->with('success', 'Employee added successfully');
 }
