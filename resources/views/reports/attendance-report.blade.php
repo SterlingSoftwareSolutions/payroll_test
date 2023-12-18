@@ -131,7 +131,7 @@
                         <tbody>
                             @foreach($employees as $employee)
                             <tr>
-                                <td>{{ $employee->f_name }}</td>
+                                <td>{{ $employee->full_name }}</td>
                                 <td>Number of days</td>
                                 <td>Absent days</td>
                                 <td>WO</td>

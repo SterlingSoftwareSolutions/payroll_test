@@ -85,7 +85,11 @@
                     <span> Reports </span> <span class="menu-arrow"></span></a>
                     <ul style="{{ request()->is('/*') ? 'display: block;' : 'display: none;' }}">
                         {{-- <li><a class="{{set_active(['form/expense/reports/page'])}}" href="{{ route('form/expense/reports/page') }}"> Expense Report </a></li> --}}
-                        {{-- <li><a class="{{set_active(['form/attendance/report/page'])}}" href="{{ route('form/attendance/report/page') }}"> Attendance Report </a></li> --}}
+                        <li><a class="{{set_active(['form/attendance/report/page'])}}" href="{{ route('form.attendance.index') }}"> Attendance Report </a></li>
+                        <li><a class="{{set_active(['salary/report'])}}" href="{{ route('salary/report') }}"> Salary Report </a></li>
+                        <li><a class="{{set_active(['form/payslip/approve'])}}" href="{{ route('form/payslip/approve') }}"> Payslip Approve </a></li>
+
+
                         {{-- <li><a class="{{set_active(['form/attendance/report/pdf/page'])}}" href="{{ route('form/attendance/report/pdf/page') }}"> Attendance Report PDF </a></li> --}}
                         {{-- <li><a class="{{set_active([''])}}" href="payments-reports.html"> Payments Report </a></li>
                         <li><a class="{{set_active([''])}}" href="employee-reports.html"> Employee Report </a></li>
@@ -137,7 +141,7 @@
                 </li>
 
                 ------------------------------>
-                <li class="menu-title"> <span>Pages</span> </li>
+                {{-- <li class="menu-title"> <span>Pages</span> </li>
                 <li class="{{set_active(['employee/profile/*'])}} submenu">
                     <a href="#"><i class="la la-user"></i>
                         <span> Profile </span> <span class="menu-arrow"></span>
@@ -145,7 +149,7 @@
                     <ul style="display: none;">
                         <li><a class="{{set_active(['employee/profile/*'])}}" href="{{ route('all/employee/list') }}"> Employee Profile </a></li>
                     </ul>
-                </li>
+                </li> --}}
             </ul>
         </div>
     </div>

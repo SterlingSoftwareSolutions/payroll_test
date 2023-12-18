@@ -17,6 +17,7 @@ class AttendanceController extends Controller
 
     public function index(Request $request){
         $query = Employee::query();
+       
 
         if($request->department){
             $filterDep = department::find($request->department);
@@ -25,6 +26,7 @@ class AttendanceController extends Controller
 
         $departments  = department::all();
         $employees = $query->get();
+        //dd($employees);
         return view('reports.attendance-report', compact(['departments', 'employees']));
     }
 
@@ -39,6 +41,7 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
+       
         // Validate the form data
         $request->validate([
             'employee_id' => 'required|numeric|exists:employees,id',
@@ -48,8 +51,8 @@ class AttendanceController extends Controller
         ]);
         DB::beginTransaction();
         try {
-
-            $attendence = Attendance::create([
+           
+            $attendance = Attendance::create([
                 'employee_id' => $request->employee_id,
                 'date' => $request->date,
                 'punch_in' => $request->punch_in,

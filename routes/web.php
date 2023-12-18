@@ -23,6 +23,7 @@ use App\Http\Controllers\TrainersController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PersonalInformationController;
+use App\Http\Controllers\PaySlipController;
 
 
 
@@ -234,7 +235,7 @@ Route::controller(LeavesController::class)->group(function () {
 // ATTENDACNE ROUTES
 Route::controller(AttendanceController::class)->group(function () {
 
-    Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index');
+    Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index'); //for report
     Route::get('form/attendance/new', 'attendance')->middleware('auth')->name('form.attendance.new');
     Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
     Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
@@ -348,3 +349,11 @@ Route::get('/employees', [EmployeeController::class , 'cardAllEmployee'])->name(
 
 // post route
 // Route::post('/save-record', 'EmployeeController@saveRecord')->name('save.record');
+
+//----------------------------Payslip Approve--------------------------------------------------------//
+Route::controller(PayslipController::class)->group(function () {
+
+    Route::get('form/payslip/approve', 'index')->middleware('auth')->name('form/payslip/approve'); //for payslip approve
+    Route::get('salary/report', 'get_salary_report')->middleware('auth')->name('salary/report'); //for salary report
+
+});
