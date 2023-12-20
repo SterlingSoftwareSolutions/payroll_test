@@ -1,6 +1,16 @@
 @extends('layouts.master')
 @section('content')
 
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
 <!-- Include Bootstrap CSS and JS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -56,10 +66,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-3">  
+                <div class="col-sm-6 col-md-3">
                     <div class="form-group form-focus">
                         <label class="focus-label">Year</label>
-                        <input type="text" value="{{ request('year') }}" name="year" class="form-control form-control-1 input-sm from-year" placeholder="Year">
+                        <input type="text" class="form-control form-control-1 input-sm from-year" placeholder="Year">
                         <div class="input-group-append">
                             <span class="input-group-text"><i class="far fa-calendar"></i></span>
                         </div>
@@ -164,14 +174,15 @@
 
 <script>
     $('.from-year').datepicker({
-                    autoclose: true,
-                    minViewMode: 'years',
-                    format: 'yyyy'
-                });
-                
-                $('.from-month').datepicker({
-                    autoclose: true,
-                    minViewMode: 'months',
-                    format: 'MM'
-                });
+        autoclose: true,
+        minViewMode: 'years',
+        format: 'yyyy'
+        });
+
+        $('.from-month').datepicker({
+        autoclose: true,
+        minViewMode: 'months',
+        format: 'MM'
+        });
+
 </script>
