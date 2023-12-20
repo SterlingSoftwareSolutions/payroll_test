@@ -15,17 +15,28 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class EmployeeController extends Controller
 {
-    // all employee card view
-    // public function cardAllEmployee(Request $request)
-    // {
-    //    $users = DB::table('users')
-    //                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-    //                ->select('users.*', 'employees.dob', 'employees.gender')
-    //                ->get(); 
-    //    $userList = DB::table('users')->get();
-    //    $permission_lists = DB::table('permission_lists')->get();
-    //    return view('form.allemployeecard',compact('users','userList','permission_lists'));
-    // }
+    public function submitEmployeeForm(Request $request)
+{
+    // Handle personal details form submission logic here
+    // ...
+
+    return redirect()->back()->with('success', 'Employee form submitted successfully!');
+}
+public function submitBankForm(Request $request)
+{
+    // Handle bank details form submission logic here
+    // ...
+
+    return redirect()->back()->with('success', 'Bank details submitted successfully!');
+}
+public function submitSalaryForm(Request $request)
+{
+    // Handle salary details form submission logic here
+    // ...
+
+    return redirect()->back()->with('success', 'Salary details submitted successfully!');
+}
+
 
     // all employee list
     public function listAllEmployee()
@@ -41,12 +52,17 @@ class EmployeeController extends Controller
         
         return view('form.employeelist', compact('employees'));
     }
+    // Add employee view
+    public function createEmployee(){
+        return view('form.employeeform');
+
+    }
+
 
     // save data employee
     
     public function saveRecord(Request $request)
 {
- 
     // Validate the form data
     $validatedData = $request->validate([
         // Add validation rules for each form field
@@ -60,31 +76,31 @@ class EmployeeController extends Controller
     // Create a new employee
     $employee = new Employee;
 
-    $employee->f_name = $request->input('first_name');
-    $employee->l_name = $request->input('last_name');
-    $employee->full_name = $request->input('full_name');
     $employee->employee_id = $request->input('employee_id');
-    $employee->email = $request->input('email');
+    $employee->d_name = $request->input('d_name');
+    $employee->f_name = $request->input('f_name');
+    $employee->l_name = $request->input('l_name');
+    $employee->email = $request->input('full_name');
     $employee->dob = $request->input('dob');
-    $employee->nic = $request->input('nic');
-    $employee->c_number = $request->input('c_num');
-    $employee->J_title= $request->input('job_title');
-    $employee->d_name = $request->input('departName');
-    $employee->joinedDate = $request->input('joinedDate');
-    $employee->createdDate = $request->input('createdDate');
-    $employee->status = $request->input('status');
     $employee->gender = $request->input('gender');
+    $employee->email = $request->input('email');
+    $employee->nic= $request->input('nic');
+    $employee->c_number = $request->input('c_number');
+    $employee->j_title = $request->input('j_title');
+    $employee->joinedDate = $request->input('joinedDate');
+    $employee->createdDate = today();
+    $employee->status = $request->input('status');
     $employee->description = $request->input('description');
+    $employee->account_name = $request->input('account_name');
+    $employee->account_number = $request->input('account_number');
+    $employee->bank_name = $request->input('bank_name');
+    $employee->branch = $request->input('branch');
     // Set other fields
 
     // Save the employee to the database
     $employee->save();
-    // $products = compact('employee');
 
-    
-    return view('form.employeelist', compact('employee'))->with('success', 'Employee added successfully');
-    // Redirect back or return a response as needed
-    // return redirect()->back()->with('success', 'Employee added successfully');
+    return redirect()->route('all/employee/list');
 }
     // view edit record
     public function viewRecord($employee_id)
@@ -106,20 +122,24 @@ class EmployeeController extends Controller
             // update table Employee
             $updateEmployee = [
                 'employee_id'=>$request->employee_id,
+                'd_name'=>$request->d_name,
                 'f_name'=>$request->f_name,
                 'l_name'=>$request->l_name,
                 'full_name'=>$request->full_name,
-                'email'=>$request->email,
                 'dob'=>$request->dob,
+                'gender'=>$request->gender,
+                'email'=>$request->email,
                 'nic'=>$request->nic,
                 'c_number'=>$request->c_number,
                 'j_title'=>$request->j_title,
-                'd_name'=>$request->d_name,
                 'joinedDate'=>$request->joinedDate,
                 'createdDate'=>$request->createdDate,
                 'status'=>$request->status,
-                'gender'=>$request->gender,
                 'description'=>$request->description,
+                'account_name'=>$request->account_name,
+                'account_number'=>$request->account_number,
+                'bank_name'=>$request->bank_name,
+                'branch'=>$request->branch,
             ];
             // update table user
             $updateUser = [
@@ -391,11 +411,11 @@ class EmployeeController extends Controller
                 Toastr::error('Add new department exits :)','Error');
                 return redirect()->back();
             }
-        }catch(\Exception $e){
-            DB::rollback();
-            Toastr::error('Add new department fail :)','Error');
-            return redirect()->back();
-        }
+            }catch(\Exception $e){
+                DB::rollback();
+                Toastr::error('Add new department fail :)','Error');
+                return redirect()->back();
+            }
         ;
     
     }
@@ -469,12 +489,6 @@ class EmployeeController extends Controller
     {
         $url = route('save.record'); // Include the correct namespace
     }
-
-
-
-
-
-
 }
 
 

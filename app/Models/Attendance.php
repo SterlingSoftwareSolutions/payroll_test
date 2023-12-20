@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'employee_id',
         'date',
@@ -24,4 +23,12 @@ class Attendance extends Model
             $model->id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' =>'A']);
         });
     }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+    protected $casts = [
+        'id' => 'string'
+    ];
 }

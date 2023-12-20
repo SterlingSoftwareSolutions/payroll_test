@@ -10,24 +10,34 @@ class Employee extends Model
     use HasFactory;
     protected $fillable = [
         'employee_id',
+        'd_name',
         'f_name',
         'l_name',
         'full_name',
-        'employee_id',
-        'email',
         'dob',
+        'gender',
+        'email',
         'nic',
         'c_number',
         'j_title',
-        'd_name',
         'joinedDate',
         'createdDate',
         'status',
-        'gender',
         'description',
+        'account_name',
+        'account_number',
+        'bank_name',
+        'branch',
     ];
 
     protected $casts=[
         'dob' => 'date',
+        'joinedDate'=> 'date',
+        'createdDate'=> 'date',
     ];
+    // Employee.php
+    public function bankDetails()
+    {
+        return $this->hasMany(BankDetail::class);
+    }
 }
