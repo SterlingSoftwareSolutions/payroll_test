@@ -80,7 +80,7 @@ public function submitSalaryForm(Request $request)
     $employee->d_name = $request->input('d_name');
     $employee->f_name = $request->input('f_name');
     $employee->l_name = $request->input('l_name');
-    $employee->email = $request->input('full_name');
+    $employee->full_name = $request->input('full_name');
     $employee->dob = $request->input('dob');
     $employee->gender = $request->input('gender');
     $employee->email = $request->input('email');

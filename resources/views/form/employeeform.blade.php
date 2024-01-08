@@ -71,8 +71,8 @@ border-color: red !important;
                         <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
                         <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name"
                             name="d_name">
-                            <option value="">IT</option>
-                            <option value="">Local</option>
+                            <option value="it">IT</option>
+                            <option value="local">Local</option>
                         </select>
                     </div>
                 </div>
@@ -99,7 +99,7 @@ border-color: red !important;
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label class="col-form-label">Date <span class="text-danger">*</span></label>
+                        <label class="col-form-label">DOB <span class="text-danger">*</span></label>
                         <div class="cal-icon">
                             <input class="form-control datetimepicker" tabindex="-1" aria-hidden="true" id="dob" name="dob">
                         </div>
