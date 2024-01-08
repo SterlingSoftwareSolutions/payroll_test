@@ -523,7 +523,8 @@ table.dataTable thead > tr > td.sorting {
 	color: #7460ee !important;
 }
 .text-muted {
-    color: #8e8e8e !important;
+    color: #ED5A5B !important;
+	font-style: italic;
 }
 .btn-purple {
 	background-color: #7460ee;
@@ -1873,6 +1874,89 @@ table.dataTable thead > tr > td.sorting {
 
 /*-----------------
 	11. Login
+-----------------------*/
+.lside-login{
+	background-color: #ED5A5B;/* Set the orange color */
+            width: 30%; /* Set one-fourth of the page width */
+            padding: 20px;
+			height: 100vh;
+			color: white;
+}
+.rside-login {
+	background-color: #FFFFFF;
+	width: 70%;
+	padding: 20px;
+	height: 100vh;
+	float: left;
+	color: #706D6D;
+	font-family: Rubik;
+}
+.placeholder-text::placeholder {
+	font-style: italic; 
+}
+#login {
+    width: 100%;
+    background-color: #ED5A5B; /* Add a semicolon here */
+    border: 1px solid #ED5A5B; /* Specify the border style */
+}
+
+.login-form{
+	width: 60%;
+	margin-top: 75px;
+	margin-left: 60px;
+	font-weight: bold;
+}
+.login {
+    width: 111px;
+    height: 47px;
+    top: 105px;
+    left: 501px;
+    font-family: 'Rubik', sans-serif;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 47.4px;
+    color: #ED5A5B;
+    margin-bottom: 40px;
+    /* Add any additional styles as needed */
+}
+
+.login-sub{
+	margin-bottom: 40px;
+	font-size: larger;
+}
+.password-container {
+    position: relative;
+}
+
+.input-password::placeholder {
+    font-weight: bold;
+}
+
+.eye-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+.field{
+	background-color: #F2F2F2;
+	border-radius: 8px;
+}
+.img-main {
+    width: 80%;
+    padding-top: 70px;
+    margin: 0 auto; /* Center the content horizontally */
+}
+.img-content{
+	font-size: 18px;
+}
+.log-img {
+	margin-bottom: 30px;
+}
+
+/*-----------------
+	register page 
 -----------------------*/
 
 .account-page {

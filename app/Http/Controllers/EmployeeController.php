@@ -49,8 +49,9 @@ public function submitSalaryForm(Request $request)
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
         $employees = Employee::all();
+        $departments = department::all();
         
-        return view('form.employeelist', compact('employees'));
+        return view('form.employeelist', compact('employees','departments'));
     }
     // Add employee view
     public function createEmployee(){

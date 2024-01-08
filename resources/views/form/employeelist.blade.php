@@ -336,9 +336,14 @@
                                 <div class="col-sm-6">  
                                     <div class="form-group">
                                         <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
-                                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name">
-                                            <option value="">IT</option>
-                                            <option value="">Local</option>
+                                        {{-- <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name"> --}}
+                                        
+                                            <select class="select form-control floating" name="department">
+                                                <option value=""> --Select Department-- </option>
+                                                @foreach ($departments as $department)
+                                                <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                                @endforeach
+                                            
                                         </select>
                                     </div>
                                 </div>
