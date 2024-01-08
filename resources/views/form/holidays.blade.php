@@ -47,7 +47,7 @@
                                 @if(($today_date > $items->date_holiday))
                                     <tr class="holiday-completed">
                                         <td>{{ ++$key }}</td>
-                                        <td>{{ $items->holiday_id }}</td>
+                                        <td class="text-left">{{ $items->holiday_id }}</td>
                                         <td>{{ $items->name_holiday }}</td>
                                         <td>{{ date('d F, Y', strtotime($items->date_holiday)) }}</td>
                                         <td>{{ date('l', strtotime($items->date_holiday)) }}</td>

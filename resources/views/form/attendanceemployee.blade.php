@@ -35,7 +35,7 @@
                         <label class="focus-label">Employee ID/Name</label>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-3">
+                <div class="col-sm-6 col-md-4">
                     <div class="form-group form-focus">
                         <input type="text" class="form-control floating" name="select_month">
                         <label class="focus-label">Select Month</label>
@@ -74,7 +74,7 @@
                     });
                 </script>
 
-                <div class="col-sm-6 col-md-3">
+                <div class="col-sm-6 col-md-2">
                     <button type="sumit" class="btn btn-success btn-block"> Search </button>
                 </div>
             </div>
@@ -108,11 +108,7 @@
                             <tr class="attendance-completed">
                                     <td>{{ ++$key }}</td>
                                     <td class="text-left">{{ $items->id }}</td>
-                                    @foreach ($employees as $employee)
-                                    @if ($employee->id == $items->employee_id)
-                                    <td class="text-left">{{ $employee->full_name }}</td>
-                                    @endif
-                                    @endforeach
+                                    <td class="text-left">{{ $items->employee->full_name }}</td>
                                     <td class="text-left">{{ $items->date}}</td>
                                     <td class="text-left">{{ $items->punch_in}}</td>
                                     <td class="text-left">{{ $items->punch_out}}</td>
@@ -143,8 +139,7 @@
                                                     data-employee-id="{{ $items->employee_id }}" data-date="{{ $items->date }}"
                                                     data-punch-in="{{ $items->punch_in }}" data-punch-out="{{ $items->punch_out }}"
                                                     data-target="#edit_attendance">
-                                                    <i class="fa fa-pencil m-r-5"></i> Edit
-                                                </a>
+                                                    <i class="fa fa-pencil m-r-5"></i> Edit </a>
                                             </div>
                                         </div>
                                     </td>
@@ -165,14 +160,14 @@
                                                     <div class="modal-body">
                                                         <form action="{{ route('form/attendance/update') }}" method="POST">
                                                         @csrf
-                                                            <div class="col-sm">
+                                                            <div class="col-md">
                                                                 <div class="form-group">
                                                                     <label class="col-form-label">Attendance ID <span class="text-danger">*</span></label>
                                                                     <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                                                         id="attendance_id" name="attendance_id" value="{{$next_id}}" disabled>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-sm">
+                                                            <div class="col-md">
                                                                 <div class="form-group">
                                                                     <label class="col-form-label">Select Employee <span
                                                                             class="text-danger">*</span></label>
@@ -250,45 +245,38 @@
                     <div class="modal-body">
                         <form action="{{ route('form.attendance.store') }}" method="POST">
                             @csrf
-                            <div class="col-sm">
+                            <div class="col-md">
                                 <div class="form-group">
-                                    <label class="col-form-label">Attendance ID <span
-                                            class="text-danger">*</span></label>
-                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                        id="attendance_id" name="attendance_id" value="{{$next_id}}" disabled>
+                                    <label class="col-form-label">Attendance ID <span class="text-danger">*</span></label>
+                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="attendance_id" name="attendance_id" value="{{$next_id}}" disabled>
+                                    @error('attendance_id')<span class="text-danger">{{$message}}</span>@enderror                                
                                 </div>
                             </div>
-                            <div class="col-sm">
+                            <div class="col-md">
                                 <div class="form-group">
-                                    <label class="col-form-label">Select Employee <span
-                                            class="text-danger">*</span></label>
+                                    <label class="col-form-label">Select Employee <span class="text-danger">*</span></label>
                                     <datalist id="employees">
                                         @for($i = 0; $i < $employees->count(); $i++)
                                             <option value="{{$employees[$i]->id}}">{{$employees[$i]->full_name}}
                                             </option>
                                             @endfor
                                     </datalist>
-                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;"
-                                        tabindex="-1" aria-hidden="true" id="empolyee_name" type="text"
-                                        name="employee_id">
+                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="empolyee_name" type="text" name="employee_id">
                                     @error('employee_id')<span class="text-danger">{{$message}}</span>@enderror
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-group">
                                     <label class="col-form-label">Select Date <span class="text-danger">*</span></label>
-                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                        id="date" type="date" name="date">
+                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="date" type="date" name="date">
                                     @error('date')<span class="text-danger">{{$message}}</span>@enderror
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-group">
-                                    <label class="col-form-label">Punch In time <span
-                                            class="text-danger">*</span></label>
+                                    <label class="col-form-label">Punch In time <span class="text-danger">*</span></label>
                                     <div>
-                                        <input class="form-control" style="width: 100%;" tabindex="-1"
-                                            aria-hidden="true" id="punch_in" name="punch_in" type="time">
+                                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="punch_in" name="punch_in" type="time">
                                         @error('punch_in')<span class="text-danger">{{$message}}</span>@enderror
                                     </div>
                                 </div>
