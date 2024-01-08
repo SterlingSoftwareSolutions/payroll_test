@@ -113,7 +113,7 @@
                     <span> Training </span> <span class="menu-arrow"></span></a>
                     <ul style="{{ request()->is('/*') ? 'display: block;' : 'display: none;' }}">
                         <li><a class="{{set_active(['form/training/list/page'])}}" href="{{ route('form/training/list/page') }}"> Training List </a></li>
-                        <li><a class="{{set_active(['form/trainers/list/page'])}}" href="{{ route('form/trainers/list/page') }}"> Trainers</a></li>
+                        <li><a class="{{set_active (['form/trainers/list/page'])}}" href="{{ route('form/trainers/list/page') }}"> Trainers</a></li>
                         <li><a class="{{set_active(['form/training/type/list/page'])}}" href="{{ route('form/training/type/list/page') }}"> Training Type </a></li>
                     </ul>
                 </li>
