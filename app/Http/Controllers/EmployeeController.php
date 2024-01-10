@@ -128,7 +128,7 @@ public function submitSalaryForm(Request $request)
             // update table Employee
             $updateEmployee = [
                 'employee_id'=>$request->employee_id,
-                'd_name'=>$request->d_name,
+                'd_name'=>$request->department,
                 'f_name'=>$request->f_name,
                 'l_name'=>$request->l_name,
                 'full_name'=>$request->full_name,
