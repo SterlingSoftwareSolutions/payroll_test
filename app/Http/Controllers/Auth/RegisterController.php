@@ -11,37 +11,61 @@ use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 class RegisterController extends Controller
 {
     public function register()
     {
+        $users = User::all();
+       
+
+        $userId = IdGenerator::generate(['table' => 'users', 'length' => 6, 'prefix' => 'U']);
+        
         $role = DB::table('role_type_users')->get();
-        return view('auth.register',compact('role'));
+        return view('auth.register',compact('role',));
     }
     public function storeUser(Request $request)
     {
-        $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|string|email|max:255|unique:users',
-            'role_name' => 'required|string|max:255',
-            'password'  => 'required|string|min:8|confirmed',
-            'password_confirmation' => 'required',
-        ]);
-
-        $dt       = Carbon::now();
-        $todayDate = $dt->toDayDateTimeString();
+        try {
+            // Validation
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+                'password_confirmation' => 'required',
+            ]);
         
-        User::create([
-            'name'      => $request->name,
-            'avatar'    => $request->image,
-            'email'     => $request->email,
-            'join_date' => $todayDate,
-            'role_name' => $request->role_name,
-            'status'    => 'Active',
-            'password'  => Hash::make($request->password),
-        ]);
-        Toastr::success('Create new account successfully :)','Success');
-        return redirect('login');
+            if ($validator->fails()) {
+                // Validation failed
+                //return dd($request);
+               
+            }
+            $dt = Carbon::now();
+            $todayDate = $dt->toDayDateTimeString();
+          $userId = IdGenerator::generate(['table' => 'users', 'length' => 6, 'prefix' => 'U']);
+    
+            // Create user
+            User::create([
+                'user_id' => $userId,
+                'name' => $request->name,
+                'avatar' => $request->image,
+                'email' => $request->email,
+                'join_date' => $todayDate,
+                'role_name' => "Admin",
+                'status' => 'Active',
+                'password' => Hash::make($request->password),
+            ]);
+        
+            Toastr::success('Create new account successfully :)', 'Success');
+            return redirect('login');
+        } catch (\Exception $e) {
+            // Handle the exception, log it, or display an error message
+            Toastr::error('An error occurred while creating the account. Please try again later.', 'Error');
+            return redirect()->back();
+        }
+        
     }
 }

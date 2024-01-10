@@ -2,11 +2,11 @@
 @section('content')
     <div class="main-wrapper">
         <div class="account-content">
-            <a href="{{ route('form/job/list') }}" class="btn btn-primary apply-btn">Apply Job</a>
+            {{-- <a href="{{ route('form/job/list') }}" class="btn btn-primary apply-btn">Apply Job</a> --}}
             <div class="container">
                 <!-- Account Logo -->
                 <div class="account-logo">
-                    <a href="index.html"><img src="{{ URL::to('assets/img/logo2.png') }}" alt="SoengSouy"></a>
+                    <a href="index.html"><img src="{{ URL::to('assets/img/logo4.png') }}" alt="SoengSouy"></a>
                 </div>
                 <!-- /Account Logo -->
                 <div class="account-box">
@@ -19,7 +19,7 @@
                             @csrf
                             <div class="form-group">
                                 <label>Full Name</label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" placeholder="Enter Your Name">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" >
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -28,7 +28,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="Enter Your Email">
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" >
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -36,8 +36,11 @@
                                 @enderror
                             </div>
                             {{-- insert defaults --}}
-                            <input type="hidden" class="image" name="image" value="photo_defaults.jpg">
-                            <div class="form-group">
+                            <input type="hidden" class="image" name="image" value="photo_defaults.jpg">                          
+                           
+                            {{-- TODO get User Role --}}
+
+                            {{-- <div class="form-group">
                                 <label class="col-form-label">Role Name</label>
                                 <select class="select @error('role_name') is-invalid @enderror" name="role_name" id="role_name">
                                     <option selected disabled>-- Select Role Name --</option>
@@ -50,11 +53,11 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <div class="form-group">
                                 <label>Password</label>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Enter Password">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -62,8 +65,8 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label><strong>Repeat Password</strong></label>
-                                <input type="password" class="form-control" name="password_confirmation" placeholder="Choose Repeat Password">
+                                <label>Repeat Password</label>
+                                <input type="password" class="form-control" name="password_confirmation" >
                             </div>
                             <div class="form-group text-center">
                                 <button class="btn btn-primary account-btn" type="submit">Register</button>
