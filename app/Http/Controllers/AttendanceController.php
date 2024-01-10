@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
-use App\Models\department;
-use App\Models\Employee;
-use Haruncpi\LaravelIdGenerator\IdGenerator;
-use Illuminate\Http\Request;
-use Brian2694\Toastr\Facades\Toastr;
-use App\Models\Holiday;
 use DB;
 use Validator;
+use DatePeriod;
+use DateInterval;
+use App\Models\Holiday;
+use App\Models\Employee;
+use App\Models\Attendance;
+use App\Models\department;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Brian2694\Toastr\Facades\Toastr;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class AttendanceController extends Controller
 {
@@ -49,8 +52,7 @@ class AttendanceController extends Controller
 
     public function index(Request $request)
     {
-        $query = Employee::query();
-        
+        $query = Employee::query();   
 
         if ($request->department) {
             $filterDep = department::find($request->department);
@@ -58,8 +60,9 @@ class AttendanceController extends Controller
         }
         $employees = Employee::all(); 
         $departments  = department::all();
-        //dd($departments);
-       // $attendances = Attendance::all();
+
+        $employees = $query->get();
+        $holiday = Holiday::all();
         $attendances = Attendance::with('employee','holiday')->get();
 
         $attendanceCounts = DB::table('attendances')
@@ -67,14 +70,45 @@ class AttendanceController extends Controller
         ->groupBy('employee_id')
         ->get();
 
-       // dd($attendances);
-        $employees = $query->get();
-        //dd($employees);
-        $holiday = Holiday::all();
-       
-       // dd($holiday);
-        return view('reports.attendance-report', compact(['departments', 'employees','attendances','attendanceCounts','holiday']));
+        $curmnth = date('m');
+        $curyear = date('Y');
+        $totDays = $this->getDaysInMonth($curmnth, $curyear);
+        $weekendCount = $this->getWeekendCount($curmnth, $curyear);
+    
+        return view('reports.attendance-report', compact(['departments', 'employees','attendances','attendanceCounts','holiday','curmnth', 'curyear', 'totDays','weekendCount']));
     }
+
+
+    private function getDaysInMonth($month, $year)
+    {
+        if ($month == "02") {
+            return ($year % 4 == 0) ? 29 : 28;
+        } elseif (in_array($month, ["01", "03", "05", "07", "08", "10", "12"])) {
+            return 31;
+        } else {
+            return 30;
+        }
+    }
+
+
+    private function getWeekendCount($month, $year)
+{
+    $startDate = Carbon::createFromDate($year, $month, 1);
+    $endDate = $startDate->copy()->endOfMonth();
+
+    $interval = new DateInterval('P1D'); 
+    $period = new DatePeriod($startDate, $interval, $endDate);
+
+    $weekendCount = 0;
+
+    foreach ($period as $date) {
+        if ($date->format('N') >= 6) { 
+            $weekendCount++;
+        }
+    }
+    return $weekendCount;
+}
+
 
   
 
