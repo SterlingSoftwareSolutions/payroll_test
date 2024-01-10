@@ -49,6 +49,12 @@ class Employee extends Model
 //     return $this->hasMany(Holiday::class);
 // }
 
+public function getNameAttribute()
+{
+    return $this->attributes['employee_name']; // adjust based on your attribute name
+}
+
+
 
    
 
