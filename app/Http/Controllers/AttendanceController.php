@@ -14,26 +14,76 @@ use Validator;
 
 class AttendanceController extends Controller
 {
+//     public function index(Request $request)
+// {
+//     $query = Employee::query();
 
-    public function index(Request $request){
+//     if ($request->department) {
+//         $filterDep = Department::find($request->department);
+//         $query->where('d_name', $filterDep->department);
+//     }
+
+//     $employees = $query->get();
+
+//         // Calculate attendance-related information for each employee
+//         $employees = $employees->map(function ($employees) {
+//             $employees->numberOfDays = $this->calculateNumberOfDays($employees->id);
+//             $employees->absentDays = $this->calculateAbsentDays($employees->id);
+//             $employees->holidays = $this->calculateHolidays($employees->id);
+//             $employees->workingDays = $this->calculateWorkingDays($employees->id);
+//             $employees->extraDays = $this->calculateExtraDays($employees->id);
+
+//             return $employees;
+// });
+
+
+//     $departments = Department::all();
+
+//     return view('reports.attendance-report', compact('departments', 'employees'));
+// }
+
+
+
+
+
+
+    public function index(Request $request)
+    {
         $query = Employee::query();
-       
+        
 
-        if($request->department){
+        if ($request->department) {
             $filterDep = department::find($request->department);
             $query->where('d_name', $filterDep->department);
         }
-
+        $employees = Employee::all(); 
         $departments  = department::all();
+        //dd($departments);
+       // $attendances = Attendance::all();
+        $attendances = Attendance::with('employee','holiday')->get();
+
+        $attendanceCounts = DB::table('attendances')
+        ->select('employee_id', DB::raw('count(*) as attendance_count'))
+        ->groupBy('employee_id')
+        ->get();
+
+       // dd($attendances);
         $employees = $query->get();
         //dd($employees);
-        return view('reports.attendance-report', compact(['departments', 'employees']));
+        $holiday = Holiday::all();
+       
+       // dd($holiday);
+        return view('reports.attendance-report', compact(['departments', 'employees','attendances','attendanceCounts','holiday']));
     }
+
+  
 
     public function attendance()
     {
         $attendance = Attendance::all();
+       
         $attendanceCount = Attendance::count();
+      //  dd($attendanceCount);
         $next_id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
         $employees = Employee::all();
         return view('form.attendanceemployee', compact('attendance', 'next_id', 'employees', 'attendanceCount'));
@@ -58,7 +108,7 @@ class AttendanceController extends Controller
                 'punch_in' => $request->punch_in,
                 'punch_out' => $request->punch_out,
             ]);
-
+           
             DB::commit();
 
             Toastr::success('Added attendence successfully :)', 'Success');
@@ -102,4 +152,8 @@ class AttendanceController extends Controller
             return redirect()->back();
         }
     }
+
+
+
+ 
 }

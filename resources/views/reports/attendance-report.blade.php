@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @section('content')
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Remove duplicate import -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -78,7 +81,7 @@
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group form-focus">
                         <select class="form-control floating" id="monthDropdown" name="month">
-                            <option value=""></option>
+                            <option value="">----</option>
                             <option value="1" @selected(request('month') == 1)>January</option>
                             <option value="2" @selected(request('month') == 2)>February</option>
                             <option value="3" @selected(request('month') == 3)>March</option>
@@ -110,35 +113,16 @@
                                 <th>Name</th>
                                 <th>Number of days</th>
                                 <th>Absent days</th>
-                                <th>WO</th>
+                                <th>Week Off</th>
                                 <th>Holidays</th>
                                 <th>Working days</th>
                                 <th>OT</th>
                                 <th>Extra days</th>
                                 <th class="text-right">Action</th>
-                                {{-- <th class="text-right">
-                                    <a href="" class="btn btn-success">
-                                        <i class="fa fa-download"></i> Download PDF
-                                    </a>
-                                </th> --}}
-                                {{-- <td class="text-right">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            id="actionDropdown" data-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">
-                                            PDF
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="actionDropdown">
-                                            <a class="dropdown-item" href="#"
-                                                onclick="handleActionSelection('view')">View PDF</a>
-                                            <a class="dropdown-item" href="#"
-                                                onclick="handleActionSelection('download')">Download PDF</a>
-                                        </div>
-                                    </div>
-                                </td> --}}
+                          
                             </tr>
                         </thead>
-                        <tbody>
+                        {{-- <tbody>
                             @foreach($employees as $employee)
                             <tr>
                                 <td>{{ $employee->full_name }}</td>
@@ -149,10 +133,83 @@
                                 <td>Working days</td>
                                 <td>OT</td>
                                 <td>Extra days</td>
+
                                 <td class="text-right">Action</td>
                             </tr>
                             @endforeach
+                        </tbody> --}}
+
+                        <tbody>
+                            {{-- @foreach ($attendances as $attendance)
+                            <tr>
+                                <td>{{ $attendance->employee->full_name }}</td>
+                                <td>{{ $attendanceCounts->where('employee_id', $attendance->employee->id)->first()->attendance_count ?? 0 }}</td>
+                                <td>{{ $attendance->date }}</td>
+                                <td>{{ $attendance->employee_id }}</td>
+                                <td>
+                                    @php
+                                        $holiday = $holidays->firstWhere('date', $attendance->date);
+                                    @endphp
+                        
+                                    {{ $holiday ? $holiday->name_holiday : '' }}
+                                </td>
+                                <td>{{ $attendance->punch_in }}
+                                    @if ($attendance->status == 1)
+                                        <span class="badge badge-primary badge-pill float-right">On Time</span>
+                                    @else
+                                        <span class="badge badge-danger badge-pill float-right">Late</span>
+                                    @endif
+                                </td>
+                              
+
+                                <td>{{ $attendance->date }}</td>
+                            </tr>
+                        @endforeach --}}
+
+                        @foreach ($attendances as $attendance)
+                        <tr>
+                            <td>{{ $attendance->employee->full_name }}</td>
+                            <td>{{ $attendanceCounts->where('employee_id', $attendance->employee->id)->first()->attendance_count ?? 0 }}</td>
+                            <td>{{ $attendance->date }}</td>
+                            <td>{{ $attendance->employee_id }}</td>
+
+                            <td>
+                                @if ($attendance->holiday)
+                                    <span class="badge badge-warning badge-pill float-right">Holiday</span>
+                                @endif
+                            </td>
+
+                            <td>
+                                @foreach ($attendance->holiday as $holiday)
+                                    @if ($holiday->holiday_date == $attendance->date)
+                                        <span class="badge badge-warning badge-pill float-right">Holiday</span>
+                                    @endif
+                                @endforeach
+                            </td>
+                    
+                    
+
+                           
+                            <td>{{ $attendance->punch_in }}
+                                @if ($attendance->status == 1)
+                                    <span class="badge badge-primary badge-pill float-right">On Time</span>
+                                @else
+                                    <span class="badge badge-danger badge-pill float-right">Late</span>
+                                @endif
+                            </td>
+                            <td>{{ $attendance->date }}</td>
+
+                 
+
+                            
+                        </tr>
+                    @endforeach
+                    
+                        
                         </tbody>
+                      
+
+
                     </table>
 
                 </div>
@@ -171,7 +228,7 @@
             </div>
             
 <!------------------------------/date and month pickup ----------------------------->
-
+{{-- 
 <script>
     $('.from-year').datepicker({
         autoclose: true,
@@ -185,4 +242,17 @@
         format: 'MM'
         });
 
+</script> --}}
+
+
+<script>
+    $(document).ready(function () {
+        console.log("Script is running."); // Check if script is running
+
+        $('.from-year').datepicker({
+            autoclose: true,
+            minViewMode: 'years',
+            format: 'yyyy'
+        });
+    });
 </script>

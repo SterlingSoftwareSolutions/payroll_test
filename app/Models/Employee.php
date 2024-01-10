@@ -9,6 +9,7 @@ class Employee extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'id',
         'employee_id',
         'd_name',
         'f_name',
@@ -40,4 +41,11 @@ class Employee extends Model
     {
         return $this->hasMany(BankDetail::class);
     }
+
+
+   
+
+
+
+
 }
