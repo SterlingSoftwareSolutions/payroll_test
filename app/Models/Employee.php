@@ -43,6 +43,13 @@ class Employee extends Model
     }
 
 
+    
+// public function holiday()
+// {
+//     return $this->hasMany(Holiday::class);
+// }
+
+
    
 
 
