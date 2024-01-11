@@ -21,7 +21,7 @@
         <div class="container mt-4">
             <!-- First Row -->
             <div class="row">
-                <div class="col-md-6 border">
+                <div class="col-md-6">
                     <!-- Content for the first column -->
                     <div class="col">
                         <div class="col-md-9 col-sm-9 col-lg-9 col-xl-12">
@@ -38,7 +38,7 @@
                     </div>
 
                 </div>
-                <div class="col-md-6 border">
+                <div class="col-md-6">
                     <!-- Content for the second column -->
 
                     <div class="col">
@@ -114,7 +114,7 @@
                                 <div class="overflow-auto p-3 bg-light"
                                     style="max-width: 1000px; max-height: 200px; overflow: hidden; border-radius: 15px;">
 
-                                    @foreach($employees as $employee)
+                                    {{-- @foreach($employees as $employee)
                                     @if($employee->dob && $employee->dob->format('m-d') === now()->format('m-d'))
                                     <div class="notification">
                                         <div class="card mb-3">
@@ -126,7 +126,21 @@
                                         </div>
                                     </div>
                                     @endif
-                                    @endforeach
+                                    @endforeach --}}
+                                    @foreach($employees as $employee)
+    @if($employee->dob && $employee->dob->format('m-d') === now()->format('m-d'))
+        <div class="notification">
+            <div class="card mb-3">
+                <div class="card-body d-flex flex-row border-left border-danger">
+                    <div>
+                        Today is {{ $employee->full_name }}'s Birthday. 🎂🎉
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
+
                                 </div>
                             </div>
                         </div>
@@ -135,7 +149,7 @@
 
                     <!-- Third Row -->
                     <div class="row mt-4">
-                        <div class="col-md-6 border">
+                        <div class="col-md-6">
                             <!-- Content for the third row, first column -->
                             <div class="col">
                                 <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
@@ -159,11 +173,11 @@
                                                                 <h6 class="mb-0">{{ $employee->leaveDate }}</h6>
                                                                 <span class="text-sm text-muted">Leave Date</span>
                                                             </div>
-                                                            <div class="col-6 text-right">
+                                                            {{-- <div class="col-6 text-right">
                                                                 <span class="badge bg-inverse-danger">
                                                                     Absent: {{ $absentCounts[$employee->id] }}
                                                                 </span>
-                                                            </div>
+                                                            </div> --}}
                                                         </div>
                                                     </div>
                                                        
@@ -193,7 +207,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 border">
+                        <div class="col-md-6">
                             <!-- Content for the third row, second column -->
                             <div class="col">
                                 <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
@@ -215,11 +229,11 @@
                                                                 <h6 class="mb-0">{{ $employee->leaveDate }}</h6>
                                                                 <span class="text-sm text-muted">Leave Date</span>
                                                             </div>
-                                                            <div class="col-6 text-right">
+                                                            {{-- <div class="col-6 text-right">
                                                                 <span class="badge bg-inverse-danger">
                                                                     Absent: {{ $absentCounts[$employee->id] }}
                                                                 </span>
-                                                            </div>
+                                                            </div> --}}
                                                         </div>
                                                     </div>
                                                        

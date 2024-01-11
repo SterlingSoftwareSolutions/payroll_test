@@ -34,10 +34,10 @@ class HomeController extends Controller
         $employeeCount = Employee::count();
         $employees = Employee::all();
 
-        $absentCounts = $this->getAbsentCounts($employees);
+       // $absentCounts = $this->getAbsentCounts($employees);
    
 
-        return view('dashboard.dashboard', compact('employeeCount','employees','absentCounts'));
+        return view('dashboard.dashboard', compact('employeeCount','employees'));
     }
 
 
