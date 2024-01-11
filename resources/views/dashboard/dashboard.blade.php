@@ -89,7 +89,7 @@
             <!-- Second Row -->
             <div class="row mt-4">
                 <!-- Content for the second row -->
-                <div class="col-md-12 border">
+                <div class="col-md-12">
 
                     <div class="p-3 bg-opacity-10 border-start-0 rounded-end">
                         <div class="">

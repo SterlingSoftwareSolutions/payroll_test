@@ -129,6 +129,7 @@
                         <tbody>
                     
                             @foreach ($attendances as $attendance)
+                           
                             <tr>
                                 <td>{{ $attendance->employee->full_name }}</td>
                                 <td>
@@ -143,11 +144,52 @@
                                 </td>
                     
                                 <td>Weekend Days: {{ $weekendCount }}</td>
-                                <td>
+                                {{-- <td>
                                     @if ($attendance->date_holiday)
                                     <span class="badge badge-warning badge-pill float-right">Holiday</span>
                                     @endif
+                                </td> --}}
+                                <td>
+                                    {{-- @if ($attendance->date_holiday)
+                                        <span class="badge badge-warning badge-pill float-right">Holiday</span><br>
+                                        Holiday Date: {{ $attendance->date_holiday }}<br>
+                                        Holiday Name: {{ $attendance->holiday->name_holiday ?? 'Unknown' }}
+                                    @endif --}}
+
+
+   
+{{-- @if ($attendance->date_holiday && optional($attendance->holiday)->name_holiday)
+    <span class="badge badge-warning badge-pill float-right">Holiday</span><br>
+    Holiday Date: {{ $attendance->date_holiday }}<br>
+    Holiday Name: {{ $attendance->holiday->name_holiday }}
+@endif --}}
+
+{{-- @if ($attendance->date_holiday && $attendance->holiday)
+    <span class="badge badge-warning badge-pill float-right">Holiday</span><br>
+    Holiday Date: {{ $attendance->date_holiday }}<br>
+    Holiday Name: {{ $attendance->holiday->name_holiday }}
+@endif --}}
+
+
+
+
+
                                 </td>
+                                {{-- @php
+    dd($attendance->toArray(), optional($attendance->holiday)->toArray());
+@endphp --}}
+<td>
+    @if ($attendance->date_holiday && optional($attendance->holiday)->name_holiday)
+        <span class="badge badge-warning badge-pill float-right">Holiday</span><br>
+        Holiday Date: {{ $attendance->date_holiday }}<br>
+        Holiday Name: {{ optional($attendance->holiday)->name_holiday }}
+    @elseif ($attendance->date_holiday && !optional($attendance->holiday)->name_holiday)
+        <span class="badge badge-warning badge-pill float-right">Holiday (No Name)</span><br>
+        Holiday Date: {{ $attendance->date_holiday }}
+    @else
+    @endif
+</td>
+
                                 <td>{{ $attendanceCounts->where('employee_id',
                                     $attendance->employee->id)->first()->attendance_count ?? 0 }}</td>
                     
@@ -174,6 +216,10 @@
 
 
 @endsection
+
+
+
+
 
 
 

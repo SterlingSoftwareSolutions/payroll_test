@@ -17,41 +17,9 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class AttendanceController extends Controller
 {
-//     public function index(Request $request)
-// {
-//     $query = Employee::query();
-
-//     if ($request->department) {
-//         $filterDep = Department::find($request->department);
-//         $query->where('d_name', $filterDep->department);
-//     }
-
-//     $employees = $query->get();
-
-//         // Calculate attendance-related information for each employee
-//         $employees = $employees->map(function ($employees) {
-//             $employees->numberOfDays = $this->calculateNumberOfDays($employees->id);
-//             $employees->absentDays = $this->calculateAbsentDays($employees->id);
-//             $employees->holidays = $this->calculateHolidays($employees->id);
-//             $employees->workingDays = $this->calculateWorkingDays($employees->id);
-//             $employees->extraDays = $this->calculateExtraDays($employees->id);
-
-//             return $employees;
-// });
-
-
-//     $departments = Department::all();
-
-//     return view('reports.attendance-report', compact('departments', 'employees'));
-// }
-
-
-
-
-
-
     public function index(Request $request)
     {
+       
         $query = Employee::query();   
 
         if ($request->department) {
@@ -62,9 +30,14 @@ class AttendanceController extends Controller
         $departments  = department::all();
 
         $employees = $query->get();
-        $holiday = Holiday::all();
-        $attendances = Attendance::with('employee','holiday')->get();
+       
 
+        $holiday = Holiday::all();
+      //  dd($holiday->toArray());
+        
+
+        $attendances = Attendance::with('employee','holiday')->get();
+      
         $attendanceCounts = DB::table('attendances')
         ->select('employee_id', DB::raw('count(*) as attendance_count'))
         ->groupBy('employee_id')
@@ -75,6 +48,9 @@ class AttendanceController extends Controller
         $totDays = $this->getDaysInMonth($curmnth, $curyear);
         $weekendCount = $this->getWeekendCount($curmnth, $curyear);
     
+       // dd($attendances->toArray(), $holiday->toArray());
+
+
         return view('reports.attendance-report', compact(['departments', 'employees','attendances','attendanceCounts','holiday','curmnth', 'curyear', 'totDays','weekendCount']));
     }
 
