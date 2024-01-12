@@ -52,12 +52,14 @@ public function submitSalaryForm(Request $request)
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
         $employees = Employee::all();
+      
         $departments = department::all();
         
         return view('form.employeelist', compact('employees','departments'));
     }
     // Add employee view
     public function createEmployee(){
+      
         $departments = Department::pluck('department', 'id');
         $maxId = \App\Models\Employee::max('employee_id');
 
@@ -71,6 +73,11 @@ if ($maxId) {
 // The rest of your code...
 
         return view('form.employeeform', compact('nextUserId','departments'));
+
+        $departments = department::all();
+        
+
+        return view('form.employeeform', compact('departments'));
 
     }
 
@@ -153,6 +160,34 @@ public function salary_details($employee_id, $types, $incrementNames, $increment
             dd($e->getMessage());
         }
     }
+    // Create a new employee
+    $employee = new Employee;
+
+    $employee->employee_id = $request->input('employee_id');
+    $employee->d_name = $request->input('department');
+    $employee->f_name = $request->input('f_name');
+    $employee->l_name = $request->input('l_name');
+    $employee->full_name = $request->input('full_name');
+    $employee->dob = $request->input('dob');
+    $employee->gender = $request->input('gender');
+    $employee->email = $request->input('email');
+    $employee->nic= $request->input('nic');
+    $employee->c_number = $request->input('c_number');
+    $employee->j_title = $request->input('j_title');
+    $employee->joinedDate = $request->input('joinedDate');
+    $employee->createdDate = today();
+    $employee->status = $request->input('status');
+    $employee->description = $request->input('description');
+    $employee->account_name = $request->input('account_name');
+    $employee->account_number = $request->input('account_number');
+    $employee->bank_name = $request->input('bank_name');
+    $employee->branch = $request->input('branch');
+    // Set other fields
+
+    // Save the employee to the database
+    $employee->save();
+
+    return redirect()->route('all/employee/list');
 }
 
 
@@ -176,7 +211,7 @@ public function salary_details($employee_id, $types, $incrementNames, $increment
             // update table Employee
             $updateEmployee = [
                 'employee_id'=>$request->employee_id,
-                'd_name'=>$request->d_name,
+                'd_name'=>$request->department,
                 'f_name'=>$request->f_name,
                 'l_name'=>$request->l_name,
                 'full_name'=>$request->full_name,

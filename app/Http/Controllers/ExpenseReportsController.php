@@ -14,6 +14,7 @@ class ExpenseReportsController extends Controller
     public function index()
     {
         $departments = department::all();
+
         return view('reports.attendance-report', compact('departments'));
     }
 

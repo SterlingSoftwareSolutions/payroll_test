@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @section('content')
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Remove duplicate import -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -54,14 +57,15 @@
         <!-- Search Filter -->
         <form method="GET">
             <div class="row filter-row">
-                
+
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group form-focus">
-                       
+
                         <select class="select form-control floating" name="department">
                             <option value=""> -- Select Department-- </option>
                             @foreach ($departments as $department)
-                            <option value="{{ $department->id }}" @selected(request('department') == $department->id)>{{ $department->department }}</option>
+                            <option value="{{ $department->id }}" @selected(request('department')==$department->id)>{{
+                                $department->department }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -78,19 +82,19 @@
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group form-focus">
                         <select class="form-control floating" id="monthDropdown" name="month">
-                            <option value=""></option>
-                            <option value="1" @selected(request('month') == 1)>January</option>
-                            <option value="2" @selected(request('month') == 2)>February</option>
-                            <option value="3" @selected(request('month') == 3)>March</option>
-                            <option value="4" @selected(request('month') == 4)>April</option>
-                            <option value="5" @selected(request('month') == 5)>May</option>
-                            <option value="6" @selected(request('month') == 6)>June</option>
-                            <option value="7" @selected(request('month') == 7)>July</option>
-                            <option value="8" @selected(request('month') == 8)>August</option>
-                            <option value="9" @selected(request('month') == 9)>September</option>
-                            <option value="10" @selected(request('month') == 10)>October</option>
-                            <option value="11" @selected(request('month') == 11)>November</option>
-                            <option value="12" @selected(request('month') == 12)>December</option>
+                            <option value="">----</option>
+                            <option value="1" @selected(request('month')==1)>January</option>
+                            <option value="2" @selected(request('month')==2)>February</option>
+                            <option value="3" @selected(request('month')==3)>March</option>
+                            <option value="4" @selected(request('month')==4)>April</option>
+                            <option value="5" @selected(request('month')==5)>May</option>
+                            <option value="6" @selected(request('month')==6)>June</option>
+                            <option value="7" @selected(request('month')==7)>July</option>
+                            <option value="8" @selected(request('month')==8)>August</option>
+                            <option value="9" @selected(request('month')==9)>September</option>
+                            <option value="10" @selected(request('month')==10)>October</option>
+                            <option value="11" @selected(request('month')==11)>November</option>
+                            <option value="12" @selected(request('month')==12)>December</option>
                         </select>
                         <label class="focus-label">Month</label>
                     </div>
@@ -104,52 +108,58 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="table-responsive">
-                    <table class="table table-striped custom-table datatable">
+                 <table class="table table-striped custom-table datatable">
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Number of days</th>
+                                <th>Number of days in Month</th>
                                 <th>Absent days</th>
-                                <th>WO</th>
+                                <th>Week Off</th>
                                 <th>Holidays</th>
                                 <th>Working days</th>
                                 <th>OT</th>
                                 <th>Extra days</th>
+                                {{-- <th>Month</th>
+                                <th>Year</th>
+                                <th>Total Days</th> --}}
                                 <th class="text-right">Action</th>
-                                {{-- <th class="text-right">
-                                    <a href="" class="btn btn-success">
-                                        <i class="fa fa-download"></i> Download PDF
-                                    </a>
-                                </th> --}}
-                                {{-- <td class="text-right">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            id="actionDropdown" data-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">
-                                            PDF
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="actionDropdown">
-                                            <a class="dropdown-item" href="#"
-                                                onclick="handleActionSelection('view')">View PDF</a>
-                                            <a class="dropdown-item" href="#"
-                                                onclick="handleActionSelection('download')">Download PDF</a>
-                                        </div>
-                                    </div>
-                                </td> --}}
+                    
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($employees as $employee)
+                    
+                            @foreach ($attendances as $attendance)
                             <tr>
-                                <td>{{ $employee->full_name }}</td>
-                                <td>Number of days</td>
-                                <td>Absent days</td>
-                                <td>WO</td>
-                                <td>Holidays</td>
-                                <td>Working days</td>
-                                <td>OT</td>
-                                <td>Extra days</td>
-                                <td class="text-right">Action</td>
+                                <td>{{ $attendance->employee->full_name }}</td>
+                                <td>
+                                    <span class="label">Days:</span>
+                                    {{ $totDays }}
+                                </td>
+                    
+                                <td>
+                                    {{ $totDays - ($attendanceCounts->where('employee_id',
+                                    $attendance->employee->id)->first()->attendance_count ?? 0) -
+                                    optional($attendance->employee->holiday)->count() }}
+                                </td>
+                    
+                                <td>Weekend Days: {{ $weekendCount }}</td>
+                                <td>
+                                    @if ($attendance->date_holiday)
+                                    <span class="badge badge-warning badge-pill float-right">Holiday</span>
+                                    @endif
+                                </td>
+                                <td>{{ $attendanceCounts->where('employee_id',
+                                    $attendance->employee->id)->first()->attendance_count ?? 0 }}</td>
+                    
+                    
+                    
+                                <td>
+                                    @if ($attendance->employee->holiday && $attendance->employee->holiday->contains('date',
+                                    $attendance->date))
+                                    <span class="badge badge-warning badge-pill float-right">Holiday</span>
+                                    @endif
+                                </td>
+                    
                             </tr>
                             @endforeach
                         </tbody>
@@ -168,10 +178,10 @@
 
 
 </div>
-            </div>
-            
-<!------------------------------/date and month pickup ----------------------------->
+</div>
 
+<!------------------------------/date and month pickup ----------------------------->
+{{--
 <script>
     $('.from-year').datepicker({
         autoclose: true,
@@ -185,4 +195,17 @@
         format: 'MM'
         });
 
+</script> --}}
+
+
+<script>
+    $(document).ready(function () {
+        console.log("Script is running."); // Check if script is running
+
+        $('.from-year').datepicker({
+            autoclose: true,
+            minViewMode: 'years',
+            format: 'yyyy'
+        });
+    });
 </script>

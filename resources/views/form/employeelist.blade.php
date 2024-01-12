@@ -47,12 +47,12 @@
                     <!-- Include this section where you want the dropdown to appear -->
                     <div class="col-sm-6 col-md-3"> 
                         <div class="form-group form-focus">
-                            <select class="form-control floating" id="departmentDropdown">
-                                <option value="1">IT</option>
-                                <option value="2">Local</option>
-
+                            <select class="select floating" name="department">
+                                <option value=""> -- Select Department-- </option>
+                                @foreach ($departments as $department)
+                                <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                @endforeach
                             </select>
-                            <label class="focus-label">Department</label>
                         </div>
                     </div>
 

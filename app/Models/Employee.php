@@ -9,6 +9,7 @@ class Employee extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'id',
         'employee_id',
         'd_name',
         'f_name',
@@ -41,4 +42,24 @@ class Employee extends Model
     {
         return $this->hasMany(BankDetail::class);
     }
+
+
+    
+// public function holiday()
+// {
+//     return $this->hasMany(Holiday::class);
+// }
+
+public function getNameAttribute()
+{
+    return $this->attributes['employee_name']; // adjust based on your attribute name
+}
+
+
+
+   
+
+
+
+
 }

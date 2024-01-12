@@ -75,8 +75,14 @@ border-color: red !important;
                         <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name">
                             @foreach($departments as $id => $name)
                                 <option value="{{ $id }}">{{ $name }}</option>
+
+                        <select class="select floating" name="department">
+                            <option value=""> - Select Department- </option>
+                            @foreach ($departments as $department)
+                            <option value="{{ $department->id }}">{{ $department->department }}</option>
                             @endforeach
                         </select>
+                     
                     </div>
                 </div>                
                 <div class="col-sm-6">
@@ -88,7 +94,7 @@ border-color: red !important;
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="col-form-label">Larst Name <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Last Name <span class="text-danger">*</span></label>
                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="l_name"
                             name="l_name" required>
                     </div>

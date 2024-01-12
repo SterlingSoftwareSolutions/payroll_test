@@ -146,11 +146,10 @@
                 <tr>
                     <td>{{ $employee->id }}</td>
                     <td>{{ $employee->full_name }}</td>
-                    <td>Bank Name</td>
-                    <td>Branch Name</td>
-                    <td>Account No</td>
-                    <td>Net Salary</td>
-                    <!--need to calaculation-->
+                    <td>{{ $employee->bank_name }}</td>
+                    <td>{{ $employee->branch }}</td>
+                    <td>{{ $employee->account_number }}</td>
+                    <td>Net Salary</td>   <!--need to calaculation-->
 
 
                 </tr>
