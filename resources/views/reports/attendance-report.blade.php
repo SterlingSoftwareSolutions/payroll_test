@@ -108,75 +108,85 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="table-responsive">
-                 <table class="table table-striped custom-table datatable">
+                    <table class="table table-striped custom-table datatable">
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Number of days in Month</th>
+                                <th>Number of days</th>
                                 <th>Absent days</th>
-                                <th>Week Off</th>
+                                <th>WO</th>
                                 <th>Holidays</th>
                                 <th>Working days</th>
                                 <th>OT</th>
                                 <th>Extra days</th>
-                                {{-- <th>Month</th>
-                                <th>Year</th>
-                                <th>Total Days</th> --}}
-                                <th class="text-right">Action</th>
-                    
+                                {{-- <th>WO Attendance Count</th> --}}
+
                             </tr>
                         </thead>
+
                         <tbody>
-                    
                             @foreach ($attendances as $attendance)
+                            @php
+                            $holiday = $holiday ? $holiday->where('date_holiday', $attendance->date)->first() : null;
+                            @endphp
+
                             <tr>
-                                <td>{{ $attendance->employee->full_name }}</td>
+                                <td>{{ optional($attendance->employee)->full_name ?? '' }}</td>
+                                <td>{{ $totDays }}</td>
+                                <td>{{ $totDays - ($attendanceCounts->where('employee_id',
+                                    optional($attendance->employee)->id)->first()->attendance_count ?? 0) -
+                                    optional($attendance->employee->holiday)->count() }}</td>
+                                <td>{{ $weekendCount }}</td>
                                 <td>
-                                    <span class="label">Days:</span>
-                                    {{ $totDays }}
-                                </td>
-                    
-                                <td>
-                                    {{ $totDays - ($attendanceCounts->where('employee_id',
-                                    $attendance->employee->id)->first()->attendance_count ?? 0) -
-                                    optional($attendance->employee->holiday)->count() }}
-                                </td>
-                    
-                                <td>Weekend Days: {{ $weekendCount }}</td>
-                                <td>
-                                    @if ($attendance->date_holiday)
-                                    <span class="badge badge-warning badge-pill float-right">Holiday</span>
+                                    @if ($attendance->is_holiday)
+                                    <span class="badge badge-warning badge-pill float-right">{{
+                                        $attendance->holiday_name }}</span>
                                     @endif
                                 </td>
                                 <td>{{ $attendanceCounts->where('employee_id',
-                                    $attendance->employee->id)->first()->attendance_count ?? 0 }}</td>
-                    
-                    
-                    
-                                <td>
-                                    @if ($attendance->employee->holiday && $attendance->employee->holiday->contains('date',
-                                    $attendance->date))
-                                    <span class="badge badge-warning badge-pill float-right">Holiday</span>
+                                    optional($attendance->employee)->id)->first()->attendance_count ?? 0 }}</td>
+
+                                <td>{{ $overtimeHours }}</td>
+
+                                <td>{{ $extraDaysCount }}</td>
+                                {{-- <td> {{ $weekendAttendanceCount }}</td> --}}
+
+                                {{-- <td>
+                                    @if ($attendance->is_holiday)
+                                    Yes
+                                    @else
+                                    No
                                     @endif
                                 </td>
-                    
+                                <td>
+                                    @if ($attendance->is_holiday)
+                                    {{ $attendance->holiday_name }}
+                                    @endif
+                                </td> --}}
+
+
+                                {{-- <td>
+                                    @if ($holiday)
+                                    <span class="badge badge-warning badge-pill float-right"></span>
+                                    @endif
+                                </td>
+
+                                <td>Yes</td>
+                                <td>
+                                    @if ($holiday)
+                                    {{ $holiday->name_holiday }}
+                                    @endif
+                                </td> --}}
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
 @endsection
-
-
-
 </div>
 </div>
 
@@ -200,7 +210,7 @@
 
 <script>
     $(document).ready(function () {
-        console.log("Script is running."); // Check if script is running
+        console.log("Script is running."); 
 
         $('.from-year').datepicker({
             autoclose: true,
