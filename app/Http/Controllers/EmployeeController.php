@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Controller; 
 use DB;
-use Brian2694\Toastr\Facades\Toastr;
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Employee;
 use App\Models\department;
-use App\Models\User;
+use App\Models\SalaryDetail;
+use Illuminate\Http\Request;
 use App\Models\module_permission;
+use Brian2694\Toastr\Facades\Toastr;
+use App\Http\Controllers\Controller; 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class EmployeeController extends Controller
@@ -56,6 +59,20 @@ public function submitSalaryForm(Request $request)
     }
     // Add employee view
     public function createEmployee(){
+      
+        $departments = Department::pluck('department', 'id');
+        $maxId = \App\Models\Employee::max('employee_id');
+
+if ($maxId) {
+    $userId = $maxId;
+    $nextUserId = 'E' . str_pad((int)substr($userId, 1) + 1, 6, '0', STR_PAD_LEFT);
+} else {
+    $nextUserId = 'E000001';
+}
+
+// The rest of your code...
+
+        return view('form.employeeform', compact('nextUserId','departments'));
 
         $departments = department::all();
         
@@ -69,16 +86,80 @@ public function submitSalaryForm(Request $request)
     
     public function saveRecord(Request $request)
 {
-    // Validate the form data
-    $validatedData = $request->validate([
-        // Add validation rules for each form field
+    //   dd($request);
+    $request->validate([
+        'id' => 'required',
+        'd_name' => 'required',
+        'f_name' => 'required',
+        'l_name' => 'required',
         'full_name' => 'required',
-        'email' => 'required|email',
-        'c_number' => 'required',
+        'dob' => 'required',
+        'gender' => 'required',
         'j_title' => 'required',
-        // Add other fields as needed
+        'joinedDate' => 'required',
+        'createdDate' => 'required',
+        'status' => 'required',
+        'account_name' => 'required',
+        'account_number' => 'required|numeric|min:5',
+        'bank_name' => 'required',
+        'branch' => 'required',
+        'basic_Salary' => 'required|numeric',
     ]);
+    
+    try {
+        $this->salary_details(
+            $request->input('id'),
+            $request->input('type'),
+            $request->input('increment_name'),
+            $request->input('increment_amount'),
+            $request->input('deduction_dates')
+        );
+         
 
+        // Create a new employee
+        $employee = new Employee($request->except(['id', 'increment_amount', 'date']));
+        $employee->employee_id = $request->input('id');
+        $employee->basic_Salary = $request->input('basic_Salary');
+        $employee->createdDate = today();
+        $employee->save();
+
+        Toastr::success('Employee record added successfully :)','Success');
+        return redirect()->route('all/employee/list');
+    } catch (\Exception $e) {
+        Toastr::error('An error occurred while saving the record. Please try again.', 'Error');
+        return redirect()->back();
+    }
+}
+
+
+public function salary_details($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
+{
+    if (!is_null($types) && count($types) > 0) {
+        // Debug statements
+        $arraySize = count($types);
+
+        //  dd($dates);
+        try {
+            
+            // Check if all arrays have the same size
+        
+                for ($key = 0; $key < $arraySize; $key++) {
+                    
+                        $salaryDetail = new SalaryDetail([
+                            'employee_id' => $employee_id,
+                            'type' => $types[$key],
+                            'increment_name' => $incrementNames[$key],
+                            'increment_amount' => is_numeric($incrementAmounts[$key]) ? $incrementAmounts[$key] : 0,
+                            'date' => Carbon::createFromFormat('d-m-Y', $dates[$key])->format('Y-m-d'),
+                        ]);
+                        $salaryDetail->timestamps = false;
+                        $salaryDetail->save();
+                    }
+        } catch (\Exception $e) {
+            // Log or handle the exception
+            dd($e->getMessage());
+        }
+    }
     // Create a new employee
     $employee = new Employee;
 
@@ -108,6 +189,8 @@ public function submitSalaryForm(Request $request)
 
     return redirect()->route('all/employee/list');
 }
+
+
     // view edit record
     public function viewRecord($employee_id)
     {

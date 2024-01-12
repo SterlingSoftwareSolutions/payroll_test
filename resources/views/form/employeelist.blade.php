@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-   
+{!! Toastr::message() !!}
     <!-- Page Wrapper -->
     <div class="page-wrapper">
         <!-- Page Content -->
@@ -91,7 +91,7 @@
       <!-- Page Content -->
       <h3 class="page-title">All Employee</h3>
       {{-- message --}}
-            {!! Toastr::message() !!}
+            {{-- {!! Toastr::message() !!} --}}
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-responsive">
@@ -111,7 +111,7 @@
                                 @if(!empty($employees))
                                 @foreach ($employees as $employee)
                                         <tr>
-                                            <td class="text-left">{{ $employee->id}}</td>
+                                            <td class="text-left">{{ $employee->employee_id}}</td>
                                             <td class="text-left">{{ $employee->full_name }}</td>
                                             <td class="text-left">{{ $employee->email }}</td>
                                             <td class="text-left">{{ $employee->c_number}}</td>
