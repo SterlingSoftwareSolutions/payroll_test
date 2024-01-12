@@ -28,6 +28,7 @@ class Employee extends Model
         'account_number',
         'bank_name',
         'branch',
+        'basic_Salary',
     ];
 
     protected $casts=[

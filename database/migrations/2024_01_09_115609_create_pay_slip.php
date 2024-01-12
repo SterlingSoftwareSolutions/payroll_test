@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('pay_slip', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained()->nullOnDelete();
+            $table->string('employee_id')->constrained()->nullOnDelete();
             $table->double('basic_salary');
             $table->double('net_salary');
             $table->double('epf');
