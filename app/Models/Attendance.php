@@ -29,17 +29,16 @@ class Attendance extends Model
         return $this->belongsTo(Employee::class,'employee_id');
     }
 
-     public function holiday()
+    //  public function holiday()
+    // {
+    //     return $this->hasMany(Holiday::class, 'holiday_id', 'date');
+    // }
+
+    public function holiday()
     {
-        return $this->hasMany(Holiday::class, 'holiday_id', 'date');
+        return $this->belongsTo(Holiday::class, 'date', 'date_holiday');
     }
 
-
-
-    public function holidays()
-    {
-        return $this->hasMany(Holiday::class, 'date', 'date');
-    }
 
     protected $casts = [
         'id' => 'string'
