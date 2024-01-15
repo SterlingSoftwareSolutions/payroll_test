@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use DateTime;
 use Validator;
 use DatePeriod;
 use DateInterval;
@@ -25,28 +26,33 @@ class AttendanceController extends Controller
             $filterDep = department::find($request->department);
             $query->where('d_name', $filterDep->department);
         }
-        $employees = Employee::all();
-        $departments  = department::all();
 
         $employees = $query->get();
+        $departments = department::all();
         $holiday = Holiday::all();
         $attendances = Attendance::with('employee', 'holiday')->get();
 
+        $employeeHolidayCounts = [];
 
-        // $attendances->each(function ($attendance) use ($holiday) {
-        //     $attendance->is_holiday = $holiday->contains('date_holiday', $attendance->date);
-        //     $attendance->holiday_name = $attendance->is_holiday ? $holiday->where('date_holiday', $attendance->date)->first()->name_holiday : null;
-        // });
+        $attendances->each(function ($attendance) use ($holiday, &$employeeHolidayCounts) {
+            $attendanceDate = date('d-m-Y', strtotime($attendance->date));
 
-        //dd($attendances->pluck('date', 'name_holiday')->all());
-    
-        $attendances->each(function ($attendance) use ($holiday) {
-        $attendanceDate = date('d-m-Y', strtotime($attendance->date));
-        
-        $attendance->is_holiday = $holiday->contains('date_holiday', $attendanceDate);
-        $attendance->holiday_name = $attendance->is_holiday ? $holiday->where('date_holiday', $attendanceDate)->first()->name_holiday : null;
+            $attendance->is_holiday = $holiday->contains('date_holiday', $attendanceDate);
+
+            $employeeId = $attendance->employee_id;
+            $employeeHolidayCounts[$employeeId] = ($employeeHolidayCounts[$employeeId] ?? 0) + ($attendance->is_holiday ? 1 : 0);
+
+            $punchIn = new DateTime($attendance->punch_in);
+            $punchOut = new DateTime($attendance->punch_out);
+            $workHours = $punchOut->diff($punchIn)->format('%H:%I');
+
+            $regularWorkingHours = new DateTime('10:00');
+            $workHours = new DateTime($punchOut->diff($punchIn)->format('%H:%I'));
+            $overtime = $workHours > $regularWorkingHours ? $workHours->diff($regularWorkingHours)->format('%H:%I') : '00:00';
+
+            $attendance->overtime = $overtime;
         });
-             
+
         $attendanceCounts = DB::table('attendances')
             ->select('employee_id', DB::raw('count(*) as attendance_count'))
             ->groupBy('employee_id')
@@ -56,38 +62,17 @@ class AttendanceController extends Controller
         $curyear = date('Y');
         $totDays = $this->getDaysInMonth($curmnth, $curyear);
         $weekendCount = $this->getWeekendCount($curmnth, $curyear);
-   
+
         $extraDaysCount = $attendances->filter(function ($attendance) {
-        $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
-           
-        return $dayOfWeek == 6 || $dayOfWeek == 0;  //  Saturday (6) or Sunday (0)
+            $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
+            return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
         })->count();
 
-        // $overtimeHours = $attendances->sum(function ($attendance) {
-        //     $regularHours = 10;
-        //     $punchIn = Carbon::parse($attendance->punch_in);
-        //     $punchOut = Carbon::parse($attendance->punch_out);
-        //     $hoursWorked = $punchOut->diffInHours($punchIn);
-        //     $overtime = max($hoursWorked - $regularHours, 0);
-        //     //dd($overtime);
-        //     return $overtime;
-        // });
-        $overtimeHours = $attendances->sum(function ($attendance) {
-            $regularHours = 10;
-
-            $punchIn = Carbon::parse($attendance->punch_in);
-            $punchOut = Carbon::parse($attendance->punch_out);
-
-            $hoursWorked = $punchOut->diffInHours($punchIn);
-
-            $overtime = max($hoursWorked - $regularHours, 0);
-
-            return $overtime;
-        });
-
-        return view('reports.attendance-report', compact(['departments', 'employees', 'attendances',
-         'attendanceCounts', 'holiday', 'curmnth', 'curyear', 'totDays', 
-         'weekendCount', 'extraDaysCount','overtimeHours',]));
+        return view('reports.attendance-report', compact([
+            'departments', 'employees', 'attendances',
+            'attendanceCounts', 'holiday', 'curmnth', 'curyear', 'totDays',
+            'weekendCount', 'extraDaysCount', 'employeeHolidayCounts'
+        ]));
     }
 
 

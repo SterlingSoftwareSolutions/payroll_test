@@ -137,16 +137,19 @@
                                     optional($attendance->employee)->id)->first()->attendance_count ?? 0) -
                                     optional($attendance->employee->holiday)->count() }}</td>
                                 <td>{{ $weekendCount }}</td>
-                                <td>
+                                {{-- <td>
                                     @if ($attendance->is_holiday)
                                     <span class="badge badge-warning badge-pill float-right">{{
                                         $attendance->holiday_name }}</span>
                                     @endif
-                                </td>
+                                </td> --}}
+
+                                <td>{{ $employeeHolidayCounts[$attendance->employee_id] ?? 0 }}</td>
+
                                 <td>{{ $attendanceCounts->where('employee_id',
                                     optional($attendance->employee)->id)->first()->attendance_count ?? 0 }}</td>
 
-                                <td>{{ $overtimeHours }}</td>
+                                <td>{{ $attendance->overtime ?? 'N/A' }}</td>
 
                                 <td>{{ $extraDaysCount }}</td>
                                 {{-- <td> {{ $weekendAttendanceCount }}</td> --}}
