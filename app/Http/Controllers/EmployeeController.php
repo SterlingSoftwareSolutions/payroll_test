@@ -86,7 +86,7 @@ if ($maxId) {
     
     public function saveRecord(Request $request)
 {
-    //   dd($request);
+    //    dd($request);
     $request->validate([
         'id' => 'required',
         'd_name' => 'required',
@@ -115,16 +115,39 @@ if ($maxId) {
             $request->input('deduction_dates')
         );
          
-
         // Create a new employee
-        $employee = new Employee($request->except(['id', 'increment_amount', 'date']));
-        $employee->employee_id = $request->input('id');
-        $employee->basic_Salary = $request->input('basic_Salary');
-        $employee->createdDate = today();
-        $employee->save();
+        try {
+            $employee = new Employee;
+            
+            $employee->employee_id = $request->input('id');
+            $employee->d_name = $request->input('d_name');
+$employee->f_name = $request->input('f_name');
+$employee->email = $request->input('email');
+$employee->nic = $request->input('nic');
+$employee->c_number = $request->input('c_number');
+$employee->description = $request->input('description');
+$employee->l_name = $request->input('l_name');
+$employee->full_name = $request->input('full_name');
+$employee->dob = $request->input('dob');
+$employee->gender = $request->input('gender');
+$employee->j_title = $request->input('j_title');
+$employee->joinedDate = $request->input('joinedDate');
+$employee->status = $request->input('status');
+$employee->account_name = $request->input('account_name');
+$employee->account_number = $request->input('account_number');
+$employee->bank_name = $request->input('bank_name');
+$employee->branch = $request->input('branch');
+$employee->basic_Salary = $request->input('basic_Salary');
+$employee->createdDate = now();
+            $employee->save();
+            // dd($employee);
 
-        Toastr::success('Employee record added successfully :)','Success');
-        return redirect()->route('all/employee/list');
+            Toastr::success('Employee record added successfully :)', 'Success');
+            return redirect()->route('all/employee/list');
+        } catch (\Exception $e) {
+            Toastr::error('An error occurred while saving the employee record. Please try again.', 'Error');
+            return redirect()->back();
+        }
     } catch (\Exception $e) {
         Toastr::error('An error occurred while saving the record. Please try again.', 'Error');
         return redirect()->back();
@@ -137,29 +160,49 @@ public function salary_details($employee_id, $types, $incrementNames, $increment
     if (!is_null($types) && count($types) > 0) {
         // Debug statements
         $arraySize = count($types);
-
-        //  dd($dates);
-        try {
+// dd($arraySize,$types[0]);
+          
+        
             
             // Check if all arrays have the same size
         
                 for ($key = 0; $key < $arraySize; $key++) {
-                    
+                    // dd($key);
+                    try {
                         $salaryDetail = new SalaryDetail([
                             'employee_id' => $employee_id,
                             'type' => $types[$key],
                             'increment_name' => $incrementNames[$key],
-                            'increment_amount' => is_numeric($incrementAmounts[$key]) ? $incrementAmounts[$key] : 0,
+                            'increment_amount' => $incrementAmounts[$key],
                             'date' => Carbon::createFromFormat('d-m-Y', $dates[$key])->format('Y-m-d'),
                         ]);
                         $salaryDetail->timestamps = false;
+                        ($salaryDetail);
                         $salaryDetail->save();
-                    }
-        } catch (\Exception $e) {
+                    } catch (\Exception $e) {
             // Log or handle the exception
+            dd("x");
             dd($e->getMessage());
         }
+                    }
+        
     }
+}
+
+public function EditEmployee($user){
+    //  dd($user);
+    $employee_id= $user;
+                
+        $userList = DB::table('users')->get();
+        $permission_lists = DB::table('permission_lists')->get();
+        $employee = Employee::where('employee_id', $employee_id)->first();
+        $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+
+// dd($salary);
+
+      
+        $departments = department::all();
+    return view('form.edit.employeeedit', compact('employee', 'departments','salary'));
 }
 
 
@@ -176,68 +219,104 @@ public function salary_details($employee_id, $types, $incrementNames, $increment
         return view('form.edit.editemployee',compact('employees','permission'));
     }
     // update record employee
-    public function updateRecord( Request $request)
+    public function updateRecord( Request $request,$employeeId)
     {
-        DB::beginTransaction();
-        try{
-            // update table Employee
-            $updateEmployee = [
-                'employee_id'=>$request->employee_id,
-                'd_name'=>$request->department,
-                'f_name'=>$request->f_name,
-                'l_name'=>$request->l_name,
-                'full_name'=>$request->full_name,
-                'dob'=>$request->dob,
-                'gender'=>$request->gender,
-                'email'=>$request->email,
-                'nic'=>$request->nic,
-                'c_number'=>$request->c_number,
-                'j_title'=>$request->j_title,
-                'joinedDate'=>$request->joinedDate,
-                'createdDate'=>$request->createdDate,
-                'status'=>$request->status,
-                'description'=>$request->description,
-                'account_name'=>$request->account_name,
-                'account_number'=>$request->account_number,
-                'bank_name'=>$request->bank_name,
-                'branch'=>$request->branch,
-            ];
-            // update table user
-            $updateUser = [
-                'employee_id'=>$request->employee_id,
-                'full_name'=>$request->full_name,
-                'email'=>$request->email,
-            ];
+        // dd("x");
 
-            // update table module_permissions
-            for($i=0;$i<count($request->employee_id_permission);$i++)
-            {
-                $UpdateModule_permissions = [
-                    'employee_id' => $request->employee_id,
-                    'module_permission' => $request->permission[$i],
-                    'id'                => $request->id_permission[$i],
-                    'read'              => $request->read[$i],
-                    'write'             => $request->write[$i],
-                    'create'            => $request->create[$i],
-                    'delete'            => $request->delete[$i],
-                    'import'            => $request->import[$i],
-                    'export'            => $request->export[$i],
-                ];
-                module_permission::where('id',$request->id_permission[$i])->update($UpdateModule_permissions);
+        $request->validate([
+            'd_name' => 'required',
+            'f_name' => 'required',
+            'l_name' => 'required',
+            'full_name' => 'required',
+            'dob' => 'required',
+            'gender' => 'required',
+            'j_title' => 'required',
+            'joinedDate' => 'required',
+            'status' => 'required',
+            'account_name' => 'required',
+            'account_number' => 'required|numeric|min:5',
+            'bank_name' => 'required',
+            'branch' => 'required',
+            'basic_Salary' => 'required|numeric',
+        ]);
+    
+        try {
+            $this->salary_details(
+                $request->input('id'),
+                $request->input('type'),
+                $request->input('increment_name'),
+                $request->input('increment_amount'),
+                $request->input('deduction_dates')
+            );
+            // Find the employee by ID
+            $employee = Employee::find($employeeId);
+    
+            if (!$employee) {
+                Toastr::error('Employee not found.', 'Error');
+                return redirect()->back();
             }
-
-            User::where('id',$request->employee_id)->update($updateUser);
-            Employee::where('employye_id',$request->employye_id)->update($updateEmployee);
-        
-            DB::commit();
-            Toastr::success('updated record successfully :)','Success');
+    
+            // Update employee details
+            $employee->d_name = $request->input('d_name');
+            $employee->f_name = $request->input('f_name');
+            $employee->email = $request->input('email');
+            $employee->nic = $request->input('nic');
+            $employee->c_number = $request->input('c_number');
+            $employee->description = $request->input('description');
+            $employee->l_name = $request->input('l_name');
+            $employee->full_name = $request->input('full_name');
+            $employee->dob = $request->input('dob');
+            $employee->gender = $request->input('gender');
+            $employee->j_title = $request->input('j_title');
+            $employee->joinedDate = $request->input('joinedDate');
+            $employee->status = $request->input('status');
+            $employee->account_name = $request->input('account_name');
+            $employee->account_number = $request->input('account_number');
+            $employee->bank_name = $request->input('bank_name');
+            $employee->branch = $request->input('branch');
+            $employee->basic_Salary = $request->input('basic_Salary');
+    
+            // Save the updated employee record
+            $employee->save();
+    
+            Toastr::success('Employee record updated successfully :)', 'Success');
             return redirect()->route('all/employee/list');
-        }catch(\Exception $e){
-            DB::rollback();
-            Toastr::error('updated record fail :)','Error');
+        } catch (\Exception $e) {
+            Toastr::error('An error occurred while updating the employee record. Please try again.', 'Error');
             return redirect()->back();
         }
     }
+    public function updateSalaryDetails($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
+    {
+        $arraySize = count($types);
+    dd($arraySize);
+        // Assuming you are using an Eloquent model named "SalaryDetail" for the "salary_details" table
+        $salaryRecords = SalaryDetail::where('employee_id', $employee_id)->get();
+    
+        // Filter the collection to get records with the specific employee_id
+        $filteredRecords = $salaryRecords->where('employee_id', $employee_id);
+    
+        // Extract only the "id" column values from the filtered records
+        $filteredIds = $filteredRecords->pluck('id')->toArray();
+    
+        // Iterate over the array of "types" and update the corresponding records
+        for ($i = 0; $i < $arraySize; $i++) {
+            // Update the columns in the record with the corresponding "id"
+            $recordToUpdate = SalaryDetail::find($filteredIds[$i]);
+    
+            if ($recordToUpdate) { 
+                $recordToUpdate->type = $types[$i];
+                $recordToUpdate->increment_name = $incrementNames[$i];
+                $recordToUpdate->increment_amount = $incrementAmounts[$i];
+                $recordToUpdate->date = Carbon::createFromFormat('d-m-Y', $dates[$i])->format('Y-m-d');
+    
+                // Save the updated record
+                $recordToUpdate->save();
+            }
+        }
+    }
+        
+
     // delete record
     public function deleteRecord($employee_id)
     {

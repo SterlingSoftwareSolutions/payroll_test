@@ -52,7 +52,8 @@ border-color: red !important;
     <!-- resources/views/form.blade.php -->
     <div class="modal-body">
         {{-- <form action="{{ route('all/employee/save') }}" method="POST" style="border:1px solid #ccc;"> --}}
-        <form action="{{ route('all/employee/save') }}" method="POST" onsubmit="return validateForm()" style="border:1px solid #ccc;">
+        <form action="{{ route('all/employee/update', ['employeeId' => $employee->id]) }}" method="POST" onsubmit="return validateForm()" style="border:1px solid #ccc;">
+        {{-- <form action="{{ route('all/employee/save') }}" method="POST" onsubmit="return validateForm()" style="border:1px solid #ccc;"> --}}
             @csrf
             <h3 style="border: 1px solid #ccc; padding-top:30px; padding-bottom: 30px; padding-left:20px; ">Personal
                 Details</h3>
@@ -65,7 +66,7 @@ border-color: red !important;
                     <div class="form-group">
                         <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="id"
-                            name="id" value="{{ $nextUserId }}" readonly>
+                            name="id" value="{{ $employee->employee_id}}" readonly>
                         </select>
                     </div>
                 </div>
@@ -73,50 +74,51 @@ border-color: red !important;
                     <div class="form-group">
                         <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
                         <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name">
-                            @foreach($departments as $department => $name)
-                                <option value="{{ $department }}">{{ $name }}</option>
+                            @foreach($departments as $department)
+                                <option value="{{ $department->id }}" @if($employee->d_name == $department->id) selected @endif>
+                                    {{ $department->department }}
+                                </option>
                             @endforeach
                         </select>
-                    </div>
+                    </div>                    
                 </div>                
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-form-label">First Name <span class="text-danger">*</span></label>
                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="f_name"
-                            name="f_name" required>
+                            name="f_name" value="{{$employee->f_name}}" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="col-form-label">Larst Name <span class="text-danger">*</span></label>
                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="l_name"
-                            name="l_name" required>
+                            name="l_name" value="{{$employee->l_name}}" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="col-form-label">Full Name <span class="text-danger">*</span></label>
                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="full_name"
-                            name="full_name" required>
+                            name="full_name" value="{{$employee->full_name}}" required>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-form-label">DOB <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" tabindex="-1" aria-hidden="true" id="dob" name="dob" required>
+                            <input class="form-control datetimepicker" tabindex="-1" aria-hidden="true" id="dob" name="dob" value="{{$employee->dob}}" required>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="gender"
-                            name="gender">
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="gender" name="gender">
+                            <option value="male" @if($employee->gender == 'male') selected @endif>Male</option>
+                            <option value="female" @if($employee->gender == 'female') selected @endif>Female</option>
                         </select>
-                    </div>
+                    </div>                    
                 </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
@@ -145,7 +147,7 @@ border-color: red !important;
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="email" name="email" required>
+                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="email" name="email" value="{{$employee->email}}" required>
                         <div class="invalid-feedback">
                             <!-- This will display the custom validation message -->
                             Please enter a valid email address.
@@ -186,7 +188,7 @@ border-color: red !important;
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-form-label">NIC <span class="text-danger">*</span></label>
-                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="nic" name="nic" required>
+                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="nic" name="nic" value="{{$employee->nic}}" required>
                         <div class="invalid-feedback">
                             <!-- This will display the custom validation message -->
                             Please enter a valid NIC.
@@ -227,7 +229,7 @@ border-color: red !important;
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-form-label">Contact No <span class="text-danger">*</span></label>
-                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="c_number" name="c_number" required>
+                        <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="c_number" name="c_number" value="{{$employee->c_number}}" required>
                         <div class="invalid-feedback">
                             <!-- This will display the custom validation message -->
                             Please enter a valid contact number starting with "0" and having 10 digits.
@@ -245,16 +247,16 @@ border-color: red !important;
                     <div class="form-group">
                         <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="j_title"
-                            name="j_title" required>
+                            name="j_title"  value="{{$employee->j_title}}" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="col-form-label">Joined Date <span class="text-danger">*</span></label>
                         <div class="cal-icon">
-                            <input class="form-control datetimepicker" type="text" id="joinedDate" name="joinedDate" required>
+                            <input class="form-control datetimepicker" type="text" id="joinedDate" name="joinedDate" value="{{ $employee->joinedDate }}" required>
                         </div>
-                    </div>
+                    </div>                    
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -278,13 +280,12 @@ border-color: red !important;
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="status"
-                            name="status">
-                            <option value="active">Active</option>
-                            <option value="inactiv">Inactive</option>
-                            <option value="disable">Disable</option>
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="status" name="status">
+                            <option value="active" @if($employee->status == 'active') selected @endif>Active</option>
+                            <option value="inactive" @if($employee->status == 'inactive') selected @endif>Inactive</option>
+                            <option value="disable" @if($employee->status == 'disable') selected @endif>Disable</option>
                         </select>
-                    </div>
+                    </div>                    
                 </div>
                 <style>
                     .text-box {
@@ -302,10 +303,10 @@ border-color: red !important;
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="col-form-label">Description</label>
-                        <textarea class="form-control" style="width: 100%; height:100%" tabindex="-1" aria-hidden="true"
-                            id="description" name="description"></textarea>
+                        <textarea class="form-control" style="width: 100%; height: 100%" tabindex="-1" aria-hidden="true"
+                                  id="description" name="description">{{ $employee->description }}</textarea>
                     </div>
-                </div>
+                </div>                
             </div>
 
             <br><br><br>
@@ -334,7 +335,7 @@ border-color: red !important;
                                                 <label class="col-form-label">Account Name <span
                                                         class="text-danger">*</span></label>
                                                 <input class="form-control" style="width: 100%;" tabindex="-1"
-                                                    aria-hidden="true" id="account_name" name="account_name" required>
+                                                    aria-hidden="true" id="account_name" name="account_name"  value="{{$employee->account_name}}" required>
                                             </div>
                                         </div>
                                         <script>
@@ -357,7 +358,7 @@ border-color: red !important;
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">Account Number <span class="text-danger">*</span></label>
-                                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="account_number" name="account_number" required>
+                                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="account_number" name="account_number"value="{{$employee->account_number}}" required>
                                                 <div class="invalid-feedback">
                                                     <!-- This will display the custom validation message -->
                                                     Please enter a valid account number with at least 5 digits.
@@ -396,7 +397,7 @@ border-color: red !important;
                                                 <label class="col-form-label">Bank Name <span
                                                         class="text-danger">*</span></label>
                                                 <input class="form-control" style="width: 100%;" tabindex="-1"
-                                                    aria-hidden="true" id="bank_name" name="bank_name" required>
+                                                    aria-hidden="true" id="bank_name" name="bank_name"  value="{{$employee->bank_name}}" required>
                                             </div>
                                         </div>
                                         <div class="col-sm-6">
@@ -404,7 +405,7 @@ border-color: red !important;
                                                 <label class="col-form-label">Branch <span
                                                         class="text-danger">*</span></label>
                                                 <input class="form-control" style="width: 100%;" tabindex="-1"
-                                                    aria-hidden="true" id="branch" name="branch" required>
+                                                    aria-hidden="true" id="branch" name="branch" value="{{$employee->branch}}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -458,7 +459,7 @@ border-color: red !important;
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="col-form-label">Basic Salary <span class="text-danger">*</span></label>
-                                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="basic_Salary" name="basic_Salary" type="number" required>
+                                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="basic_Salary" name="basic_Salary" type="number" value="{{$employee->basic_Salary}}" required>
                                                 <div class="invalid-feedback">
                                                     <!-- This will display the custom validation message -->
                                                     Please enter a valid basic salary with only numeric characters.
@@ -472,50 +473,49 @@ border-color: red !important;
                                                 this.parentElement.classList.add('was-validated');
                                             });
                                         </script>
-
-                                            <div class="increment-container">
-                                                <!-- Default increment form -->
-                                                <button type="button" class="btn btn" onclick="addIncrement()"
-                                                    style="color: black;">
-                                                    <h4 style="color: #05C46B;">
-                                                        <span><i class="fa-solid fa-circle-plus"
-                                                                style="color: #05a31f;"></i></span>
-                                                        Add more..
-                                                    </h4>
-                                                </button>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <label for="type" class="col-form-label">Type :</label>
-                                                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="type" name="type[]">
-                                                            <option value="" disabled selected>Select a type</option> <!-- Placeholder option -->
-                                                            <option value="increments">Increments</option>
-                                                            <option value="deductions">Deductions</option>
-                                                        </select>
-                                                    </div>                                                    
-                                                    <div class="col-sm-6">
-                                                        <label for="incrementName1" class="col-form-label">Name
-                                                            :</label>
-                                                            <input type="text" class="form-control" id="incrementName1"
-                                                                name="increment_name[]">
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <label for="incrementAmount1" class="col-form-label">Amount :</label>
-                                                        <input type="number" class="form-control" id="incrementAmount1" name="increment_amount[]" pattern="[0-9]*">
-                                                        <div class="invalid-feedback">
-                                                            <!-- This will display the custom validation message -->
-                                                            Please enter a valid amount with only numeric characters.
-                                                        </div>
-                                                    </div>                                                    
-                                                    <div class="col-sm-6">
-                                                        <label for="deductionDate1" class="col-form-label">Date :<span style="color: darkgray"> (dd-mm-yyyy)</span></label>
-                                                            <div class="cal-icon">
-                                                                <input class="form-control datetimepicker" type="text"
-                                                                    id="deductionDate1" name="deduction_dates[]">
-                                                            </div>
-                                                    </div>
-                                                </div>
+                                       @foreach ($salary as $index => $record)
+                                       <div class="increment-container">
+                                           
+                                           <div class="row">
+                                               <div class="col-sm-6">
+                                                   <label for="type{{$index}}" class="col-form-label">Type :</label>
+                                                   <select class="form-control" style="width: 100%;" id="type{{$index}}" name="type[]">
+                                                       <option value="" disabled>Select a type</option>
+                                                       <option value="increments" @if(old('type.'.$index, $record->type) == 'increments') selected @endif>Increments</option>
+                                                       <option value="deductions" @if(old('type.'.$index, $record->type) == 'deductions') selected @endif>Deductions</option>
+                                                   </select>
+                                               </div>
+                                               <div class="col-sm-6">
+                                                   <label for="incrementName{{$index}}" class="col-form-label">Name :</label>
+                                                   <input type="text" class="form-control" id="incrementName{{$index}}" name="increment_name[]" value="{{ old('increment_name.'.$index, $record->increment_name) }}">
+                                               </div>
+                                           </div>
+                                           <div class="row">
+                                               <div class="col-sm-6">
+                                                   <label for="incrementAmount{{$index}}" class="col-form-label">Amount :</label>
+                                                   <input type="number" class="form-control" id="incrementAmount{{$index}}" name="increment_amount[]" value="{{ old('increment_amount.'.$index, $record->increment_amount) }}">
+                                                   <div class="invalid-feedback">
+                                                       Please enter a valid amount with only numeric characters.
+                                                   </div>
+                                               </div>
+                                               <div class="col-sm-6">
+                                                   <label for="deductionDate{{$index}}" class="col-form-label">Date :<span style="color: darkgray"> (dd-mm-yyyy)</span></label>
+                                                   <div class="cal-icon">
+                                                       <input class="form-control datetimepicker" type="text" id="deductionDate{{$index}}" name="deduction_dates[]" value="{{ old('deduction_dates.'.$index, $record->date) }}">
+                                                   </div>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   @endforeach
+                                   <div class="increment-container">
+                                    <!-- Default increment form -->
+                                    <button type="button" class="btn btn" onclick="addIncrement()" style="color: black;">
+                                        <h4 style="color: #05C46B;">
+                                            <span><i class="fa-solid fa-circle-plus" style="color: #05a31f;"></i></span>
+                                            Add more..
+                                        </h4>
+                                    </button>
+                                   </div>
                                                 <script>
                                                     function validateForm() {
                                                         var typeSelect = document.getElementById("type");
