@@ -178,16 +178,20 @@ Route::controller(JobController::class)->group(function () {
  
 // ----------------------------- form employee ------------------------------//
 Route::controller(EmployeeController::class)->group(function () {
+    
     // Example route definitions (update as needed)
     Route::get('all/employee/card', 'cardAllEmployee')->middleware('auth')->name('all/employee/card');
     Route::get('all/employee/list', 'listAllEmployee')->middleware('auth')->name('all/employee/list');
     Route::post('all/employee/save', 'saveRecord')->middleware('auth')->name('all/employee/save');
     Route::get('all/employee/view/edit/{employee_id}', 'viewRecord');
-    Route::post('all/employee/update', 'updateRecord')->middleware('auth')->name('all/employee/update');
+    // Route::post('all/employee/update', 'updateRecord')->middleware('auth')->name('all/employee/update');
     Route::get('all/employee/delete/{employee_id}', 'deleteRecord')->middleware('auth');
     Route::post('all/employee/search', 'employeeSearch')->name('all/employee/search');
     Route::post('all/employee/list/search', 'employeeListSearch')->name('all/employee/list/search');
     Route::get('form/employee/new','createEmployee')->middleware('auth')->name('form/employee/new');
+    Route::put('form/employee/edit/{user}', [EmployeeController::class, 'EditEmployee'])->name('form.employee.edit');
+    Route::get('form/employee/edit/{user}', [EmployeeController::class, 'EditEmployee'])->name('form.employee.edit');
+    Route::post('all/employee/update/{employeeId}', 'updateRecord')->middleware('auth')->name('all/employee/update');
 
     Route::get('form/departments/page', 'index')->middleware('auth')->name('form/departments/page');    
     Route::post('form/departments/save', 'saveRecordDepartment')->middleware('auth')->name('form/departments/save');    

@@ -73,8 +73,8 @@ border-color: red !important;
                     <div class="form-group">
                         <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
                         <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name">
-                            @foreach($departments as $id => $name)
-                                <option value="{{ $id }}">{{ $name }}</option>
+                            @foreach($departments as $department => $name)
+                                <option value="{{ $department }}">{{ $name }}</option>
                             @endforeach
                         </select>
                     </div>
