@@ -221,8 +221,7 @@ public function EditEmployee($user){
     // update record employee
     public function updateRecord( Request $request,$employeeId)
     {
-        // dd("x");
-
+//  dd($request);
         $request->validate([
             'd_name' => 'required',
             'f_name' => 'required',
@@ -241,7 +240,7 @@ public function EditEmployee($user){
         ]);
     
         try {
-            $this->salary_details(
+            $this->updateSalaryDetails(
                 $request->input('id'),
                 $request->input('type'),
                 $request->input('increment_name'),
@@ -287,35 +286,64 @@ public function EditEmployee($user){
         }
     }
     public function updateSalaryDetails($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
-    {
-        $arraySize = count($types);
-    dd($arraySize);
-        // Assuming you are using an Eloquent model named "SalaryDetail" for the "salary_details" table
-        $salaryRecords = SalaryDetail::where('employee_id', $employee_id)->get();
-    
-        // Filter the collection to get records with the specific employee_id
-        $filteredRecords = $salaryRecords->where('employee_id', $employee_id);
-    
-        // Extract only the "id" column values from the filtered records
-        $filteredIds = $filteredRecords->pluck('id')->toArray();
-    
-        // Iterate over the array of "types" and update the corresponding records
-        for ($i = 0; $i < $arraySize; $i++) {
-            // Update the columns in the record with the corresponding "id"
-            $recordToUpdate = SalaryDetail::find($filteredIds[$i]);
-    
-            if ($recordToUpdate) { 
-                $recordToUpdate->type = $types[$i];
-                $recordToUpdate->increment_name = $incrementNames[$i];
-                $recordToUpdate->increment_amount = $incrementAmounts[$i];
-                $recordToUpdate->date = Carbon::createFromFormat('d-m-Y', $dates[$i])->format('Y-m-d');
-    
-                // Save the updated record
-                $recordToUpdate->save();
+{
+    $arraySize = count($dates);
+
+    // Fetch existing salary records for the employee
+    $salaryRecords = SalaryDetail::where('employee_id', $employee_id)->get();
+
+    // Filter the collection to get records with the specific employee_id
+    $filteredRecords = $salaryRecords->where('employee_id', $employee_id);
+
+    // Extract only the "id" column values from the filtered records
+    $filteredIds = $filteredRecords->pluck('id')->toArray();
+
+    // Iterate over the array of "types" and update or add records
+    for ($i = 0; $i < $arraySize; $i++) {
+        // Check if there is a record to update
+        if (isset($filteredIds[$i])) {
+            if ($incrementAmounts[$i] == 0) {
+                // Delete the record if $incrementAmounts is 0
+                SalaryDetail::destroy($filteredIds[$i]);
+            } else {
+                // Update the columns in the existing record with the corresponding "id"
+                $recordToUpdate = SalaryDetail::find($filteredIds[$i]);
+
+                if ($recordToUpdate) {
+                    // Sanitize and update the record fields
+                    $recordToUpdate->type = $types[$i];
+                    $recordToUpdate->increment_name = $incrementNames[$i];
+                    $recordToUpdate->increment_amount = $incrementAmounts[$i];
+
+                    // Validate and format the date
+                    $formattedDate = Carbon::createFromFormat('d-m-Y', $dates[$i]);
+                    if ($formattedDate) {
+                        $recordToUpdate->date = $formattedDate->format('Y-m-d');
+                    } else {
+                        // Handle date format error, e.g., throw an exception
+                        // return response()->json(['error' => 'Invalid date format.'], 400);
+                    }
+
+                    // Save the updated record
+                    $recordToUpdate->save();
+                }
+            }
+        } else {
+            if ($incrementAmounts[$i] != 0) {
+                // Create a new record for cases where there is no corresponding record to update
+                SalaryDetail::create([
+                    'employee_id' => $employee_id,
+                    'type' => $types[$i],
+                    'increment_name' => $incrementNames[$i],
+                    'increment_amount' => $incrementAmounts[$i],
+                    'date' => Carbon::createFromFormat('d-m-Y', $dates[$i])->format('Y-m-d'),
+                ]);
             }
         }
     }
-        
+}
+
+    
 
     // delete record
     public function deleteRecord($employee_id)
