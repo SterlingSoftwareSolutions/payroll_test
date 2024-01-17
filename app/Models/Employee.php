@@ -24,7 +24,7 @@ class Employee extends Model
         'joinedDate',
         'createdDate',
         'status',
-        'description',
+        'address',
         'account_name',
         'account_number',
         'bank_name',
