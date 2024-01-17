@@ -125,7 +125,7 @@ $employee->f_name = $request->input('f_name');
 $employee->email = $request->input('email');
 $employee->nic = $request->input('nic');
 $employee->c_number = $request->input('c_number');
-$employee->description = $request->input('description');
+$employee->address = $request->input('address');
 $employee->l_name = $request->input('l_name');
 $employee->full_name = $request->input('full_name');
 $employee->dob = $request->input('dob');
@@ -261,7 +261,7 @@ public function EditEmployee($user){
             $employee->email = $request->input('email');
             $employee->nic = $request->input('nic');
             $employee->c_number = $request->input('c_number');
-            $employee->description = $request->input('description');
+            $employee->address = $request->input('address');
             $employee->l_name = $request->input('l_name');
             $employee->full_name = $request->input('full_name');
             $employee->dob = $request->input('dob');
