@@ -245,6 +245,11 @@ Route::controller(AttendanceController::class)->group(function () {
     Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
     Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
     Route::post('form/attendance/update', 'updateRecordAttendance')->middleware('auth')->name('form/attendance/update');
+
+    Route::get('form/attendance/download', 'downloardAtte')->middleware('auth')->name('form/attendance/download'); //for attendance download
+    Route::get('form/attendance/pdf', 'AttendanceController@downloadPDF');
+
+    // Route::get('form/attendance/search/page', 'getDataByYearMonth')->middleware('auth')->name('form.attendance.search.page');
 });
 
 
