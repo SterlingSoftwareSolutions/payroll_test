@@ -513,7 +513,6 @@
                 $('#e_email').val(_this.find('.email').text());
                 $('#e_phone_number').val(_this.find('.phone_number').text());
                 $('#e_image').val(_this.find('.image').text());
-
                 var name_role = (_this.find(".role_name").text());
                 var _option = '<option selected value="' + name_role + '">' + _this.find('.role_name').text() +
                     '</option>'
