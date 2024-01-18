@@ -2,6 +2,11 @@
 @section('content')
 
 
+<!-- Add this to the head section of your HTML file -->
+<script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -57,22 +62,15 @@
                             </ul>
                         </div>
 
-                        <button type="button" class="btn btn-success"
-                            style="background-color: #05c46b; width: 200px;">Print Salary Report</button>
+                        {{-- <button type="button" class="btn btn-success"
+                            style="background-color: #05c46b; width: 200px;">Print Salary Report</button> --}}
+
+                          <button onclick="downloadPDF()" class="btn btn-primary">Download PDF</button>     
+                            
                     </div>
-
-
                 </div>
-
-
-
             </div>
-
-
-
         </div>
-
-
 
         <!-- Search Filter -->
         <form method="GET">
@@ -130,7 +128,41 @@
         </form>
 
 
-        <table class="table table-striped custom-table datatable">
+
+            <table class="table table-striped custom-table datatable" id="attendanceTable">
+                {{-- <table class="table table-striped custom-table datatable"> --}}
+                    <thead>
+                       
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Employee Name</th>
+                            <th>Bank Name</th>
+                            <th>Branch Name</th>
+                            <th>Account No</th>
+                            <th>Net Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($employees as $employee)
+                        <tr>
+                            <td>{{ $employee->id }}</td>
+                            <td>{{ $employee->full_name }}</td>
+                            <td>{{ $employee->bank_name }}</td>
+                            <td>{{ $employee->branch }}</td>
+                            <td>{{ $employee->account_number }}</td>
+                            <td>Net Salary</td>   <!--need to calaculation-->
+        
+        
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </table>
+        </div>
+        
+
+
+        {{-- <table class="table table-striped custom-table datatable">
             <thead>
                 <tr>
                     <th>Employee ID</th>
@@ -155,7 +187,7 @@
                 </tr>
                 @endforeach
             </tbody>
-        </table>
+        </table> --}}
 
 
 
@@ -185,6 +217,7 @@
 
                 <table>
                     <thead>
+                       
                         <tr>
                             <th>Employee ID</th>
                             <th>Employee Name</th>
@@ -229,4 +262,22 @@
         format: 'MM'
         });
 
+</script>
+
+
+
+<script>
+    function downloadPDF() {
+        var element = document.getElementById('attendanceTable');
+
+        var options = {
+            margin: 10,
+            filename: 'Salary_Report.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', title: 'Salary Report' }
+        };
+
+        html2pdf(element, options);
+    }
 </script>

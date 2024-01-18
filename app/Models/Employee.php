@@ -55,6 +55,15 @@ public function getNameAttribute()
     return $this->attributes['employee_name']; // adjust based on your attribute name
 }
 
+public function attendances()
+{
+    return $this->hasMany(Attendance::class);
+}
+
+public function department()
+{
+    return $this->belongsTo(Department::class);
+}
 
 
    
