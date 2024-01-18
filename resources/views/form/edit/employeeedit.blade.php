@@ -39,10 +39,10 @@ border-color: red !important;
             <div class="page-header">
                 <div class="row align-lists-center">
                     <div class="col">
-                        <h3 class="page-title">Add Employee</h3>
+                        <h3 class="page-title">Edit Employee</h3>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index.html">Employees</a></li>
-                            <li class="breadcrumb-item active">Add Employee</li>
+                            <li class="breadcrumb-item active">Edit Employee</li>
                         </ul>
                     </div>
                 </div>
@@ -315,9 +315,9 @@ border-color: red !important;
                 <div class="row" style="padding-left:20px; padding-right:20px;">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label class="col-form-label">Description</label>
-                            <textarea class="form-control" style="width: 100%; height: 100%" tabindex="-1" aria-hidden="true" id="description"
-                                name="description">{{ $employee->description }}</textarea>
+                            <label class="col-form-label">Address</label>
+                            <textarea class="form-control" style="width: 100%; height: 100%" tabindex="-1" aria-hidden="true" id="address"
+                                name="address">{{ $employee->address }}</textarea>
                         </div>
                     </div>
                 </div>

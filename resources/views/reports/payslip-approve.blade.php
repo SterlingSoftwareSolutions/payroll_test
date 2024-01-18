@@ -140,7 +140,7 @@
                         <tr>
                             <th>Employee ID</th>
                             <th>Employee Name</th>
-                            <th>Position</th>
+                            <th>Month</th>
                             <th>Net Salary</th>
                             <th class="text-right">Action</th>
                         </tr>
@@ -150,7 +150,8 @@
                         <tr>
                             <td>{{ $employee->id }}</td>
                             <td>{{ $employee->full_name }}</td>
-                            <td>{{ $employee->j_title }}</td>
+                            {{-- <td>{{ $employee->j_title }}</td> --}}
+                            <td>{{ date('F Y') }}</td>
                             <td>Net Salary</td>
                             <!--need to calaculation-->
                             {{-- <td class="text-right">
@@ -194,7 +195,7 @@
 
     <!----------------------------------------------------------------------------------------->
     <!-- Edit payslip Modal -->
-<div class="modal custom-modal fade" id="edit_payslip" role="dialog">
+    <div class="modal custom-modal fade" id="edit_payslip" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -204,7 +205,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-    
+
                     <form action="{{ route('form/payslip/update') }}" method="POST">
                         @csrf
                         <div class="form-row">
@@ -221,69 +222,71 @@
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label for="Earnings" style="color: #ff0404;">Earnings</label>
-    
+
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="basicSalary">Basic Salary</label>
                                     <input type="text" class="form-control" id="earnings" name="earnings">
-    
+
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="incentive">Incentive</label>
                                     <input type="text" class="form-control" id="deductions" name="deductions">
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="holidayPayment">Holiday Payment</label>
                                     <input type="text" class="form-control" id="basicSalary" name="basicSalary">
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="ot">OT</label>
                                     <input type="text" class="form-control" id="epf" name="epf">
                                 </div>
                             </div>
-    
+
                             <!-- Right Column -->
                             <div class="col-md-6">
                                 <div class="form-group col-md-12">
                                     <label for="label1">Net Salary</label>
                                     <input type="text" class="form-control" id="input1" name="input1">
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="deductions" style="color: #ff0404;">Deductions</label>
-    
-    
+
+
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="label1">EPF</label>
                                     <input type="text" class="form-control" id="input1" name="input1">
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="label2">ETF</label>
                                     <input type="text" class="form-control" id="input2" name="input2">
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="label1">Late Deduction</label>
                                     <input type="text" class="form-control" id="input1" name="input1">
                                 </div>
-    
+
                                 <div class="form-group col-md-12">
                                     <label for="label2">Leave</label>
                                     <input type="text" class="form-control" id="input2" name="input2">
                                 </div>
                     </form>
                 </div>
-                <div class="form-group col-md-12 d-flex justify-content-center" style="flex-direction: row; width: 400px;">
+                <div class="form-group col-md-12 d-flex justify-content-center"
+                    style="flex-direction: row; width: 400px;">
                     <button type="button" class="btn btn-success"
                         style="background-color: #ff0404; width: 150px;">Approve</button>
-                    <button type="button" class="btn btn-success" style="background-color: #05c46b; width: 150px;">Approve &
+                    <button type="button" class="btn btn-success"
+                        style="background-color: #05c46b; width: 150px;">Approve &
                         Print</button>
                 </div>
             </div>

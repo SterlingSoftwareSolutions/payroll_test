@@ -90,62 +90,62 @@ class EmployeeController extends Controller
     // save data employee
 
     public function saveRecord(Request $request)
-    {
-        //    dd($request);
-        $request->validate([
-            'id' => 'required',
-            'd_name' => 'required',
-            'f_name' => 'required',
-            'l_name' => 'required',
-            'full_name' => 'required',
-            'dob' => 'required',
-            'gender' => 'required',
-            'j_title' => 'required',
-            'joinedDate' => 'required',
-            'createdDate' => 'required',
-            'status' => 'required',
-            'account_name' => 'required',
-            'account_number' => 'required|numeric|min:5',
-            'bank_name' => 'required',
-            'branch' => 'required',
-            'basic_Salary' => 'required|numeric',
-        ]);
+{
+    //    dd($request);
+    $request->validate([
+        'id' => 'required',
+        'd_name' => 'required',
+        'f_name' => 'required',
+        'l_name' => 'required',
+        'full_name' => 'required',
+        'dob' => 'required',
+        'gender' => 'required',
+        'j_title' => 'required',
+        'joinedDate' => 'required',
+        'createdDate' => 'required',
+        'status' => 'required',
+        'account_name' => 'required',
+        'account_number' => 'required|numeric|min:5',
+        'bank_name' => 'required',
+        'branch' => 'required',
+        'basic_Salary' => 'required|numeric',
+    ]);
 
+    try {
+        $this->salary_details(
+            $request->input('id'),
+            $request->input('type'),
+            $request->input('increment_name'),
+            $request->input('increment_amount'),
+            $request->input('deduction_dates')
+        );
+
+        // Create a new employee
         try {
-            $this->salary_details(
-                $request->input('id'),
-                $request->input('type'),
-                $request->input('increment_name'),
-                $request->input('increment_amount'),
-                $request->input('deduction_dates')
-            );
+            $employee = new Employee;
 
-            // Create a new employee
-            try {
-                $employee = new Employee;
-
-                $employee->employee_id = $request->input('id');
-                $employee->d_name = $request->input('d_name');
-                $employee->f_name = $request->input('f_name');
-                $employee->email = $request->input('email');
-                $employee->nic = $request->input('nic');
-                $employee->c_number = $request->input('c_number');
-                $employee->description = $request->input('description');
-                $employee->l_name = $request->input('l_name');
-                $employee->full_name = $request->input('full_name');
-                $employee->dob = $request->input('dob');
-                $employee->gender = $request->input('gender');
-                $employee->j_title = $request->input('j_title');
-                $employee->joinedDate = $request->input('joinedDate');
-                $employee->status = $request->input('status');
-                $employee->account_name = $request->input('account_name');
-                $employee->account_number = $request->input('account_number');
-                $employee->bank_name = $request->input('bank_name');
-                $employee->branch = $request->input('branch');
-                $employee->basic_Salary = $request->input('basic_Salary');
-                $employee->createdDate = now();
-                $employee->save();
-                // dd($employee);
+            $employee->employee_id = $request->input('id');
+            $employee->d_name = $request->input('d_name');
+$employee->f_name = $request->input('f_name');
+$employee->email = $request->input('email');
+$employee->nic = $request->input('nic');
+$employee->c_number = $request->input('c_number');
+$employee->description = $request->input('description');
+$employee->l_name = $request->input('l_name');
+$employee->full_name = $request->input('full_name');
+$employee->dob = $request->input('dob');
+$employee->gender = $request->input('gender');
+$employee->j_title = $request->input('j_title');
+$employee->joinedDate = $request->input('joinedDate');
+$employee->status = $request->input('status');
+$employee->account_name = $request->input('account_name');
+$employee->account_number = $request->input('account_number');
+$employee->bank_name = $request->input('bank_name');
+$employee->branch = $request->input('branch');
+$employee->basic_Salary = $request->input('basic_Salary');
+$employee->createdDate = now();
+            $employee->save();
+            // dd($employee);
 
                 Toastr::success('Employee record added successfully :)', 'Success');
                 return redirect()->route('all/employee/list');
@@ -357,7 +357,7 @@ $attendances = Attendance::where('employee_id', $findid)->get();
             $employee->email = $request->input('email');
             $employee->nic = $request->input('nic');
             $employee->c_number = $request->input('c_number');
-            $employee->description = $request->input('description');
+            $employee->address = $request->input('address');
             $employee->l_name = $request->input('l_name');
             $employee->full_name = $request->input('full_name');
             $employee->dob = $request->input('dob');

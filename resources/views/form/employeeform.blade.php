@@ -88,7 +88,7 @@ border-color: red !important;
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="col-form-label">Larst Name <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Last Name <span class="text-danger">*</span></label>
                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="l_name"
                             name="l_name" required>
                     </div>
@@ -301,9 +301,9 @@ border-color: red !important;
             <div class="row" style="padding-left:20px; padding-right:20px;">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label class="col-form-label">Description</label>
+                        <label class="col-form-label">Address</label>
                         <textarea class="form-control" style="width: 100%; height:100%" tabindex="-1" aria-hidden="true"
-                            id="description" name="description"></textarea>
+                            id="address" name="address"></textarea>
                     </div>
                 </div>
             </div>

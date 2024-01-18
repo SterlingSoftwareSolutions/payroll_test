@@ -24,7 +24,7 @@ class Employee extends Model
         'joinedDate',
         'createdDate',
         'status',
-        'description',
+        'address',
         'account_name',
         'account_number',
         'bank_name',
@@ -55,6 +55,15 @@ public function getNameAttribute()
     return $this->attributes['employee_name']; // adjust based on your attribute name
 }
 
+public function attendances()
+{
+    return $this->hasMany(Attendance::class);
+}
+
+public function department()
+{
+    return $this->belongsTo(Department::class);
+}
 
 
    

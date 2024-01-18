@@ -111,8 +111,9 @@
                         {{-- <li><a class="{{set_active(['form/attendance/report/pdf/page'])}}"
                                 href="{{ route('form/attendance/report/pdf/page') }}"> Salary Report </a></li> --}}
                                 <li><a class="{{set_active(['form/attendance/report/page'])}}" href="{{ route('form.attendance.index') }}"> Attendance Report </a></li>
-                                <li><a class="{{set_active(['salary/report'])}}" href="{{ route('salary/report') }}"> Salary Report </a></li>
+                                {{-- <li><a class="{{set_active(['salary/report'])}}" href="{{ route('salary/report') }}"> Salary Report </a></li> --}}
                                 <li><a class="{{set_active(['form/payslip/approve'])}}" href="{{ route('form/payslip/approve') }}"> Payslip Approve </a></li>
+                                <li><a class="{{set_active(['salary/report'])}}" href="{{ route('salary/report') }}"> Salary Report </a></li>
 
                     </ul>
                 </li>

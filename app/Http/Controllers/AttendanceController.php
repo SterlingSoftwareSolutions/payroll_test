@@ -9,6 +9,7 @@ use DatePeriod;
 use DateInterval;
 use App\Models\Holiday;
 use App\Models\Employee;
+use Barryvdh\DomPDF\PDF;
 use App\Models\Attendance;
 use App\Models\department;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class AttendanceController extends Controller
 {
+
+
     public function index(Request $request)
     {
         $query = Employee::query();
@@ -26,13 +29,20 @@ class AttendanceController extends Controller
             $filterDep = department::find($request->department);
             $query->where('d_name', $filterDep->department);
         }
+        if ($request->year) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        if ($request->month) {
+            $query->whereMonth('created_at', $request->month);
+        }
 
         $employees = $query->get();
         $departments = department::all();
         $holiday = Holiday::all();
         $attendances = Attendance::with('employee', 'holiday')->get();
 
-        $employeeHolidayCounts = [];
+        $employeeHolidayCounts = [];                //for holidays count
 
         $attendances->each(function ($attendance) use ($holiday, &$employeeHolidayCounts) {
             $attendanceDate = date('d-m-Y', strtotime($attendance->date));
@@ -53,7 +63,7 @@ class AttendanceController extends Controller
             $attendance->overtime = $overtime;
         });
 
-        $attendanceCounts = DB::table('attendances')
+        $attendanceCounts = DB::table('attendances')                    //attendance count
             ->select('employee_id', DB::raw('count(*) as attendance_count'))
             ->groupBy('employee_id')
             ->get();
@@ -68,10 +78,29 @@ class AttendanceController extends Controller
             return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
         })->count();
 
+
+        
+        $departments = department::select('id','department')->distinct()->get();
+
+        $department = $request->input('department', null);                  //for search feature
+        $selectedYear = $request->input('year', date('Y'));
+        $selectedMonth = $request->input('month', date('m'));
+
+        $dataQuery = department::when($department, function ($query) use ($department) {
+            return $query->where('department', $department);
+        })
+   
+        ->whereYear('created_at', '=', $selectedYear)       
+        ->whereMonth('created_at', '=', $selectedMonth);
+
+        $data = $dataQuery->get();
+
+        
+
         return view('reports.attendance-report', compact([
             'departments', 'employees', 'attendances',
             'attendanceCounts', 'holiday', 'curmnth', 'curyear', 'totDays',
-            'weekendCount', 'extraDaysCount', 'employeeHolidayCounts'
+            'weekendCount', 'extraDaysCount', 'employeeHolidayCounts','selectedYear', 'selectedMonth','data'
         ]));
     }
 
@@ -134,7 +163,7 @@ class AttendanceController extends Controller
                 'punch_in' => $request->punch_in,
                 'punch_out' => $request->punch_out,
             ]);
-
+           
             DB::commit();
 
             Toastr::success('Added attendence successfully :)', 'Success');
@@ -144,7 +173,9 @@ class AttendanceController extends Controller
             Toastr::error('Add Attendance fail :)', 'Error');
             return redirect()->back();
         }
+       
     }
+   
 
     /** update record attendance */
     public function updateAttendance(Request $request)
@@ -178,4 +209,30 @@ class AttendanceController extends Controller
             return redirect()->back();
         }
     }
+
+
+
+
+    public function downloardAtte()
+    {
+        $file = public_path('files/sample.pdf');
+        return response()->download($file);
+    }
+
+
+    public function downloadPDF(Request $request)
+    {
+        $attendances = $request->all();
+
+        $request->validate([
+            // ... (same validation rules as before)
+        ]);
+
+        // Generate PDF using the 'attendance.form' Blade view and data
+        $pdf = PDF::loadView('reports.attendance-report', compact('attendances'));
+
+        // Download the PDF with a custom filename
+        return $pdf->download('form/attendance/pdf');
+    }
+
 }
