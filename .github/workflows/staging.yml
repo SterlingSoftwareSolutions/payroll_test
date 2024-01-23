@@ -19,6 +19,9 @@ jobs:
       run: |
         sed -i "s%ACTIONS_APP_KEY%${{ secrets.ACTIONS_APP_KEY }}%g" .env
         sed -i "s%ACTIONS_APP_URL%${{ secrets.ACTIONS_APP_URL }}%g" .env
+        sed -i "s%ACTIONS_DB_DATABASE%${{ secrets.ACTIONS_DB_DATABASE }}%g" .env
+        sed -i "s%ACTIONS_DB_USERNAME%${{ secrets.ACTIONS_DB_USERNAME }}%g" .env
+        sed -i "s%ACTIONS_DB_PASSWORD%${{ secrets.ACTIONS_DB_PASSWORD }}%g" .env
 
     - name: Install vendor files
       run: composer install --no-dev --optimize-autoloader
