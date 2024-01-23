@@ -29,18 +29,14 @@ class AttendanceController extends Controller
             $filterDep = department::find($request->department);
             $query->where('d_name', $filterDep->department);
         }
-        if ($request->year) {
-            $query->whereYear('created_at', $request->year);
-        }
 
-        if ($request->month) {
-            $query->whereMonth('created_at', $request->month);
-        }
+        $current_month = $request->month ?? date('m');
+        $current_year = $request->year ?? date('Y');
 
         $employees = $query->get();
         $departments = department::all();
         $holiday = Holiday::all();
-        $attendances = Attendance::with('employee', 'holiday')->get();
+        $attendances = Attendance::with('employee', 'holiday')->whereMonth('date', $current_month)->whereYear('date', $current_year)->get();
 
         $employeeHolidayCounts = [];                //for holidays count
 
@@ -68,10 +64,9 @@ class AttendanceController extends Controller
             ->groupBy('employee_id')
             ->get();
 
-        $curmnth = date('m');
-        $curyear = date('Y');
-        $totDays = $this->getDaysInMonth($curmnth, $curyear);
-        $weekendCount = $this->getWeekendCount($curmnth, $curyear);
+
+        $totDays = $this->getDaysInMonth($current_month, $current_year);
+        $weekendCount = $this->getWeekendCount($current_month, $current_year);
 
         $extraDaysCount = $attendances->filter(function ($attendance) {
             $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
@@ -99,7 +94,7 @@ class AttendanceController extends Controller
 
         return view('reports.attendance-report', compact([
             'departments', 'employees', 'attendances',
-            'attendanceCounts', 'holiday', 'curmnth', 'curyear', 'totDays',
+            'attendanceCounts', 'holiday', 'current_month', 'current_year', 'totDays',
             'weekendCount', 'extraDaysCount', 'employeeHolidayCounts','selectedYear', 'selectedMonth','data'
         ]));
     }
@@ -236,10 +231,10 @@ class AttendanceController extends Controller
     }
  
     public function download(Employee $employee) {
-        $attendances = Attendance::where('employee_id', $employee->id);
         $current_month = date('m');
         $current_year = date('Y');
         $total_days = $this->getDaysInMonth($current_month, $current_year);
+        $attendances = Attendance::where('employee_id', $employee->id)->whereMonth('date', $current_month)->whereYear('date', $current_year);
         $weekend_days = $this->getWeekendCount($current_month, $current_year);
         $working_days = $total_days - $weekend_days;
         $attended_days = $attendances->count();
@@ -266,7 +261,7 @@ class AttendanceController extends Controller
             'holiday_working_count',
         ))->setPaper('a5', 'landscape');;
 
-       // return $pdf->stream();
-        return $pdf->download();
+       return $pdf->stream();
+        // return $pdf->download();
     }
 }

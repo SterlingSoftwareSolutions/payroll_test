@@ -27,7 +27,7 @@
                 <td  style="border: 1px solid #000;">{{  $absent_days }}</td>
                 <td  style="border: 1px solid #000;">{{   $weekend_days }}</td>
                 <td  style="border: 1px solid #000;">{{  $holiday_working_count }}</td>
-                <td  style="border: 1px solid #000;">{{   $working_days }}</td>
+                <td  style="border: 1px solid #000;">{{   $attended_days }}</td>
                 <td  style="border: 1px solid #000;">{{  $extra_days_count    }}</td>
             </tr>
         </tbody>
