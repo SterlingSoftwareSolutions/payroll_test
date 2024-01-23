@@ -268,7 +268,7 @@
                                 <td>{{ $attendance->overtime ?? 'N/A' }}</td>
                                 <td>{{ $extraDaysCount }}</td>
                                 <td>
-                                    <button onclick="generateAndDownloadEmployeePDF({{ $attendance->employee->id }})">Download PDF</button>
+                                    <a href="/form/attendance/download/{{ $attendance->employee->id}}"><button>Download PDF</button></a>
                                 </td>
                             </tr>
                             @endforeach
@@ -386,7 +386,7 @@
 
 
 
-
+{{-- 
 <script>
     function generateAndDownloadEmployeePDF(employeeId) {
         // Get the specific row of the employee
@@ -404,4 +404,160 @@
         // Use html2pdf.js to generate and download the PDF for the specific row
         html2pdf(row, options);
     }
+</script> --}}
+
+
+
+{{-- <script>
+    function generateAndDownloadEmployeePDF(employeeId) {
+        // Get the specific row of the employee
+        var row = document.getElementById('attendanceTable').querySelector('[data-employee-id="' + employeeId + '"]');
+
+        // Create a wrapper div for title and table
+        var wrapperDiv = document.createElement('div');
+
+        // Add title to the wrapper div
+        var title = document.createElement('h2');
+        title.textContent = 'Employee Report';
+        wrapperDiv.appendChild(title);
+
+        // Add the table to the wrapper div
+        var table = document.getElementById('attendanceTable').cloneNode(true);
+        wrapperDiv.appendChild(table);
+
+        // Append the wrapperDiv to the document body
+        document.body.appendChild(wrapperDiv);
+
+        // Configure the PDF options
+        var options = {
+            margin: 10,
+            filename: 'employee_report.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Use html2pdf.js to generate and download the PDF for the wrapper div
+        html2pdf(wrapperDiv, options);
+
+        // Remove the wrapperDiv from the document body after generating PDF
+        document.body.removeChild(wrapperDiv);
+    }
+</script> --}}
+
+
+
+
+<!-- Include the html2pdf library -->
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
+<script>
+    // Function to generate and download PDF for a specific employee
+    function generateAndDownloadEmployeePDF(employee_Id, employeeName, numberOfDays, absentDays, wo, holidays, workingDays, ot, extraDays) {
+        // Create a wrapper div for title and table
+        var wrapperDiv = document.createElement('div');
+
+        // Add title to the wrapper div
+        var title = document.createElement('h2');
+        title.textContent = 'Employee Report - ' + employeeName;
+        wrapperDiv.appendChild(title);
+
+        var table = document.createElement('table');
+        table.style.borderCollapse = 'collapse';
+        table.innerHTML = `
+            <thead>
+                <tr style="border: 1px solid #000;">
+                    <th style="border: 1px solid #000;">Name</th>
+                    <th style="border: 1px solid #000;">Number of days</th>
+                    <th style="border: 1px solid #000;">Absent days</th>
+                    <th style="border: 1px solid #000;">WO</th>
+                    <th style="border: 1px solid #000;">Holidays</th>
+                    <th style="border: 1px solid #000;">Working days</th>
+                    <th style="border: 1px solid #000;">OT</th>
+                    <th style="border: 1px solid #000;">Extra days</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border: 1px solid #000; data-employee-id="{{ $attendance->employee->id }}">
+                                <td style="border: 1px solid #000;">{{ optional($attendance->employee)->full_name ?? '' }}</td>
+                                <td style="border: 1px solid #000;">{{ $totDays }}</td>
+                                <td style="border: 1px solid #000;">{{ $totDays - ($attendanceCounts->where('employee_id',
+                                    optional($attendance->employee)->id)->first()->attendance_count ?? 0) -
+                                    optional($attendance->employee->holiday)->count() }}</td>
+                                <td style="border: 1px solid #000;">{{ $weekendCount }}</td>
+                                {{-- <td>
+                                    @if ($attendance->is_holiday)
+                                    <span class="badge badge-warning badge-pill float-right">{{ $attendance->holiday_name }}</span>
+                                    @endif
+                                </td> --}}
+                                <td style="border: 1px solid #000;">{{ $employeeHolidayCounts[$attendance->employee_id] ?? 0 }}</td>
+                                <td style="border: 1px solid #000;">{{ $attendanceCounts->where('employee_id',
+                                    optional($attendance->employee)->id)->first()->attendance_count ?? 0 }}</td>
+                                <td style="border: 1px solid #000;">{{ $attendance->overtime ?? 'N/A' }}</td>
+                                <td style="border: 1px solid #000;>{{ $extraDaysCount }}</td>
+                            </tr>
+            </tbody>
+        `;
+        wrapperDiv.appendChild(table);
+
+        // Append the wrapperDiv to the document body
+        document.body.appendChild(wrapperDiv);
+
+        // Configure the PDF options
+        var options = {
+            margin: 10,
+            filename: 'employee_attendance_report_' + employee_Id + '.pdf', 
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a5', orientation: 'landscape' }
+        };
+
+        // Use html2pdf.js to generate and download the PDF for the wrapper div
+        html2pdf(wrapperDiv, options)
+            .then(function () {
+                // Remove the wrapperDiv from the document body after generating PDF
+                document.body.removeChild(wrapperDiv);
+            })
+            .catch(function (error) {
+                console.error('Error generating PDF:', error);
+            });
+    }
+
+    // Function to handle click event on the "Download PDF" button
+    function handleDownloadButtonClick(button) {
+        var row = button.closest('tr');
+        var employeeId = row.getAttribute('data-employee-id');
+        var employeeName = row.querySelector('td:nth-child(1)').textContent;
+        var numberOfDays = row.querySelector('td:nth-child(2)').textContent;
+        var absentDays = row.querySelector('td:nth-child(3)').textContent;
+        var wo = row.querySelector('td:nth-child(4)').textContent;
+        var holidays = row.querySelector('td:nth-child(5)').textContent;
+        var workingDays = row.querySelector('td:nth-child(6)').textContent;
+        var ot = row.querySelector('td:nth-child(7)').textContent;
+        var extraDays = row.querySelector('td:nth-child(8)').textContent;
+
+        generateAndDownloadEmployeePDF(employee_Id, employeeName, numberOfDays, absentDays, wo, holidays, workingDays, ot, extraDays);
+    }
+   
+    // Attach click event handlers to each "Download PDF" button
+    // var buttons = document.querySelectorAll('#attendanceTable tbody tr td:last-child button');
+    var buttons = document.querySelectorAll('#attendanceTable button');
+
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            handleDownloadButtonClick(button);
+        });    
+    });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
