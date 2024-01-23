@@ -1,0 +1,40 @@
+on:
+  push:
+    branches:
+      - staging
+
+name: Deploy Site
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get latest code
+      uses: actions/checkout@v2
+
+    - name: Use production env
+      run: cp .env.staging .env
+
+    - name: Update .env
+      run: |
+        sed -i "s%ACTIONS_APP_KEY%${{ secrets.ACTIONS_APP_KEY }}%g" .env
+        sed -i "s%ACTIONS_APP_URL%${{ secrets.ACTIONS_APP_URL }}%g" .env
+
+    - name: Install vendor files
+      run: composer install --no-dev --optimize-autoloader
+
+    - name: Install node modules
+      run: npm install
+
+    - name: Build static assets
+      run: npm run build
+
+    - name: Delete cache
+      run: rm -rf /bootstrap/cache/*
+
+    - name: Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
