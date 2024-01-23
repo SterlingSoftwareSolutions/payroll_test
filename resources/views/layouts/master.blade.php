@@ -10,7 +10,7 @@
 	<meta name="robots" content="noindex, nofollow">
 	<title>Dashboard - HRMS</title>
 	<!-- Favicon -->
-	<link rel="shortcut icon" type="image/x-icon" href="{{ URL::to('assets/img/favicon.png') }}">
+	<link rel="shortcut icon" type="image/x-icon" href="{{ URL::to('assets/img/logo6.png') }}">
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="{{ URL::to('assets/css/bootstrap.min.css') }}">
 	<!-- Fontawesome CSS -->
@@ -59,11 +59,11 @@
 		<!-- Header -->
 		<div class="header">
 			<!-- Logo -->
-			<div class="header-left">
+			{{-- <div class="header-left">
 				<a href="{{ route('home') }}" class="logo">
 					<img src="{{ URL::to('/assets/images/'. Auth::user()->avatar) }}" width="40" height="40" alt="">
 				</a>
-			</div>
+			</div> --}}
 			<!-- /Logo -->
 			<a id="toggle_btn" href="javascript:void(0);">
 				<span class="bar-icon">
@@ -73,15 +73,17 @@
 				</span>
 			</a>
 			<!-- Header Title -->
+			<a href="{{ route('home') }}">
 			<div class="page-title-box">
 				<h3>Hi, {{ Session::get('name') }}</h3>
 			</div>
+			</a>
 			<!-- /Header Title -->
 			<a id="mobile_btn" class="mobile_btn" href="#sidebar"><i class="fa fa-bars"></i></a>
 			<!-- Header Menu -->
 			<ul class="nav user-menu">
 				<!-- Search -->
-				<li class="nav-item">
+				{{-- <li class="nav-item">
 					<div class="top-nav-search">
 						<a href="javascript:void(0);" class="responsive-search"> <i class="fa fa-search"></i> </a>
 						<form action="search.html">
@@ -91,11 +93,11 @@
 							</button>
 						</form>
 					</div>
-				</li>
+				</li> --}}
 				<!-- /Search -->
 
 				<!-- Flag -->
-				<li class="nav-item dropdown has-arrow flag-nav">
+				{{-- <li class="nav-item dropdown has-arrow flag-nav">
 					<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">
 						<img src="{{ URL::to('assets/img/flags/us.png') }}" alt="" height="20"> <span>English</span>
 					</a>
@@ -105,15 +107,16 @@
 						<a href="javascript:void(0);" class="dropdown-item">
 						<img src="{{ URL::to('assets/img/flags/kh.png') }}" alt="" height="16"> Khmer </a>
 					</div>
-				</li>
+				</li> --}}
 				<!-- /Flag -->
 
 				<!-- Notifications -->
-				<li class="nav-item dropdown">
-					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-						<i class="fa fa-bell-o"></i>
-						<span class="badge badge-pill">3</span> 
-					</a>
+				{{-- <li class="nav-item dropdown">
+					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" id="notification">
+						<i class="fa fa-bell-o"></i> --}}
+						{{-- TODO notification count --}}
+						{{-- <span class="badge badge-pill">3</span>  --}}
+					{{-- </a>
 					<div class="dropdown-menu notifications">
 						<div class="topnav-dropdown-header">
 							<span class="notification-title">Notifications</span> 
@@ -190,10 +193,12 @@
 						</div>
 						<div class="topnav-dropdown-footer"> <a href="activities.html">View all Notifications</a> </div>
 					</div>
-				</li>
+				</li> --}}
 				<!-- /Notifications -->
 				
-				<!-- Message Notifications -->
+				
+				<li class="nav-item dropdown  main-drop">
+						{{-- <!--TODO: Message Notifications -->
 				<li class="nav-item dropdown">
 					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
 						<i class="fa fa-comment-o"></i> <span class="badge badge-pill">8</span>
@@ -294,18 +299,19 @@
 						</div>
 						<div class="topnav-dropdown-footer"> <a href="chat.html">View all Messages</a> </div>
 					</div>
-				</li>
+				</li> --}}
 				<!-- /Message Notifications -->
-				<li class="nav-item dropdown has-arrow main-drop">
+				<li class="nav-item dropdown  main-drop">
 					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
 						<span class="user-img">
-						<img src="{{ URL::to('/assets/images/'. Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}">
-						<span class="status online"></span></span>
+							{{-- <img src="/assets/img/user.jpg" alt="User Image"> --}}
+							<img class="img" src="{{ Auth::user()->avatar ? URL::to('/assets/images/'. Auth::user()->avatar) : '/assets/img/user.jpg' }}" alt="{{ Auth::user()->name }}">
+						{{-- <span class="status online"></span></span> --}}
 						<span>{{ Session::get('name') }}</span>
 					</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="{{ route('profile_user') }}">My Profile</a>
-						<a class="dropdown-item" href="{{ route('company/settings/page') }}">Settings</a>
+						{{-- <a class="dropdown-item" href="{{ route('company/settings/page') }}">Settings</a> --}}
 						<a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
 					</div>
 				</li>

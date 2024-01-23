@@ -10,7 +10,7 @@
         <meta name="robots" content="noindex, nofollow">
         <title>Login HRMS</title>
 		<!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{{ URL::to('assets/img/favicon.png') }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ URL::to('assets/img/logo6.png') }}">
 		<!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ URL::to('assets/css/bootstrap.min.css') }}">
 		<!-- Fontawesome CSS -->
@@ -28,6 +28,11 @@
         <link rel="stylesheet" href="{{ URL::to('assets/css/toastr.min.css') }}">
         <script src="{{ URL::to('assets/js/toastr_jquery.min.js') }}"></script>
         <script src="{{ URL::to('assets/js/toastr.min.js') }}"></script>
+
+         <!---add jquery-->
+        <script src="{{ asset('js/jquery-1.9.1.min.js') }}"></script>
+
+
     </head>
     <body class="account-page error-page">
         <style>    
