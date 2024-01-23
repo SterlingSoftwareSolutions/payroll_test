@@ -261,7 +261,7 @@ class AttendanceController extends Controller
             'holiday_working_count',
         ))->setPaper('a5', 'landscape');;
 
-       return $pdf->stream();
-        // return $pdf->download();
+      // return $pdf->stream();
+         return $pdf->download();
     }
 }
