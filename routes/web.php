@@ -370,3 +370,4 @@ Route::controller(PayslipController::class)->group(function () {
     Route::get('form/payslip/download', 'downloardfile')->middleware('auth')->name('form/payslip/download'); //for payslip download
 
 });
+Route::get('/getDetails/{employeeId}', [PaySlipController::class, 'getDetails'])->name('getDetails');

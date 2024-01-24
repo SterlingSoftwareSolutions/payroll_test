@@ -152,7 +152,7 @@
                             <tbody>
                                 @foreach ($employees as $employee)
                                     <tr>
-                                        <td>{{ $employee->id }}</td>
+                                        <td>{{ $employee->employee_id }}</td>
                                         <td>{{ $employee->full_name }}</td>
                                         {{-- <td>{{ $employee->j_title }}</td> --}}
                                         <td>{{ date('F Y') }}</td>
@@ -178,8 +178,10 @@
                                                     aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item userUpdate" data-toggle="modal"
-                                                        data-id="{{ $employee->id }}" data-target="#edit_payslip"><i
-                                                            class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                        data-id="{{ $employee->employee_id }}" data-target="#edit_payslip">
+                                                        <i class="fa fa-pencil m-r-5"></i> Edit
+                                                    </a>
+
                                                     <a class="dropdown-item" href="#" data-toggle="modal"
                                                         data-target="#delete_holiday"><i class="fa fa-print m-r-5"></i>
                                                         Print</a>
@@ -218,11 +220,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group col-md-12">
                                             <label for="employeeSelect">Select Employee</label>
-                                            <select class="form-control" id="employeeSelect" name="employeeSelect">
-                                                @foreach ($employees as $employee)
-                                                    <option value="{{ $employee->employee_id }}">{{ $employee->employee_id }}</option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" class="form-control" id="employeeIdInput"
+                                                name="employee_id" readonly>
 
                                         </div>
                                         <div class="form-group col-md-12">
@@ -231,23 +230,24 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="">Basic Salary</label>
-                                            <input type="" class="form-control" id="">
+                                            <label for="basicSalary">Basic Salary</label>
+                                            <input type="text" class="form-control" id="basicSalary"
+                                                name="basic_salary">
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="">BR Allowance</label>
-                                            <input type="" class="form-control" id="">
+                                            <label for="brAllowance">BR Allowance</label>
+                                            <input type="" class="form-control" id="brAllowance">
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="">Incentive 01</label>
-                                            <input type="" class="form-control" id="">
+                                            <label for="incentive1">Incentive 01</label>
+                                            <input type="" class="form-control" id="incentive1">
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="">Incentive 02</label>
-                                            <input type="" class="form-control" id="">
+                                            <label for="incentive2">Incentive 02</label>
+                                            <input type="" class="form-control" id="incentive2">
                                         </div>
 
                                         <div class="form-group col-md-12">
@@ -263,8 +263,8 @@
                                             <input type="text" class="form-control" id="epf" name="epf">
                                         </div>
                                         <div class="form-group col-md-12">
-                                            <label for="">Other</label>
-                                            <input type="" class="form-control" id="">
+                                            <label for="increment_others">Other</label>
+                                            <input type="" class="form-control" id="increment_others">
                                         </div>
                                     </div>
 
@@ -275,12 +275,7 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="">EPF</label>
-                                            <input type="" class="form-control" id="">
-                                        </div>
-
-                                        <div class="form-group col-md-12">
-                                            <label for="">ETF</label>
+                                            <label for="">EPF<span> (Employee)</span> </label>
                                             <input type="" class="form-control" id="">
                                         </div>
 
@@ -305,25 +300,40 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="">Advanced</label>
+                                            <label for="Advanced">Advanced</label>
+                                            <input type="" class="form-control" id="Advanced">
+                                        </div>
+
+                                        <div class="form-group col-md-12">
+                                            <label for="deduction_others">Other</label>
+                                            <input type="" class="form-control" id="deduction_others">
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label for="">EPF<span> (Company)</span> </label>
                                             <input type="" class="form-control" id="">
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="">Other</label>
+                                            <label for="">ETF</label>
                                             <input type="" class="form-control" id="">
                                         </div>
+
                             </form>
                         </div>
-                        <div class="form-group col-md-12 d-flex justify-content-between" style="flex-direction: row; width: 400px;">
-                            <div style="background-color: red; display: flex; align-items: center; justify-content: center; height: 50px; color: white; width: 300px; margin-left: 15px; border-radius: 10px">
+                        <div class="form-group col-md-12 d-flex justify-content-between"
+                            style="flex-direction: row; width: 400px;">
+                            <div
+                                style="background-color: red; display: flex; align-items: center; justify-content: center; height: 50px; color: white; width: 300px; margin-left: 15px; border-radius: 10px">
                                 <label for="">Total pay :</label>
                                 <label for="">68,850.66</label>
                             </div>
 
                             <div>
-                                <button type="button" class="btn btn-success" style="background-color:transparent ;color: #05c46b ;border-color: #05c46b; width: 150px;">Approve</button>
-                                <button type="button" class="btn btn-success" style="background-color: #05c46b; width: 150px;border-color: #05c46b;">Approve & Print</button>
+                                <button type="button" class="btn btn-success"
+                                    style="background-color:transparent ;color: #05c46b ;border-color: #05c46b; width: 150px;">Approve</button>
+                                <button type="button" class="btn btn-success"
+                                    style="background-color: #05c46b; width: 150px;border-color: #05c46b;">Approve &
+                                    Print</button>
                             </div>
                         </div>
 
@@ -358,6 +368,37 @@
 
                 // Toggle the visibility of the dropdown menu
                 $(this).siblings(".dropdown-menu").toggle();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Triggered when the modal is about to be shown
+            $('#edit_payslip').on('show.bs.modal', function(event) {
+                var link = $(event.relatedTarget); // Link that triggered the modal
+                var employeeId = link.data('id'); // Extract employee id from data-id attribute
+
+                // Update the value of the employee id input field in the modal
+                $('#employeeIdInput').val(employeeId);
+
+                // Make an AJAX request to fetch the basic salary based on the employee id
+                $.ajax({
+                    type: 'GET',
+                    url: '/getDetails/' + employeeId, // Adjust the URL to your actual route
+                    success: function(response) {
+                        // Update the value of the basic salary input field in the modal
+                        $('#basicSalary').val(response.basic_salary);
+                        $('#brAllowance').val(response.brAllowance);
+                        $('#incentive1').val(response.incentive1);
+                        $('#incentive2').val(response.incentive2);
+                        $('#increment_others').val(response.increment_others);
+                        $('#deduction_others').val(response.deduction_others);
+                        $('#Advanced').val(response.Advanced);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
             });
         });
     </script>
