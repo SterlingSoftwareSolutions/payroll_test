@@ -171,7 +171,7 @@
                     class="{{ set_active(['form/expense/reports/page', 'form/attendance/report/page', 'form/leave/reports/page', 'form/attendance/report/pdf/page', 'form/payslip/approve/page']) }} submenu">
                     <a href="#"
                         class="{{ set_active(['form/expense/reports/page', 'form/attendance/report/page', 'form/leave/reports/page', 'form/attendance/report/pdf/page', 'form/payslip/approve/page']) }}"
-                        style="{{ request()->is(['form/expense/reports/page', 'form/attendance/report/page', 'form/leave/reports/page', 'form/attendance/report/pdf/page', 'form/payslip/approve/page']) ? 'background-color: #f43b48; color: white;' : '' }}">
+                        style="{{ request()->is(['form/expense/reports/page', 'form/attendance/report/page', 'form/leave/reports/page', 'form/attendance/report/pdf/page','form/payslip/approve','salary/report']) ? 'background-color: #f43b48; color: white;' : '' }}">
                         <i class="la la-pie-chart"></i>
                         <span
                             style="{{ request()->is(['form/expense/reports/page', 'form/attendance/report/page', 'form/leave/reports/page', 'form/attendance/report/pdf/page', 'form/payslip/approve/page']) ? 'color: white;' : '' }}">
@@ -179,13 +179,17 @@
                         <span class="menu-arrow"></span>
                     </a>
                     <ul style="{{ request()->is('/*') ? 'display: block;' : 'display: none;' }}">
+                        {{-- <li><a class="{{set_active(['form/attendance/report/page'])}}"
+                                href="{{ route('form/attendance/report/page') }}"> Attendance Report </a></li> --}}
+                        {{-- <li><a class="{{set_active(['form/attendance/report/pdf/page'])}}"
+                                href="{{ route('form/attendance/report/pdf/page') }}"> Salary Report </a></li> --}}
                         <li><a class="{{ set_active(['form/attendance/report/page']) }}"
                                 href="{{ route('form.attendance.index') }}"> Attendance Report </a></li>
+                        {{-- <li><a class="{{set_active(['salary/report'])}}" href="{{ route('salary/report') }}"> Salary Report </a></li> --}}
                         <li><a class="{{ set_active(['form/payslip/approve']) }}"
                                 href="{{ route('form/payslip/approve') }}"> Payslip Approve </a></li>
                         <li><a class="{{ set_active(['salary/report']) }}" href="{{ route('salary/report') }}">
                                 Salary Report </a></li>
-                        <!-- Add similar styling for other list items -->
                     </ul>
                 </li>
 
