@@ -1832,27 +1832,30 @@ a:focus, a:hover {
 	margin-bottom: 20px;
 }
 .add-btn {
-  background-color: #05C46B;
+    background-color: #05C46B;
     border: 1px solid #05C46B;
-
     border-radius: 10px;
     color: #FFFFFF;
     float: right;
     font-weight: 500;
-	font-size: large;
+    font-size: large;
     width: 320px;
-	height: 50px;
-	padding-top: 10px;
-	left: 1042px;
-	text-align: center;
+    height: 50px;
+    padding: 20px;
+    text-align: center;
+
+    /* Add the following properties for centering vertically */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
 }
 .add-btn:hover,
 .add-btn:focus,
 .add-btn:active {
-	background-color: #05C46B;
+	background-color: #049250;
 	border: 1px solid #05C46B;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
 
 }
 .add-btn i {
