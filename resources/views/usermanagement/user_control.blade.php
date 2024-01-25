@@ -220,16 +220,41 @@
                                         </select>
                                    </div>
 
-                                   <div class="col-right ">
-                                        <label for="">Position</label><br>
-                                       <select class="form-control" name="position" id="position">
+                                   <div class="col-right">
+                                    <label for="">Position</label><br>
+                                    <select class="form-control" name="position" id="position">
                                         <option selected disabled></option>
-                                        @foreach ($position as $positions )
-                                        <option value="{{ $positions->position }}">{{ $positions->position }}</option>
-                                        @endforeach
-                                       </select>
-                                   </div>
-                               </div>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <script>
+                                // When the department dropdown changes
+                                $('#department').on('change', function() {
+                                    var selectedDepartment = $(this).val();
+
+                                    // Clear the options in the position dropdown
+                                    $('#position').empty();
+
+                                    // If a department is selected
+                                    if (selectedDepartment) {
+                                        // Fetch positions based on the selected department
+                                        $.ajax({
+                                            url: '/get-positions/' + selectedDepartment,
+                                            type: 'GET',
+                                            success: function(data) {
+                                                // Populate the position dropdown with the fetched data
+                                                $.each(data, function(key, value) {
+                                                    $('#position').append('<option value="' + value.position + '">' + value.position + '</option>');
+                                                });
+                                            },
+                                            error: function(xhr, status, error) {
+                                                console.error(error);
+                                            }
+                                        });
+                                    }
+                                });
+                            </script>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">

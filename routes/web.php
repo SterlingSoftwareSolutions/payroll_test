@@ -1,29 +1,30 @@
 <?php
 
-use App\Http\Controllers\AttendanceController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SettingController;
-use App\Http\Controllers\PhotosController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\UserManagementController;
-use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LockScreen;
-use App\Http\Controllers\PayrollController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
-use App\Http\Controllers\HolidayController;
-use App\Http\Controllers\LeavesController;
-use App\Http\Controllers\ExpenseReportsController;
-use App\Http\Controllers\PerformanceController;
-use App\Http\Controllers\TrainingController;
-use App\Http\Controllers\TrainersController;
-use App\Http\Controllers\TrainingTypeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SalesController;
-use App\Http\Controllers\PersonalInformationController;
+use App\Http\Controllers\LeavesController;
+use App\Http\Controllers\PhotosController;
+use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\PaySlipController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\TrainersController;
+use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\PerformanceController;
+use App\Http\Controllers\TrainingTypeController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\ExpenseReportsController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\PersonalInformationController;
 
 
 /*
@@ -370,3 +371,4 @@ Route::controller(PayslipController::class)->group(function () {
     Route::get('form/payslip/download', 'downloardfile')->middleware('auth')->name('form/payslip/download'); //for payslip download
 
 });
+Route::get('/get-positions/{department}', [PositionController::class, 'getPositions'])->name('get-positions');
