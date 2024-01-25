@@ -41,15 +41,15 @@
                 @csrf
                 <div class="row filter-row">
                     <div class="col-sm-6 col-md-4">
-                        <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" id="name" name="name">
-                            <label class="focus-label">Name</label>
+                        <div class="form-group ">
+                            <input type="text" class="form-control floating" id="name" name="name" placeholder="Name">
+                            {{-- <label class="focus-label">Name</label> --}}
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-4">
-                        <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" id="name" name="department">
-                            <label class="focus-label">Department</label>
+                        <div class="form-group ">
+                            <input type="text" class="form-control floating" id="name" name="department" placeholder="Department">
+                            {{-- <label class="focus-label">Department</label> --}}
                         </div>
                     </div>
                     {{-- <div class="col-sm-6 col-md-3">
@@ -653,9 +653,9 @@
                                         <button type="submit"
                                             class="btn btn-primary continue-btn submit-btn">Delete</button>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
                                         <a href="javascript:void(0);" data-dismiss="modal"
-                                            class="btn btn-primary cancel-btn">Cancel</a>
+                                            class="btn btn-primary cancel-btn text-center" style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important;">Cancel</a>
                                     </div>
                                 </div>
                             </form>
