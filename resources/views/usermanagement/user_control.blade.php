@@ -1,15 +1,18 @@
 @extends('layouts.master')
 @section('content')
 
-<!-- Include Bootstrap CSS and JS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- Include Bootstrap CSS and JS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-<!-- Include Bootstrap DateTimePicker CSS and JS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <!-- Include Bootstrap DateTimePicker CSS and JS -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
+    </script>
 
     <!-- Page Wrapper -->
     <div class="page-wrapper">
@@ -20,17 +23,18 @@
                 <div class="row align-items-center">
                     <div class="col">
                         <h3 class="page-title">User Management</h3>
-                        <ul class="breadcrumb" >
+                        <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
                             <li class="breadcrumb-item active">User</li>
                         </ul>
                     </div>
                     <div class="col-auto float-right ml-auto">
-                        <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_user"><i class="fa fa-plus"></i> Add User</a>
+                        <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_user"><i
+                                class="fa fa-plus"></i> Add User</a>
                     </div>
                 </div>
             </div>
-			<!-- /Page Header -->
+            <!-- /Page Header -->
 
             <!-- Search Filter -->
             <form action="{{ route('search/user/list') }}" method="POST">
@@ -82,23 +86,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($result as $key=>$user )
-                                <tr>
-                                    <td>
-                                        <span hidden class="image">{{ $user->avatar}}</span>
-                                        <h2 class="table-avatar">
-                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="avatar"><img src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
-                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="name">{{ $user->name }}</span></a>
-                                        </h2>
-                                    </td>
-                                    <td hidden class="ids">{{ $user->id }}</td>
-                                    <td class="id">{{ $user->user_id }}</td>
-                                    <td class="email">{{ $user->email }}</td>
-                                    <td class="position">{{ $user->position }}</td>
-                                    <td class="phone_number" hidden>{{ $user->phone_number }}</td>
-                                    <td class="join_date" hidden>{{ $user->join_date }}</td>
-                                    {{-- <td>
-                                        @if ($user->role_name=='Admin')
+                                @foreach ($result as $key => $user)
+                                    <tr>
+                                        <td>
+                                            <span hidden class="image">{{ $user->avatar }}</span>
+                                            <h2 class="table-avatar">
+                                                <a href="{{ url('employee/profile/' . $user->user_id) }}" class="avatar"><img
+                                                        src="{{ URL::to('/images/' . $user->avatar) }}"
+                                                        alt="{{ $user->avatar }}"></a>
+                                                <a href="{{ url('employee/profile/' . $user->user_id) }}"
+                                                    class="name">{{ $user->name }}</span></a>
+                                            </h2>
+                                        </td>
+                                        <td hidden class="ids">{{ $user->id }}</td>
+                                        <td class="id">{{ $user->user_id }}</td>
+                                        <td class="email">{{ $user->email }}</td>
+                                        <td class="position">{{ $user->position }}</td>
+                                        <td class="phone_number" hidden>{{ $user->phone_number }}</td>
+                                        <td class="join_date" hidden>{{ $user->join_date }}</td>
+                                        {{-- <td>
+                                        @if ($user->role_name == 'Admin')
                                             <span class="badge bg-inverse-danger role_name">{{ $user->role_name }}</span>
                                             @elseif ($user->role_name=='Super Admin')
                                             <span class="badge bg-inverse-warning role_name">{{ $user->role_name }}</span>
@@ -110,54 +117,64 @@
                                             <span class="badge bg-inverse-dark role_name">{{ $user->role_name }}</span>
                                         @endif
                                     </td> --}}
-                                    <td hidden>
-                                        <div class="dropdown action-label">
-                                            @if ($user->status=='Active')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-success"></i>
-                                                    <span class="statuss">{{ $user->status }}</span>
-                                                </a>
-                                                @elseif ($user->status=='Inactive')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-info"></i>
-                                                    <span class="statuss">{{ $user->status }}</span>
-                                                </a>
-                                                @elseif ($user->status=='Disable')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-danger"></i>
-                                                    <span class="statuss">{{ $user->status }}</span>
-                                                </a>
-                                                @elseif ($user->status=='')
-                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa fa-dot-circle-o text-dark"></i>
-                                                    <span class="statuss">N/A</span>
-                                                </a>
-                                            @endif
+                                        <td hidden>
+                                            <div class="dropdown action-label">
+                                                @if ($user->status == 'Active')
+                                                    <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                        href="#" data-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fa fa-dot-circle-o text-success"></i>
+                                                        <span class="statuss">{{ $user->status }}</span>
+                                                    </a>
+                                                @elseif ($user->status == 'Inactive')
+                                                    <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                        href="#" data-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fa fa-dot-circle-o text-info"></i>
+                                                        <span class="statuss">{{ $user->status }}</span>
+                                                    </a>
+                                                @elseif ($user->status == 'Disable')
+                                                    <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                        href="#" data-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fa fa-dot-circle-o text-danger"></i>
+                                                        <span class="statuss">{{ $user->status }}</span>
+                                                    </a>
+                                                @elseif ($user->status == '')
+                                                    <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                        href="#" data-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fa fa-dot-circle-o text-dark"></i>
+                                                        <span class="statuss">N/A</span>
+                                                    </a>
+                                                @endif
 
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#">
-                                                    <i class="fa fa-dot-circle-o text-success"></i> Active
-                                                </a>
-                                                <a class="dropdown-item" href="#">
-                                                    <i class="fa fa-dot-circle-o text-warning"></i> Inactive
-                                                </a>
-                                                <a class="dropdown-item" href="#">
-                                                    <i class="fa fa-dot-circle-o text-danger"></i> Disable
-                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#">
+                                                        <i class="fa fa-dot-circle-o text-success"></i> Active
+                                                    </a>
+                                                    <a class="dropdown-item" href="#">
+                                                        <i class="fa fa-dot-circle-o text-warning"></i> Inactive
+                                                    </a>
+                                                    <a class="dropdown-item" href="#">
+                                                        <i class="fa fa-dot-circle-o text-danger"></i> Disable
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="department">{{ $user->department }}</td>
-                                    <td class="text-right">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item userUpdate" data-toggle="modal" data-id="'.$user->id.'" data-target="#edit_user"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                <a class="dropdown-item userDelete" href="#" data-toggle="modal" ata-id="'.$user->id.'" data-target="#delete_user"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </td>
+                                        <td class="department">{{ $user->department }}</td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                                    aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item userUpdate" data-toggle="modal"
+                                                        data-id="'.$user->id.'" data-target="#edit_user"><i
+                                                            class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item userDelete" href="#"
+                                                        data-toggle="modal" ata-id="'.$user->id.'"
+                                                        data-target="#delete_user"><i class="fa fa-trash-o m-r-5"></i>
+                                                        Delete</a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -179,21 +196,25 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('user/add/save') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('user/add/save') }}" method="POST" enctype="multipart/form-data"
+                            onsubmit="return validateForm()">
                             @csrf
                             <div class="rows">
                                 <div class="group" id="uploadGroup">
                                     <div class="user-profile">
-                                        <img id="profileImage" src="{{ asset('assets/images/photo_defaults.jpg') }}" alt="">
+                                        <img id="profileImage" src="{{ asset('assets/images/photo_defaults.jpg') }}"
+                                            alt="">
                                         <span class="edit-text" onclick="openFileInput()">Edit</span>
                                     </div>
-                                    <input type="file" name="image" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
+                                    <input type="file" name="image" id="fileInput" style="display: none;"
+                                        accept="image/*" onchange="previewImage()">
                                 </div>
                                 <div class="row">
                                     <div class="col-sms">
                                         <div class="col-sm col-sm-input">
                                             <label for="">User Id</label><br>
-                                            <input class="form-control col-sm" type="text" name="user_id" id="user_id" value="{{ $nextUserId }}" readonly>
+                                            <input class="form-control col-sm" type="text" name="user_id"
+                                                id="user_id" value="{{ $nextUserId }}" readonly>
                                         </div>
                                     </div>
 
@@ -202,7 +223,8 @@
                                             <label for="">User Role</label><br>
                                             <select class="form-control col-sm" name="role_name" id="role_name" disabled>
                                                 @foreach ($role_name as $role)
-                                                    <option value="{{ $role->role_type }}" >{{ $role->role_type }}</option>
+                                                    <option value="{{ $role->role_type }}">{{ $role->role_type }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -212,55 +234,30 @@
                                 <div class="row">
                                     <div class="col-right ">
                                         <label for="">Department</label><br>
-                                        <select class="form-control"  name="department" id="department">
-                                            <option selected disabled></option>
-                                            @foreach ($department as $departments )
-                                            <option value="{{ $departments->department }}">{{ $departments->department }}</option>
+                                        <select class="form-control" name="department" id="department">
+                                            <option value="" selected disabled>-- Select Department --</option>
+                                            @foreach ($department as $departments)
+                                                <option value="{{ $departments->department }}">
+                                                    {{ $departments->department }}</option>
                                             @endforeach
                                         </select>
-                                   </div>
+                                    </div>
 
-                                   <div class="col-right">
-                                    <label for="">Position</label><br>
-                                    <select class="form-control" name="position" id="position">
-                                        <option selected disabled></option>
-                                    </select>
+                                    <div class="col-right">
+                                        <label for="">Position</label><br>
+                                        <select class="form-control" name="position" id="position">
+                                            <option value="" selected disabled>-- Select Position --</option>
+                                            <!-- Add other position options dynamically if needed -->
+                                        </select>
+                                    </div>
+
                                 </div>
-                            </div>
-
-                            <script>
-                                // When the department dropdown changes
-                                $('#department').on('change', function() {
-                                    var selectedDepartment = $(this).val();
-
-                                    // Clear the options in the position dropdown
-                                    $('#position').empty();
-
-                                    // If a department is selected
-                                    if (selectedDepartment) {
-                                        // Fetch positions based on the selected department
-                                        $.ajax({
-                                            url: '/get-positions/' + selectedDepartment,
-                                            type: 'GET',
-                                            success: function(data) {
-                                                // Populate the position dropdown with the fetched data
-                                                $.each(data, function(key, value) {
-                                                    $('#position').append('<option value="' + value.position + '">' + value.position + '</option>');
-                                                });
-                                            },
-                                            error: function(xhr, status, error) {
-                                                console.error(error);
-                                            }
-                                        });
-                                    }
-                                });
-                            </script>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Full Name</label>
-                                        <input class="form-control " type="text" id="" name="name">
+                                        <input class="form-control " type="text" id="fullname" name="name">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -272,7 +269,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Phone</label>
-                                        <input class="form-control" type="tel" id="" name="phone" >
+                                        <input class="form-control" type="tel" id="" name="phone">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -280,13 +277,14 @@
                                         <label>Created Date and Time</label>
                                         <?php $dateTime = now()->format('Y-m-d H:i:s'); ?>
                                         <div class='input-group date' id='datetimepicker'>
-                                            <input type='text' class="form-control" name="created_at" id="created_at" value="{{ old('created_at', $dateTime) }}" readonly />
+                                            <input type='text' class="form-control" name="created_at" id="created_at"
+                                                value="{{ old('created_at', $dateTime) }}" readonly />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
                                         </div>
                                         <script type="text/javascript">
-                                            $(function () {
+                                            $(function() {
                                                 $('#datetimepicker').datetimepicker({
                                                     format: 'YYYY-MM-DD HH:mm:ss', // Include time in the format
                                                 });
@@ -299,12 +297,12 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Password</label>
-                                        <input type="password" class="form-control" name="password" >
+                                        <input type="password" class="form-control" name="password">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Repeat Password</label>
-                                    <input type="password" class="form-control" name="password_confirmation" >
+                                    <input type="password" class="form-control" name="password_confirmation">
                                 </div>
                             </div>
 
@@ -312,16 +310,20 @@
                                 <div class="col-sm-6">
                                     <label>Status</label>
                                     <select class="form-control" name="status" id="status">
-                                        <option selected disabled> </option>
-                                        @foreach ($status_user as $status )
-                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
+                                        @foreach ($status_user as $status)
+                                            <option value="{{ $status->type_name }}"
+                                                {{ $loop->first ? 'selected' : '' }}>
+                                                {{ $status->type_name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-auto float-right ml-auto">
                                     <br><br>
-                                    <button class="btn add-btn" data-toggle="modal" data-target="#add_user"><i class="fa fa-plus"></i> Add User</button>
-
+                                    <button id="add_user_btn" class="btn add-btn" data-toggle="modal"
+                                        data-target="#add_user" disabled>
+                                        <i class="fa fa-plus"></i> Add User
+                                    </button>
                                 </div>
                             </div>
 
@@ -342,7 +344,7 @@
                                     <label>Role Name</label>
                                     <select class="select" name="role_name" id="role_name">
                                         <option selected disabled> --Select --</option>
-                                        @foreach ($role_name as $role )
+                                        @foreach ($role_name as $role)
                                         <option value="{{ $role->role_type }}">{{ $role->role_type }}</option>
                                         @endforeach
                                     </select>
@@ -351,7 +353,7 @@
                                     <label>Position</label>
                                     <select class="select" name="position" id="position">
                                         <option selected disabled> --Select --</option>
-                                        @foreach ($position as $positions )
+                                        @foreach ($position as $positions)
                                         <option value="{{ $positions->position }}">{{ $positions->position }}</option>
                                         @endforeach
                                     </select>
@@ -369,7 +371,7 @@
                                     <label>Department</label>
                                     <select class="select" name="department" id="department">
                                         <option selected disabled> --Select --</option>
-                                        @foreach ($department as $departments )
+                                        @foreach ($department as $departments)
                                         <option value="{{ $departments->department }}">{{ $departments->department }}</option>
                                         @endforeach
                                     </select>
@@ -380,7 +382,7 @@
                                     <label>Status</label>
                                     <select class="select" name="status" id="status">
                                         <option selected disabled> --Select --</option>
-                                        @foreach ($status_user as $status )
+                                        @foreach ($status_user as $status)
                                         <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
                                         @endforeach
                                     </select>
@@ -426,21 +428,25 @@
                     <br>
                     <div class="modal-body">
                         <form action="{{ route('update') }}" method="POST" enctype="multipart/form-data">
-                             <div class="rows">
+                            <div class="rows">
                                 <div class="group" id="uploadGroup">
                                     <div class="user-profile">
                                         <span hidden class="image"></span>
-                                        <a  href="{{ url('employee/profile/'.$user->user_id) }}" id="e_image"><img  src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
+                                        <a href="{{ url('employee/profile/' . $user->user_id) }}" id="e_image"><img
+                                                src="{{ URL::to('/images/' . $user->avatar) }}"
+                                                alt="{{ $user->avatar }}"></a>
                                         <span class="edit-text" onclick="openFileInput()">Edit</span>
                                     </div>
-                                    <input type="file" name="avatar" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
+                                    <input type="file" name="avatar" id="fileInput" style="display: none;"
+                                        accept="image/*" onchange="previewImage()">
                                 </div>
                                 <div class="row">
                                     <div class="col-sms">
                                         <div class="col-sm col-sm-input">
                                             <label for="">User Id</label><br>
                                             @csrf
-                                            <input class="form-control col-sm" type="text"  name="user_id" id="e_id"readonly>
+                                            <input class="form-control col-sm" type="text" name="user_id"
+                                                id="e_id"readonly>
                                         </div>
                                     </div>
 
@@ -449,7 +455,8 @@
                                             <label for="">User Role</label><br>
                                             <select class="form-control col-sm" name="role_name" id="role_name" disabled>
                                                 @foreach ($role_name as $role)
-                                                    <option value="{{ $role->role_type }}" >{{ $role->role_type }}</option>
+                                                    <option value="{{ $role->role_type }}">{{ $role->role_type }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -460,56 +467,62 @@
                                     <div class="col-right ">
                                         <label for="">Department</label>
                                         <select class="select" name="department" id="e_department">
-                                            @foreach ($department as $departments )
-                                            <option value="{{ $departments->department }}">{{ $departments->department }}</option>
+                                            @foreach ($department as $departments)
+                                                <option value="{{ $departments->department }}">
+                                                    {{ $departments->department }}</option>
                                             @endforeach
                                         </select>
-                                   </div>
+                                    </div>
 
-                                   <div class="col-right ">
+                                    <div class="col-right ">
                                         <label for="">Position</label><br>
                                         <select class="select" name="position" id="e_position">
-                                            @foreach ($position as $positions )
-                                            <option value="{{ $positions->position }}">{{ $positions->position }}</option>
+                                            @foreach ($position as $positions)
+                                                <option value="{{ $positions->position }}">{{ $positions->position }}
+                                                </option>
                                             @endforeach
                                         </select>
-                                   </div>
-                               </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Name</label>
-                                        <input class="form-control" type="text" name="name" id="e_name" value="" />
+                                        <input class="form-control" type="text" name="name" id="e_name"
+                                            value="" />
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Email</label>
-                                    <input class="form-control" type="text" name="email" id="e_email" value=""/>
+                                    <input class="form-control" type="text" name="email" id="e_email"
+                                        value="" />
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Phone</label>
-                                        <input class="form-control" type="text" id="e_phone_number" name="phone" value=""/>
+                                        <input class="form-control" type="text" id="e_phone_number" name="phone"
+                                            value="" />
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Created Date and Time</label>
-                                    <input class="form-control" type="text" id="e_join_date" name="join" value="" readonly/>
+                                    <input class="form-control" type="text" id="e_join_date" name="join"
+                                        value="" readonly />
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Password</label>
-                                        <input type="password" class="form-control" name="password" >
+                                        <input type="password" class="form-control" name="password">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Repeat Password</label>
-                                    <input type="password" class="form-control" name="password_confirmation" >
+                                    <input type="password" class="form-control" name="password_confirmation">
                                 </div>
                             </div>
                             <br>
@@ -517,14 +530,14 @@
                                 <div class="col-sm-6">
                                     <label>Status</label>
                                     <select class="select" name="status_user" id="e_status">
-                                        @foreach ($status_user as $status )
-                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
+                                        @foreach ($status_user as $status)
+                                            <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-auto float-right ml-auto">
                                     <br><br>
-                                <button type="submit" class="btn add-btn">Update</button>
+                                    <button type="submit" class="btn add-btn">Update</button>
                                 </div>
                             </div>
                         </form>
@@ -564,7 +577,7 @@
                                 <div class="col-sm-6">
                                     <label>Role Name</label>
                                     <select class="select" name="role_name" id="e_role_name">
-                                        @foreach ($role_name as $role )
+                                        @foreach ($role_name as $role)
                                         <option value="{{ $role->role_type }}">{{ $role->role_type }}</option>
                                         @endforeach
                                     </select>
@@ -572,7 +585,7 @@
                                 <div class="col-sm-6">
                                     <label>Position</label>
                                     <select class="select" name="position" id="e_position">
-                                        @foreach ($position as $positions )
+                                        @foreach ($position as $positions)
                                         <option value="{{ $positions->position }}">{{ $positions->position }}</option>
                                         @endforeach
                                     </select>
@@ -589,7 +602,7 @@
                                 <div class="col-sm-6">
                                     <label>Department</label>
                                     <select class="select" name="department" id="e_department">
-                                        @foreach ($department as $departments )
+                                        @foreach ($department as $departments)
                                         <option value="{{ $departments->department }}">{{ $departments->department }}</option>
                                         @endforeach
                                     </select>
@@ -599,7 +612,7 @@
                                 <div class="col-sm-6">
                                     <label>Status</label>
                                     <select class="select" name="status" id="e_status">
-                                        @foreach ($status_user as $status )
+                                        @foreach ($status_user as $status)
                                         <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
                                         @endforeach
                                     </select>
@@ -637,10 +650,12 @@
                                 <input type="hidden" name="avatar" class="e_avatar" value="">
                                 <div class="row">
                                     <div class="col-6">
-                                        <button type="submit" class="btn btn-primary continue-btn submit-btn">Delete</button>
+                                        <button type="submit"
+                                            class="btn btn-primary continue-btn submit-btn">Delete</button>
                                     </div>
                                     <div class="col-6">
-                                        <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                                        <a href="javascript:void(0);" data-dismiss="modal"
+                                            class="btn btn-primary cancel-btn">Cancel</a>
                                     </div>
                                 </div>
                             </form>
@@ -652,11 +667,10 @@
         <!-- /Delete User Modal -->
     </div>
     <!-- /Page Wrapper -->
-    @section('script')
+@section('script')
     {{-- update js --}}
     <script>
-        $(document).on('click','.userUpdate',function()
-        {
+        $(document).on('click', '.userUpdate', function() {
             var _this = $(this).parents('tr');
             $('#e_id').val(_this.find('.id').text());
             $('#e_name').val(_this.find('.name').text());
@@ -668,56 +682,127 @@
             $('#e_image').val(_this.find('.avatar').text());
 
             var name_role = (_this.find(".role_name").text());
-            var _option = '<option selected value="' + name_role+ '">' + _this.find('.role_name').text() + '</option>'
-            $( _option).appendTo("#e_role_name");
+            var _option = '<option selected value="' + name_role + '">' + _this.find('.role_name').text() +
+                '</option>'
+            $(_option).appendTo("#e_role_name");
 
             var position = (_this.find(".position").text());
-            var _option = '<option selected value="' +position+ '">' + _this.find('.position').text() + '</option>'
-            $( _option).appendTo("#e_position");
+            var _option = '<option selected value="' + position + '">' + _this.find('.position').text() +
+                '</option>'
+            $(_option).appendTo("#e_position");
 
             var department = (_this.find(".department").text());
-            var _option = '<option selected value="' +department+ '">' + _this.find('.department').text() + '</option>'
-            $( _option).appendTo("#e_department");
+            var _option = '<option selected value="' + department + '">' + _this.find('.department').text() +
+                '</option>'
+            $(_option).appendTo("#e_department");
 
             var statuss = (_this.find(".statuss").text());
-            var _option = '<option selected value="' +statuss+ '">' + _this.find('.statuss').text() + '</option>'
-            $( _option).appendTo("#e_status");var statuss = (_this.find(".statuss").text());
+            var _option = '<option selected value="' + statuss + '">' + _this.find('.statuss').text() + '</option>'
+            $(_option).appendTo("#e_status");
+            var statuss = (_this.find(".statuss").text());
 
         });
     </script>
     {{-- delete js --}}
     <script>
-        $(document).on('click','.userDelete',function()
-        {
+        $(document).on('click', '.userDelete', function() {
             var _this = $(this).parents('tr');
             $('.e_id').val(_this.find('.ids').text());
             $('.e_avatar').val(_this.find('.image').text());
         });
     </script>
 
+    <!-- Your existing HTML code -->
+
+    <script>
+        function validateForm() {
+            var email = $('input[name="email"]').val();
+            var phone = $('input[name="phone"]').val();
+            var password = $('input[name="password"]').val();
+            var confirmPassword = $('input[name="password_confirmation"]').val();
+            var department = $('#department').val();
+            var position = $('#position').val();
+            var fullname = $('#fullname').val();
+
+            return email !== "" && phone !== "" && password !== "" && confirmPassword !== "" && department !== null &&
+                position !== null && fullname !== "";
+        }
+
+        // Enable/disable the button based on required fields
+        $(document).ready(function() {
+            $('input[name="email"], input[name="phone"], input[name="password"], input[name="password_confirmation"], #department, #position, #fullname')
+                .on('input change', function() {
+                    var isValid = validateForm();
+
+                    if (isValid) {
+                        // Enable the button
+                        $('#add_user_btn').prop('disabled', false);
+                    } else {
+                        // Disable the button
+                        $('#add_user_btn').prop('disabled', true);
+                    }
+                });
+        });
+    </script>
+
+
+
+
+
 
 <script>
-    function openFileInput() {
-        document.getElementById('fileInput').click();
-    }
+    // When the department dropdown changes
+    $('#department').on('change', function() {
+        var selectedDepartment = $(this).val();
 
-    function previewImage() {
-        const fileInput = document.getElementById('fileInput');
-        const profileImage = document.getElementById('profileImage');
+        // Clear the options in the position dropdown and set the placeholder
+        $('#position').empty().append('<option value="" selected disabled>-- Select Position --</option>');
 
-        const selectedFile = fileInput.files[0];
-
-        if (selectedFile) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                profileImage.src = e.target.result;
-            };
-
-            reader.readAsDataURL(selectedFile);
+        // If a department is selected
+        if (selectedDepartment) {
+            // Fetch positions based on the selected department
+            $.ajax({
+                url: '/get-positions/' + selectedDepartment,
+                type: 'GET',
+                success: function(data) {
+                    // Populate the position dropdown with the fetched data
+                    $.each(data, function(key, value) {
+                        $('#position').append('<option value="' + value.position + '">' +
+                            value.position + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
         }
-    }
+    });
 </script>
-    @endsection
+
+
+
+    <script>
+        function openFileInput() {
+            document.getElementById('fileInput').click();
+        }
+
+        function previewImage() {
+            const fileInput = document.getElementById('fileInput');
+            const profileImage = document.getElementById('profileImage');
+
+            const selectedFile = fileInput.files[0];
+
+            if (selectedFile) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    profileImage.src = e.target.result;
+                };
+
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+    </script>
+@endsection
 
 @endsection
