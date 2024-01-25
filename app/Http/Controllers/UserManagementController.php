@@ -48,6 +48,7 @@ class UserManagementController extends Controller
     // search user
     public function searchUser(Request $request)
     {
+        // dd($request);
         if (Auth::user()->role_name == 'Admin') {
             $users      = DB::table('users')->get();
             $result     = DB::table('users')->get();
@@ -56,9 +57,24 @@ class UserManagementController extends Controller
             $department = DB::table('departments')->get();
             $status_user = DB::table('user_types')->get();
 
+            $maxId = \App\Models\User::max('id');
+
+            if ($maxId) {
+                $user = \App\Models\User::find($maxId);
+
+                if ($user) {
+                    $userId = $user->user_id;
+                    $nextUserId = 'U' . str_pad((int)substr($userId, 2) + 1, 6, '0', STR_PAD_LEFT);
+                } else {
+                    $nextUserId = 'U000001';
+                }
+            } else {
+                $nextUserId = 'U000001';
+            }
             // search by name
             if ($request->name) {
                 $result = User::where('name', 'LIKE', '%' . $request->name . '%')->get();
+                // dd($result);
             }
 
             // search by Department name
@@ -104,8 +120,8 @@ class UserManagementController extends Controller
                     ->where('status', 'LIKE', '%' . $request->status . '%')
                     ->get();
             }
-
-            return view('usermanagement.user_control', compact('users', 'role_name', 'position', 'department', 'status_user', 'result'));
+            // dd('users', 'role_name', 'position', 'department', 'status_user', 'result');
+            return view('usermanagement.user_control', compact('user', 'role_name', 'position', 'department', 'status_user', 'result','nextUserId'));
         } else {
             return redirect()->route('home');
         }
