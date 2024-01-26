@@ -1,20 +1,24 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Brian2694\Toastr\Facades\Toastr;
 use App\Models\Holiday;
-use DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
+use Brian2694\Toastr\Facades\Toastr;
 
 class HolidayController extends Controller
 {
-    // holidays
     public function holiday()
     {
-        $holiday = Holiday::all();
-        return view('form.holidays',compact('holiday'));
+        $holidays = Holiday::all();
+       // dd($holidays);
+        $next_id = IdGenerator::generate(['table' => 'holidays', 'length' => 5, 'prefix' => 'H']);
+
+        return view('form.holidays', compact('holidays', 'next_id'));
     }
+
+
     // save record
     public function saveRecord(Request $request)
     {
@@ -71,26 +75,4 @@ class HolidayController extends Controller
             return redirect()->back();
         }
     }
-        // delete  
-        public function deleteRecord(Request $request) 
-        {
-            DB::beginTransaction();
-            try {
-                $id = $request->id;
-        
-                Holiday::destroy($id);
-        
-                DB::commit();
-        
-                Toastr::success('Holiday deleted successfully :)', 'Success');
-                return redirect()->back();
-        
-            } catch (\Exception $e) {
-        
-                DB::rollback();
-                Toastr::error('Holiday delete fail :)', 'Error');
-                return redirect()->back();
-            }
-        }
-    
 }

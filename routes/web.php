@@ -221,12 +221,12 @@ Route::controller(EmployeeController::class)->group(function () {
 });
 
 // ----------------------------- form holiday ------------------------------//
-Route::controller(HolidayController::class)->group(function () {
-    Route::get('form/holidays/new', 'holiday')->middleware('auth')->name('form/holidays/new');
-    Route::post('form/holidays/save', 'saveRecord')->middleware('auth')->name('form/holidays/save');
-    Route::post('form/holidays/update', 'updateRecord')->middleware('auth')->name('form/holidays/update');
-    Route::post('form/holidays/delete', 'deleteRecord')->middleware('auth')->name('form/holidays/delete');
-});
+ Route::controller(HolidayController::class)->group(function () {
+   Route::get('form/holidays/new', 'holiday')->middleware('auth')->name('form/holidays/new');
+ Route::post('form/holidays/save', 'saveRecord')->middleware('auth')->name('form/holidays/save');
+  Route::post('form/holidays/update', 'updateRecord')->middleware('auth')->name('form/holidays/update');
+  Route::post('form/holidays/delete', 'deleteRecord')->middleware('auth')->name('form/holidays/delete');
+ });
 
 // ----------------------------- form leaves ------------------------------//
 Route::controller(LeavesController::class)->group(function () {
