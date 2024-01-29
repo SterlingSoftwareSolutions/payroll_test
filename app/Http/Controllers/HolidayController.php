@@ -13,17 +13,31 @@ class HolidayController extends Controller
     public function holiday()
     {
         $holiday = Holiday::all();
-        return view('form.holidays',compact('holiday'));
+        $maxId = Holiday::max('id');
+
+        if ($maxId) {
+            $user = Holiday::find($maxId);
+
+            if ($user) {
+                $userId = $user->holiday_id;
+                $nextUserId = 'H' . str_pad((int)substr($userId, 2) + 1, 6, '0', STR_PAD_LEFT);
+            } else {
+                $nextUserId = 'H000001';
+            }
+        } else {
+            $nextUserId = 'H000001';
+        }
+        return view('form.holidays', compact('holiday', 'nextUserId'));
     }
     // save record
     public function saveRecord(Request $request)
     {
         $request->validate([
-            'holidayId'=> 'required|string|max:255',
+            'holidayId' => 'required|string|max:255',
             'nameHoliday' => 'required|string|max:255',
             'holidayDate' => 'required|string|max:255',
         ]);
-        
+
         DB::beginTransaction();
         try {
             $holiday = new Holiday;
@@ -31,22 +45,21 @@ class HolidayController extends Controller
             $holiday->name_holiday = $request->nameHoliday;
             $holiday->date_holiday  = $request->holidayDate;
             $holiday->save();
-            
+
             DB::commit();
-            Toastr::success('Create new holiday successfully :)','Success');
+            Toastr::success('Create new holiday successfully :)', 'Success');
             return redirect()->back();
-            
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
-            Toastr::error('Add Holiday fail :)','Error');
+            Toastr::error('Add Holiday fail :)', 'Error');
             return redirect()->back();
         }
     }
     // update
-    public function updateRecord( Request $request)
+    public function updateRecord(Request $request)
     {
         DB::beginTransaction();
-        try{
+        try {
             $id           = $request->id;
             $holidayId    = $request->holidayId;
             $holidayName  = $request->holidayName;
@@ -60,37 +73,34 @@ class HolidayController extends Controller
                 'date_holiday' => $holidayDate,
             ];
 
-            Holiday::where('id',$request->id)->update($update);
+            Holiday::where('id', $request->id)->update($update);
             DB::commit();
-            Toastr::success('Holiday updated successfully :)','Success');
+            Toastr::success('Holiday updated successfully :)', 'Success');
             return redirect()->back();
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
-            Toastr::error('Holiday update fail :)','Error');
+            Toastr::error('Holiday update fail :)', 'Error');
             return redirect()->back();
         }
     }
-        // delete  
-        public function deleteRecord(Request $request) 
-        {
-            DB::beginTransaction();
-            try {
-                $id = $request->id;
-        
-                Holiday::destroy($id);
-        
-                DB::commit();
-        
-                Toastr::success('Holiday deleted successfully :)', 'Success');
-                return redirect()->back();
-        
-            } catch (\Exception $e) {
-        
-                DB::rollback();
-                Toastr::error('Holiday delete fail :)', 'Error');
-                return redirect()->back();
-            }
+    // delete
+    public function deleteRecord(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $id = $request->id;
+
+            Holiday::destroy($id);
+
+            DB::commit();
+
+            Toastr::success('Holiday deleted successfully :)', 'Success');
+            return redirect()->back();
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            Toastr::error('Holiday delete fail :)', 'Error');
+            return redirect()->back();
         }
-    
+    }
 }
