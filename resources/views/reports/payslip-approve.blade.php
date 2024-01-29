@@ -139,7 +139,7 @@
                                         <td colspan="5" class="text-center">
                                             <form action="/form/payslip/generate" method="post" class="p-3">
                                                 @csrf
-                                                <h3>No Payslips Available</h3>
+                                                <h3>No Payslips Found</h3>
                                                 <button class="btn btn-danger">Generate payslips for previous month</button>
                                             </form>
                                         </td>

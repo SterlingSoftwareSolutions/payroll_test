@@ -47,7 +47,6 @@ class PayslipController extends Controller
             'bank_name' => $employee->bank_name,
             'branch' => $employee->branch,
         ]);
-        dd($payslip);
         return $payslip;
     }
 
