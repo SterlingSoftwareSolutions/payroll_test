@@ -23,7 +23,7 @@ use App\Http\Controllers\TrainersController;
 use App\Http\Controllers\TrainingTypeController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PersonalInformationController;
-use App\Http\Controllers\PaySlipController;
+use App\Http\Controllers\PayslipController;
 
 
 /*
@@ -363,6 +363,7 @@ Route::get('/employees', [EmployeeController::class, 'cardAllEmployee'])->name('
 Route::controller(PayslipController::class)->group(function () {
 
     Route::get('form/payslip/approve', 'index')->middleware('auth')->name('form/payslip/approve'); //for payslip approve
+    Route::post('form/payslip/generate', 'generate_payslips')->middleware('auth')->name('form/payslip/generate_payslips');
     Route::get('salary/report', 'get_salary_report')->middleware('auth')->name('salary/report'); //for salary report
     // Route::post('form/payslip/save', 'saveRecord')->middleware('auth')->name('form/payslip/save');
     Route::post('form/payslip/update', 'updateRecord')->middleware('auth')->name('form/payslip/update');
@@ -370,4 +371,4 @@ Route::controller(PayslipController::class)->group(function () {
     Route::get('form/payslip/download', 'downloardfile')->middleware('auth')->name('form/payslip/download'); //for payslip download
 
 });
-Route::get('/getDetails/{employeeId}', [PaySlipController::class, 'getDetails'])->name('getDetails');
+Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');

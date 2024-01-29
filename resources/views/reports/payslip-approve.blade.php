@@ -37,11 +37,9 @@
                             <li class="breadcrumb-item active">Payslip Report</li>
                         </ul>
                     </div>
-                    <div class="col text-right col-md-3" style="height: 50px;">
+                    <div class="col text-right col-md-3">
                         <!-- Add the "Approve Payslip" button here -->
-                        <div data-toggle="modal" data-target="#approve_payslip" class="btn btn-primary"
-                            style="height: 100%;">Approve Payslip
-                        </div>
+                        <button type="submit" class="btn btn-primary btn-block rounded p-3">Approve All</button>
                     </div>
                 </div>
             </div>
@@ -57,7 +55,6 @@
                             <label class="focus-label">Employee ID</label>
                         </div>
                     </div>
-
 
                     <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
@@ -97,48 +94,6 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        {{-- <table class="table table-striped custom-table datatable">
-                        <thead>
-                            <tr>
-                                <th>Employee ID</th>
-                                <th>Employee Name</th>
-                                <th>Position</th>
-                                <th>Net Salary</th>
-                                <th class="text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($employees as $employee)
-                            <tr>
-                                <td>{{ $employee->id }}</td>
-                                <td>{{ $employee->full_name }}</td>
-                                <td>Position</td>
-                                <td>Net Salary</td>
-
-                                <td class="text-right">
-                                    <div class="dropdown dropdown-action">
-                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
-                                            aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item edit_payslip" href="#" data-toggle="modal"
-                                                data-target="#edit_payslip"><i class="fa fa-pencil m-r-5"></i> Edit
-                                                Payslip</a>
-                                            <a class="dropdown-item print_payslip" href="#" data-toggle="modal"
-                                                data-target="#print_payslip"><i class="fa fa-print m-r-5"></i> Print
-                                                Payslip</a>
-                                        </div>
-                                    </div>
-                                </td>
-
-
-                </div>
-
-                </td>
-                </tr>
-                @endforeach
-                </tbody>
-                </table> --}}
-
                         <table class="table table-striped custom-table datatable">
                             <thead>
                                 <tr>
@@ -150,50 +105,46 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($employees as $employee)
-                                    <tr>
-                                        <td>{{ $employee->employee_id }}</td>
-                                        <td>{{ $employee->full_name }}</td>
-                                        {{-- <td>{{ $employee->j_title }}</td> --}}
-                                        <td>{{ date('F Y') }}</td>
-                                        <td>Net Salary</td>
-                                        <!--need to calaculation-->
-                                        {{-- <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
-                                        aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item edit_payslip" href="#" data-toggle="modal"
-                                            data-target="#edit_payslip" data-employee-id="{{ $employee->id }}"><i
-                                                class="fa fa-pencil m-r-5"></i> Edit Payslip</a>
-                                        <a class="dropdown-item print_payslip" href="#" data-toggle="modal"
-                                            data-target="#print_payslip" data-employee-id="{{ $employee->id }}"><i
-                                                class="fa fa-print m-r-5"></i> Print Payslip</a>
-                                    </div>
-                                </div>
-                            </td> --}}
-                                        <td class="text-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
-                                                    aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item userUpdate" data-toggle="modal"
-                                                        data-id="{{ $employee->employee_id }}" data-target="#edit_payslip">
-                                                        <i class="fa fa-pencil m-r-5"></i> Edit
-                                                    </a>
+                                @if(count($payslips))
+                                    @foreach ($payslips as $payslip)
+                                        <tr>
+                                            <td>{{ $payslip->employee->employee_id }}</td>
+                                            <td>{{ $payslip->employee->full_name }}</td>
+                                            <td>{{ $payslip->date->format('F Y') }}</td>
+                                            <td>{{ $payslip->net_salary()}}</td>
+                                            <!--need to calaculation-->
+                                            <td class="text-center">
+                                                <div class="dropdown dropdown-action">
+                                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                                        aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item userUpdate" data-toggle="modal"
+                                                            data-id="{{ $payslip->employee->employee_id }}" data-target="#edit_payslip">
+                                                            <i class="fa fa-pencil m-r-5"></i> Edit
+                                                        </a>
 
-                                                    <a class="dropdown-item" href="#" data-toggle="modal"
-                                                        data-target="#delete_holiday"><i class="fa fa-print m-r-5"></i>
-                                                        Print</a>
-                                                    {{-- <a class="dropdown-item" href="#" data-toggle="modal"
-                                            data-target="#delete_holiday"><i class="fa fa-trash-o m-r-5"></i> Print</a>
-                                        --}}
-
+                                                        <a class="dropdown-item" href="#" data-toggle="modal"
+                                                            data-target="#delete_holiday"><i class="fa fa-print m-r-5"></i>
+                                                            Print</a>
+                                                        {{-- <a class="dropdown-item" href="#" data-toggle="modal"
+                                                data-target="#delete_holiday"><i class="fa fa-trash-o m-r-5"></i> Print</a>
+                                            --}}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <form action="/form/payslip/generate" method="post" class="p-3">
+                                                @csrf
+                                                <h3>No Payslips Available</h3>
+                                                <button class="btn btn-danger">Generate payslips for previous month</button>
+                                            </form>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -341,7 +292,6 @@
                 </div>
             </div>
             <!-- /Edit payslip Modal -->
-
         </div>
     </div>
 

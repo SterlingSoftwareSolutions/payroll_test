@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pay_slip', function (Blueprint $table) {
+        Schema::create('payslips', function (Blueprint $table) {
             $table->id();
             $table->string('employee_id')->constrained()->nullOnDelete();
-            // net_salary - computed field
-            $table->boolean('approved')->default(false);
+            $table->date('date');
+            $table->dateTimeTz('approved_at');
 
             // Gross salary
             $table->double('basic_salary');
@@ -39,6 +39,7 @@ return new class extends Migration
             // Extra paymments
             $table->double('holiday_payment');
             $table->double('incentives');
+            $table->double('ot');
 
             // Company EPF & ETF
             $table->double('company_epf');
@@ -61,6 +62,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pay_slip');
+        Schema::dropIfExists('payslips');
     }
 };
