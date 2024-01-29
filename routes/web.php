@@ -193,6 +193,7 @@ Route::controller(EmployeeController::class)->group(function () {
     Route::post('all/employee/update/{employeeId}', 'updateRecord')->middleware('auth')->name('all/employee/update');
     Route::put('form/employee/view/{user}', [EmployeeController::class, 'ViewEmployee'])->name('form.employee.view');
     Route::get('form/employee/view/{user}', [EmployeeController::class, 'ViewEmployee'])->name('form.employee.view');
+    Route::post('all/employee/delete', [EmployeeController::class, 'deleteRecords'])->middleware('auth')->name('deleteEmployee');
 
     Route::get('form/departments/page', 'index')->middleware('auth')->name('form/departments/page');
     Route::post('form/departments/save', 'saveRecordDepartment')->middleware('auth')->name('form/departments/save');
