@@ -97,16 +97,16 @@
                             @csrf
                             <div class="form-group">
                                 <label>Holiday ID <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" id="holidayId" name="holidayId">
+                                <input class="form-control" type="text" id="holidayId" name="holidayId" required>
                             </div>
                             <div class="form-group">
                                 <label>Holiday Name <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" id="nameHoliday" name="nameHoliday">
+                                <input class="form-control" type="text" id="nameHoliday" name="nameHoliday" required>
                             </div>
                             <div class="form-group">
                                 <label>Holiday Date <span class="text-danger">*</span></label>
                                 <div class="cal-icon">
-                                    <input class="form-control datetimepicker" type="text" id="holidayDate" name="holidayDate">
+                                    <input class="form-control datetimepicker" type="text" id="holidayDate" name="holidayDate" required>
                                 </div>
                             </div>
                             <div class="submit-section">
@@ -184,7 +184,7 @@
             </div>
         </div>
         <!-- /Delete Holiday Modal -->
-       
+
     </div>
     <!-- /Page Wrapper -->
     @section('script')
@@ -198,7 +198,7 @@
             var _this = $(this).parents('tr');
             $('#e_id').val(_this.find('.id').text());
             $('#holidayName_edit').val(_this.find('.holidayName').text());
-            $('#holidayDate_edit').val(_this.find('.holidayDate').text());  
+            $('#holidayDate_edit').val(_this.find('.holidayDate').text());
         });
     </script>
     {{-- delete js --}}
