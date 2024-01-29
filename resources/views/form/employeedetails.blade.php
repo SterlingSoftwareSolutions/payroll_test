@@ -39,9 +39,9 @@
                             @method('PUT')
 
                             <h3 class="card-title">{{ $employee->full_name }}
-                                <button type="submit" class="edit-icon">
+                                {{-- <button type="submit" class="edit-icon">
                                     <i class="fa fa-pencil"></i>
-                                </button>
+                                </button> --}}
                                 <p class="text-secondary">{{ $employee->j_title }}</p>
                             </h3>
                     </div>
@@ -80,28 +80,28 @@
 
         </div>
         <style>
-            .nav-tabs .nav-link label {
-                padding: 10px 15px;
-                /* Adjust the padding for spacing */
-                background-color: #ed5a5b;
-                /* Set your desired background color */
-                color: #fff;
-                /* Set text color */
-                border-radius: 100px;
-                /* Set border radius to achieve a rounded appearance */
-                display: inline-block;
-                /* Ensure the label behaves as a block element */
-            }
-
             .custom-label {
                 padding: 10px;
                 padding-left: 20px;
                 padding-right: 20px;
-                background-color: #ed5a5b;
-                color: #fff;
+                background-color: transparent;
+                border: 2px solid #ed5a5b;
+                color: #ed5a5b;
                 border-radius: 100px;
                 display: inline-block;
                 width: 180px;
+                text-align: center;
+            }
+
+            span.custom-label-click-style {
+                background-color: #ed5a5b;
+                color: #ffffff !important;
+                border-radius: 100px;
+                padding: 10px;
+                display: inline-block;
+                padding-left: 20px;
+                padding-right: 20px;
+                /* width: 180px; */
                 text-align: center;
             }
 
@@ -111,6 +111,38 @@
 
             .custom-nav-item {}
         </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var elements = document.querySelectorAll('.custom-nav-link');
+
+                elements.forEach(function(element) {
+                    element.addEventListener('click', function() {
+                        // Remove the class and reset the style from all elements
+                        elements.forEach(function(el) {
+                            el.classList.remove('custom-label-click-style');
+                            var customLabel = el.querySelector('.custom-label');
+                            customLabel.style.color = '#ed5a5b'; // Reset to the default color
+                            customLabel.style.backgroundColor =
+                            'transparent'; // Reset background color
+                        });
+
+                        // Add the class to the clicked element
+                        this.classList.add('custom-label-click-style');
+
+                        // Update the style of the custom-label element
+                        var customLabel = this.querySelector('.custom-label');
+                        customLabel.style.color = '#ffffff';
+                        customLabel.style.backgroundColor = '#ed5a5b';
+                    });
+                });
+            });
+        </script>
+
+
+
+
+        {{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
 
         <div class="card tab-box">
             <div class="row user-tabs">
@@ -130,7 +162,7 @@
                                 </li>
                                 <li class="nav-item custom-nav-item">
                                     <a href="#bank_statutory" data-toggle="tab" class="nav-link custom-nav-link">
-                                        <span class="custom-label">Bank & Statutory</span>
+                                        <span class="custom-label">Attendance</span>
                                     </a>
                                 </li>
                             </ul>
@@ -140,6 +172,21 @@
             </div>
         </div>
 
+        {{-- <script>
+        $(document).ready(function() {
+            // Handle tab click event
+            $('.nav-link').click(function() {
+                // Remove active class from all tabs
+                $('.nav-link').removeClass('active');
+                // Remove active class from all labels
+                $('.custom-label').removeClass('active');
+
+                // Add active class to the clicked tab and its label
+                $(this).addClass('active');
+                $(this).find('.custom-label').addClass('active');
+            });
+        });
+    </script> --}}
 
         <div class="tab-content">
             <!-- Profile Info Tab -->
