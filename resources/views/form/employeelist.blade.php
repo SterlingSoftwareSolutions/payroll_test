@@ -114,7 +114,7 @@
                                 @if (!empty($employees))
                                     @foreach ($employees as $employee)
                                         <tr>
-                                            <td class="text-left"><a class="dropdown-item"
+                                            <td class="text-left"><a class="dropdown-item" id="eid"
                                                     href="{{ route('form.employee.view', $employee->employee_id) }}"
                                                     data-toggle="#" data-target="#">
                                                     {{ $employee->employee_id }}</a></td>
@@ -143,9 +143,9 @@
                                                             class="dropdown-item userUpdate" data-toggle="#"
                                                             data-target="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                                         {{-- <a class="dropdown-item userUpdate" data-toggle="modal" data-id="{{ $employee->employee_id }}" data-target="#edit_employee"><i class="fa fa-pencil m-r-5"></i> Edit</a> --}}
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_employee"><i
-                                                                class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                        <a class="dropdown-item delete_employee" href="#" data-toggle="modal" data-id="{{ $employee->employee_id }}" data-target="#delete_employee">
+                                                            <i class="fa fa-trash-o m-r-5"></i> Delete
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -235,6 +235,43 @@
                 </div>
             </div>
             <!-- /Page Content -->
+            <div class="modal custom-modal fade" id="delete_employee" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="form-header">
+                                <h3>Delete Employee</h3>
+                                <p>Are you sure want to delete?</p>
+                            </div>
+                            <div class="modal-btn delete-action">
+                                <form action="{{ route('deleteEmployee')}}" method="POST" id="deleteEmployeeForm">
+                                    @csrf
+                                    <input type="hidden" name="id" class="e_id" value="">
+                                    <input type="hidden" name="avatar" class="e_avatar" value="">
+                                    <div class="row">
+                                        <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
+                                            <button type="submit" class="btn btn-primary continue-btn submit-btn" style="margin-top: 15px; background-color: #337ab7 !important; color: #fff !important; border-color: #337ab7 !important;" onmouseover="this.style.backgroundColor='#0b477c'; this.style.borderColor='#0b477c';" onmouseout="this.style.backgroundColor='#337ab7'; this.style.borderColor='#337ab7';">Delete</button>
+                                        </div>
+                                        <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
+                                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn text-center" style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important; background-color: #337ab7 !important; color: #fff !important; border-color: #337ab7 !important;" onmouseover="this.style.backgroundColor='#0b477c'; this.style.borderColor='#0b477c';" onmouseout="this.style.backgroundColor='#337ab7'; this.style.borderColor='#337ab7';">Cancel</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             {{-- delete js --}}
+             <script>
+                $(document).ready(function() {
+                    $('.delete_employee').on('click', function() {
+                        var employeeId = $(this).data('id');
+                        $('#deleteEmployeeForm .e_id').val(employeeId);
+                    });
+                });
+            </script>
 
             <!-- Add Employee Modal -->
             <div id="add_employee" class="modal custom-modal fade" role="dialog">

@@ -442,8 +442,11 @@ class EmployeeController extends Controller
 
 
     // delete record
-    public function deleteRecord($employee_id)
+    public function deleteRecords(Request $request)
     {
+
+        $employee_id = $request->id;
+        // dd($employee_id);
         DB::beginTransaction();
         try {
 
