@@ -186,7 +186,7 @@ Route::controller(EmployeeController::class)->group(function () {
     // Route::post('all/employee/update', 'updateRecord')->middleware('auth')->name('all/employee/update');
     Route::get('all/employee/delete/{employee_id}', 'deleteRecord')->middleware('auth');
     Route::post('all/employee/search', 'employeeSearch')->name('all/employee/search');
-    Route::post('all/employee/list/search', 'employeeListSearch')->name('all/employee/list/search');
+    Route::get('all/employee/list/search', 'employeeListSearch')->name('all/employee/list/search');
     Route::get('form/employee/new', 'createEmployee')->middleware('auth')->name('form/employee/new');
     Route::get('form/employee/edit/{user}', [EmployeeController::class, 'EditEmployee'])->name('form.employee.edit');
     Route::put('form/employee/edit/{user}', [EmployeeController::class, 'EditEmployee'])->name('form.employee.edit');

@@ -30,66 +30,43 @@
             <!-- /Page Header -->
 
             <!-- Search Filter -->
-            <form action="{{ route('all/employee/search') }}" method="POST">
-                @csrf
+            <form action="{{ route('all/employee/list') }}" method="GET">
+              
                 <div class="row filter-row">
                     <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" name="employee_id">
                             <label class="focus-label">Employee ID</label>
+                            <input type="text" name="employee_id" value="{{ request('employee_id') }}" class="form-control">
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-4">
                         <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" name="full_name">
                             <label class="focus-label">Employee Name</label>
+                            <input type="text" name="full_name" value="{{ request('full_name') }}" class="form-control">
                         </div>
-                    </div>
-                    <!-- Include this section where you want the dropdown to appear -->
+                    </div>  
+
                     <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
-                            <select class="select floating" name="department">
+                            <label class="focus-label">Department</label>
+                            {{-- <select class="select form-control floating" name="department">
                                 <option value=""> -- Select Department-- </option>
                                 @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}">{{ $department->department }}</option>
+                                <option value="{{ $department->id }}" @if(request('department')==$department->id) selected
+                                    @endif>{{ $department->department }}</option>
                                 @endforeach
-                            </select>
+                            </select> --}}
                         </div>
-                    </div>
+                     </div>
 
-                    <!-- Include this script at the end of your Blade view -->
-                    <script>
-                        // Fetch departments and populate the dropdown
-                        window.addEventListener('DOMContentLoaded', (event) => {
-                            fetch('/get-departments')
-                                .then(response => response.json())
-                                .then(departments => {
-                                    const dropdown = document.getElementById('departmentDropdown');
-
-                                    departments.forEach(department => {
-                                        const option = document.createElement('option');
-                                        option.value = department
-                                        .id; // Assuming your department model has an 'id' field
-                                        option.textContent = department
-                                        .name; // Assuming your department model has a 'name' field
-                                        dropdown.appendChild(option);
-                                    });
-                                });
-                        });
-
-                        // Handle department selection
-                        document.getElementById('departmentDropdown').addEventListener('change', function() {
-                            const selectedDepartment = this.value;
-                            document.getElementById('selectedDepartment').innerText = `Selected Department: ${selectedDepartment}`;
-
-                        });
-                    </script>
-
+                    
                     <div class="col-sm-6 col-md-2">
-                        <button type="sumit" class="btn btn-success btn-block"> Search </button>
+                        <button type="submit" class="btn btn-success btn-block">Search</button>
                     </div>
                 </div>
             </form>
+
+              
 
             <!-- Page Content -->
             <h3 class="page-title">All Employee</h3>
@@ -390,14 +367,14 @@
                                                     class="text-danger">*</span></label>
                                             {{-- <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name"> --}}
 
-                                            <select class="select form-control floating" name="department">
+                                            {{-- <select class="select form-control floating" name="department">
                                                 <option value=""> --Select Department-- </option>
                                                 @foreach ($departments as $department)
                                                     <option value="{{ $department->id }}">{{ $department->department }}
                                                     </option>
                                                 @endforeach
 
-                                            </select>
+                                            </select> --}}
                                         </div>
                                     </div>
                                     <div class="col-md-6">

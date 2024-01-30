@@ -47,18 +47,38 @@ class EmployeeController extends Controller
 
 
     // all employee list
-    public function listAllEmployee()
+    public function listAllEmployee(Request $request)
     {
         $users = DB::table('users')
-            ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-            ->select('users.*', 'employees.dob', 'employees.gender')
-            ->get();
+        ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        ->select('users.*', 'employees.dob', 'employees.gender')
+        ->get();
+
+
+    
 
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
         $employees = Employee::all();
-
+       
         $departments = department::all();
+
+    $query = Employee::query();
+
+   
+
+        if ($request->has('employee_id')) {
+            $query->where('employee_id', 'like', '%'. $request->input('employee_id') . '%');
+        }
+
+        if ($request->has('full_name')) {
+            $query->where('full_name', 'like', '%' . $request->input('full_name') . '%');
+        }
+
+        $employees = $query->get();
+    
+
+       
 
         return view('form.employeelist', compact('employees', 'departments'));
     }
@@ -535,76 +555,103 @@ class EmployeeController extends Controller
     }
     public function employeeListSearch(Request $request)
     {
-        $users = DB::table('users')
-            ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-            ->select('users.*', 'employees.dob', 'employees.gender')
-            ->get();
-        $permission_lists = DB::table('permission_lists')->get();
-        $userList = DB::table('users')->get();
+        
+        $employees = Employee::all();
+      
+        $employeeListSearch = $request->employeeListSearch;
+        $data =  Employee::where('full_name','LIKE','%'.$employeeListSearch. '%')->get();
 
-        // search by id
-        if ($request->employee_id) {
-            $users = DB::table('users')
-                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                ->select('users.*', 'employees.dob', 'employees.gender')
-                ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
-                ->get();
-        }
-        // search by name
-        if ($request->name) {
-            $users = DB::table('users')
-                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                ->select('users.*', 'employees.dob', 'employees.gender')
-                ->where('users.name', 'LIKE', '%' . $request->name . '%')
-                ->get();
-        }
-        // search by department
-        if ($request->department) {
-            $users = DB::table('users')
-                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                ->select('users.*', 'employees.dob', 'employees.gender')
-                ->where('users.department', 'LIKE', '%' . $request->department . '%')
-                ->get();
-        }
 
-        // search by name and id
-        if ($request->employee_id && $request->name) {
-            $users = DB::table('users')
-                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                ->select('users.*', 'employees.dob', 'employees.gender')
-                ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
-                ->where('users.name', 'LIKE', '%' . $request->name . '%')
-                ->get();
-        }
-        // search by department and id
-        if ($request->employee_id && $request->department) {
-            $users = DB::table('users')
-                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                ->select('users.*', 'employees.dob', 'employees.gender')
-                ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
-                ->where('users.department', 'LIKE', '%' . $request->department . '%')
-                ->get();
-        }
-        // search by name and department
-        if ($request->name && $request->department) {
-            $users = DB::table('users')
-                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                ->select('users.*', 'employees.dob', 'employees.gender')
-                ->where('users.name', 'LIKE', '%' . $request->name . '%')
-                ->where('users.department', 'LIKE', '%' . $request->department . '%')
-                ->get();
-        }
-        // search by name and department and id
-        if ($request->employee_id && $request->name && $request->department) {
-            $users = DB::table('users')
-                ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-                ->select('users.*', 'employees.dob', 'employees.gender')
-                ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
-                ->where('users.name', 'LIKE', '%' . $request->name . '%')
-                ->where('users.department', 'LIKE', '%' . $request->department . '%')
-                ->get();
-        }
-        return view('form.employeelist', compact('users', 'userList', 'permission_lists'));
+        return view('form.employeelist',compact('data','employees'));
+
+        //dd($request);
+        // $users = DB::table('users')
+        //     ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //     ->select('users.*', 'employees.dob', 'employees.gender')
+        //     ->get();
+        // $permission_lists = DB::table('permission_lists')->get();
+        // $userList = DB::table('users')->get();
+
+        // // search by id
+        // if ($request->employee_id) {
+        //     $users = DB::table('users')
+        //         ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //         ->select('users.*', 'employees.dob', 'employees.gender')
+        //         ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
+        //         ->get();
+        // }
+        // // search by name
+        // if ($request->name) {
+        //     $users = DB::table('users')
+        //         ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //         ->select('users.*', 'employees.dob', 'employees.gender')
+        //         ->where('users.name', 'LIKE', '%' . $request->name . '%')
+        //         ->get();
+        // }
+        // // search by department
+        // if ($request->department) {
+        //     $users = DB::table('users')
+        //         ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //         ->select('users.*', 'employees.dob', 'employees.gender')
+        //         ->where('users.department', 'LIKE', '%' . $request->department . '%')
+        //         ->get();
+        // }
+
+        // // search by name and id
+        // if ($request->employee_id && $request->name) {
+        //     $users = DB::table('users')
+        //         ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //         ->select('users.*', 'employees.dob', 'employees.gender')
+        //         ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
+        //         ->where('users.name', 'LIKE', '%' . $request->name . '%')
+        //         ->get();
+        // }
+        // // search by department and id
+        // if ($request->employee_id && $request->department) {
+        //     $users = DB::table('users')
+        //         ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //         ->select('users.*', 'employees.dob', 'employees.gender')
+        //         ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
+        //         ->where('users.department', 'LIKE', '%' . $request->department . '%')
+        //         ->get();
+        // }
+        // // search by name and department
+        // if ($request->name && $request->department) {
+        //     $users = DB::table('users')
+        //         ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //         ->select('users.*', 'employees.dob', 'employees.gender')
+        //         ->where('users.name', 'LIKE', '%' . $request->name . '%')
+        //         ->where('users.department', 'LIKE', '%' . $request->department . '%')
+        //         ->get();
+        // }
+        // // search by name and department and id
+        // if ($request->employee_id && $request->name && $request->department) {
+        //     $users = DB::table('users')
+        //         ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+        //         ->select('users.*', 'employees.dob', 'employees.gender')
+        //         ->where('employee_id', 'LIKE', '%' . $request->employee_id . '%')
+        //         ->where('users.name', 'LIKE', '%' . $request->name . '%')
+        //         ->where('users.department', 'LIKE', '%' . $request->department . '%')
+        //         ->get();
+        // }
+        // return view('form.employeelist', compact('users', 'userList', 'permission_lists'));    
+
+
+
+
+        // $employeeId = $request->input('employee_id');
+    
+
+
+        // $data = DB::table('employees')->where(['employee_id'=>$employeeId])->first();
+    
+        // return $data;
+
+            
+
+
+
+       
     }
 
     // employee profile with all controller user
@@ -623,7 +670,11 @@ class EmployeeController extends Controller
         return view('form.employeeprofile', compact('user', 'users'));
     }
 
-    /** page departments */
+
+
+
+
+                                /**    page departments */
     public function index()
     {
         $departments = Department::all();
@@ -671,7 +722,7 @@ class EmployeeController extends Controller
     {
         DB::beginTransaction();
         try {
-            // update table departments
+            // update table departments               
             $department = [
                 'id' => IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']),
                 'department' => $request->department,
