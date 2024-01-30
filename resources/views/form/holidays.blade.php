@@ -43,44 +43,31 @@
                                 </tr>
                             </thead>
                             <tbody>
+
                                 @foreach ($holiday as $key => $items)
-                                    @if ($today_date > $items->date_holiday)
-                                        <tr class="holiday-completed">
-                                            <td>{{ ++$key }}</td>
-                                            <td class="text-left">{{ $items->holiday_id }}</td>
-                                            <td>{{ $items->name_holiday }}</td>
-                                            <td>{{ date('d F, Y', strtotime($items->date_holiday)) }}</td>
-                                            <td>{{ date('l', strtotime($items->date_holiday)) }}</td>
-                                            <td></td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                                @foreach ($holiday as $key => $items)
-                                    @if ($today_date <= $items->date_holiday)
-                                        <tr class="holiday-upcoming">
-                                            <td>{{ ++$key }}</td>
-                                            <td>{{ $items->holiday_id }}</td>
-                                            <td class="holidayName">{{ $items->name_holiday }}</td>
-                                            <td>{{ date('d F, Y', strtotime($items->date_holiday)) }}</td>
-                                            <td>{{ date('l', strtotime($items->date_holiday)) }}</td>
-                                            <td class="text-center">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle"
-                                                        data-toggle="dropdown" aria-expanded="false"><i
-                                                            class="material-icons">more_vert</i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item userUpdate" data-toggle="modal"
-                                                            data-id="{{ $items->holiday_id }}"
-                                                            data-target="#edit_holiday"><i class="fa fa-pencil m-r-5"></i>
-                                                            Edit</a>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_holiday"><i
-                                                                class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                                    </div>
+                                    <tr>
+                                        <td>{{ ++$key }}</td>
+                                        <td class="text-left id">{{ $items->holiday_id }}</td>
+                                        <td class="holidayName holiday-name">{{ $items->name_holiday }}</td>
+                                        <td class="holiday holidayDate">
+                                            {{ date('d F, Y', strtotime($items->date_holiday)) }}</td>
+                                        <td>{{ date('l', strtotime($items->date_holiday)) }}</td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                                    aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item userUpdate" data-toggle="modal"
+                                                        data-id="'.$items->holiday_id.'" data-target="#edit_holiday"><i
+                                                            class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item userDelete" href="#" data-toggle="modal"
+                                                        ata-id="'.$items->holiday_id.'" data-target="#delete_holiday"><i
+                                                            class="fa fa-trash-o m-r-5"></i>
+                                                        Delete</a>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    @endif
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -143,8 +130,8 @@
                             @csrf
                             <div class="form-group">
                                 <label>Holiday ID <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="holidayId_edit" name="holidayId"
-                                    value="">
+                                <input type="text" class="form-control" id="e_id" name="holidayId"
+                                    value=""readonly>
                             </div>
                             <div class="form-group">
                                 <label>Holiday Name <span class="text-danger">*</span></label>
@@ -154,8 +141,8 @@
                             <div class="form-group">
                                 <label>Holiday Date <span class="text-danger">*</span></label>
                                 <div class="cal-icon">
-                                    <input type="text" class="form-control datetimepicker" id="holidayDate_edit"
-                                        name="holidayDate" value="">
+                                    <input class="form-control datetimepicker" type="text" id="holidayDate_edit"
+                                        name="holidayDate" required>
                                 </div>
                             </div>
                             <div class="submit-section">
