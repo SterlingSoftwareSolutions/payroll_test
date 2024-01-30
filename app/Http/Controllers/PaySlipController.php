@@ -24,50 +24,50 @@ class PayslipController extends Controller
         $basic_salary = $employee->basic_Salary;
 
         // Increments
-        $br_allowance = SalaryDetail::where('employee_id', $employee->id)
+        $br_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'BR Allowance')
             ->where('type', 'increments')
             ->sum('increment_amount');
 
-        $fixed_allowance = SalaryDetail::where('employee_id', $employee->id)
+        $fixed_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Fixed Allowance')
             ->where('type', 'increments')
             ->sum('increment_amount');
 
-        $attendance_allowance = SalaryDetail::where('employee_id', $employee->id)
+        $attendance_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Attendance Allowance')
             ->where('type', 'increments')
             ->sum('increment_amount');
 
-        $incentives = SalaryDetail::where('employee_id', $employee->id)
+        $incentives = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'like', 'Incentive %')
             ->where('type', 'increments')
             ->sum('increment_amount');
 
-        $other_incrmeents = SalaryDetail::where('employee_id', $employee->id)
+        $other_incrmeents = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Other')
             ->where('type', 'increments')
             ->sum('increment_amount');
 
         // Deductions
-        $advance = SalaryDetail::where('employee_id', $employee->id)
+        $advance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Advance')
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
-        $loan = SalaryDetail::where('employee_id', $employee->id)
+        $loan = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Loan')
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
-        $other_deductions = SalaryDetail::where('employee_id', $employee->id)
+        $other_deductions = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Other')
             ->where('type', 'deductions')
@@ -132,6 +132,12 @@ class PayslipController extends Controller
             'bank_name' => $employee->bank_name,
             'branch' => $employee->branch,
         ]);
+
+        // Deactivate one-time adjustments
+        SalaryDetail::where('employee_id', $employee->employee_id)
+                    ->where('active', true)
+                    ->where('recurring', false)
+                    ->update(['active' => false]);
 
         return $payslip;
     }

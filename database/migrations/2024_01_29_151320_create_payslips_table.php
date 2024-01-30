@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('payslips', function (Blueprint $table) {
             $table->id();
-            $table->string('employee_id')->constrained()->nullOnDelete();
+            $table->foreignId('employee_id')->constrained()->nullOnDelete();
             $table->date('date');
             $table->dateTimeTz('approved_at')->nullable();
 
