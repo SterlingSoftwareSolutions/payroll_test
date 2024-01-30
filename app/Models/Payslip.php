@@ -12,6 +12,7 @@ class Payslip extends Model
     protected $casts = [
         'date' => 'date'
     ];
+
     public function employee(){
         return $this->belongsTo(Employee::class);
     }

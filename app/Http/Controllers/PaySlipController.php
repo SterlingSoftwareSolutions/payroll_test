@@ -21,32 +21,118 @@ class PayslipController extends Controller
 
     public function create_payslip(Employee $employee)
     {
+        $basic_salary = $employee->basic_Salary;
+
+        // Increments
+        $br_allowance = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'BR Allowance')
+            ->where('type', 'increments')
+            ->sum('increment_amount');
+
+        $fixed_allowance = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'Fixed Allowance')
+            ->where('type', 'increments')
+            ->sum('increment_amount');
+
+        $attendance_allowance = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'Attendance Allowance')
+            ->where('type', 'increments')
+            ->sum('increment_amount');
+
+        $incentives = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'like', 'Incentive %')
+            ->where('type', 'increments')
+            ->sum('increment_amount');
+
+        $other_incrmeents = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'Other')
+            ->where('type', 'increments')
+            ->sum('increment_amount');
+
+        // Deductions
+        $advance = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'Advance')
+            ->where('type', 'deductions')
+            ->sum('increment_amount');
+
+        $loan = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'Loan')
+            ->where('type', 'deductions')
+            ->sum('increment_amount');
+
+        $other_deductions = SalaryDetail::where('employee_id', $employee->id)
+            ->where('active', true)
+            ->where('increment_name', 'Other')
+            ->where('type', 'deductions')
+            ->sum('increment_amount');
+
+        // Salary amounts
+        $gross_salary = $basic_salary + $br_allowance + $fixed_allowance;
+        $gross_salary_day = $gross_salary / 30;
+        $gross_salary_hour = $gross_salary_day / 10;
+
+        // Overtime
+        $ot_hours = 0;
+        $ot = ($gross_salary / 240) * $ot_hours;
+
+        // No pay leave deduction
+        $no_pay_leaves = 0;
+        $no_pay_leave_deduction =  $gross_salary_day * $no_pay_leaves;
+
+        // Late hours deduction
+        $late_hours = 0;
+        $late_deduction = $gross_salary_hour * $late_hours;
+
+        // Employee EPF
+        $employee_epf = ($gross_salary / 100) * 8;
+
+        // Company EPF/ETF
+        $company_epf = ($gross_salary / 100) * 12;
+        $etf = ($gross_salary / 100) * 3;
+
         $payslip = Payslip::firstOrCreate([
             'employee_id' => $employee->id,
             'date' => now()->startOfMonth()->subMonth(),
         ],[
-            'approved_at' => now(),
-            'basic_salary' => $employee->basic_Salary,
-            'br_allowance' => 0,
-            'fixed_allowance' => 0,
-            'attendance_allowance' => 0,
-            'no_pay_leave_deduction' => 0,
-            'late_deduction' => 0,
-            'employee_epf' => 0,
+            'approved_at' => null,
+
+            'basic_salary' => $basic_salary,
+            'br_allowance' => $br_allowance,
+            'fixed_allowance' => $fixed_allowance,
+            'attendance_allowance' => $attendance_allowance,
+
+            'no_pay_leave_deduction' => $no_pay_leave_deduction,
+            'late_deduction' => $late_deduction,
+
+            'employee_epf' => $employee_epf,
             'paye' => 0,
             'stamp_duty' => 0,
-            'advance' => 0,
-            'loan' => 0,
+
+            'advance' => $advance,
+            'loan' => $loan,
+            'other_deductions' => $other_deductions,
+
             'holiday_payment' => 0,
-            'incentives' => 0,
-            'ot' => 0,
-            'company_epf' => 0,
-            'etf' => 0,
+            'incentives' => $incentives,
+            'ot' => $ot,
+            'other_increments' => $other_incrmeents,
+
+            'company_epf' => $company_epf,
+            'etf' => $etf,
+
             'account_name' => $employee->account_name,
             'account_number' => $employee->account_number,
             'bank_name' => $employee->bank_name,
             'branch' => $employee->branch,
         ]);
+
         return $payslip;
     }
 

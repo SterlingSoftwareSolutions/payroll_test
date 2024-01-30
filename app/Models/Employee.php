@@ -32,43 +32,30 @@ class Employee extends Model
         'basic_Salary',
     ];
 
-    protected $casts=[
+    protected $casts = [
         'dob' => 'date',
-        'joinedDate'=> 'date',
-        'createdDate'=> 'date',
+        'joinedDate' => 'date',
+        'createdDate' => 'date',
     ];
+
     // Employee.php
     public function bankDetails()
     {
         return $this->hasMany(BankDetail::class);
     }
 
+    public function getNameAttribute()
+    {
+        return $this->attributes['employee_name']; // adjust based on your attribute name
+    }
 
-    
-// public function holiday()
-// {
-//     return $this->hasMany(Holiday::class);
-// }
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 
-public function getNameAttribute()
-{
-    return $this->attributes['employee_name']; // adjust based on your attribute name
-}
-
-public function attendances()
-{
-    return $this->hasMany(Attendance::class);
-}
-
-public function department()
-{
-    return $this->belongsTo(Department::class);
-}
-
-
-   
-
-
-
-
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }

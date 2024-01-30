@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('employee_id')->constrained()->nullOnDelete();
             $table->date('date');
-            $table->dateTimeTz('approved_at');
+            $table->dateTimeTz('approved_at')->nullable();
 
             // Gross salary
             $table->double('basic_salary');
@@ -35,11 +35,13 @@ return new class extends Migration
 
             $table->double('advance');
             $table->double('loan');
+            $table->double('other_deductions');
 
             // Extra paymments
             $table->double('holiday_payment');
             $table->double('incentives');
             $table->double('ot');
+            $table->double('other_increments');
 
             // Company EPF & ETF
             $table->double('company_epf');
