@@ -74,7 +74,7 @@ class AttendanceController extends Controller
         })->count();
 
 
-        
+
         $departments = department::select('id','department')->distinct()->get();
 
         $department = $request->input('department', null);                  //for search feature
@@ -84,13 +84,13 @@ class AttendanceController extends Controller
         $dataQuery = department::when($department, function ($query) use ($department) {
             return $query->where('department', $department);
         })
-   
-        ->whereYear('created_at', '=', $selectedYear)       
+
+        ->whereYear('created_at', '=', $selectedYear)
         ->whereMonth('created_at', '=', $selectedMonth);
 
         $data = $dataQuery->get();
 
-        
+
 
         return view('reports.attendance-report', compact([
             'departments', 'employees', 'attendances',
@@ -141,10 +141,11 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
-
+        // dd($request);
         // Validate the form data
         $request->validate([
-            'employee_id' => 'required|numeric|exists:employees,id',
+            'employee_id' => 'required',
+            'selected_employee_id' => 'required|numeric|exists:employees,id',
             'date' => 'required|date|date_format:Y-m-d',
             'punch_in' => 'required|date_format:H:i',
             'punch_out' => 'required|date_format:H:i',
@@ -153,12 +154,12 @@ class AttendanceController extends Controller
         try {
 
             $attendance = Attendance::create([
-                'employee_id' => $request->employee_id,
+                'employee_id' => $request->selected_employee_id,
                 'date' => $request->date,
                 'punch_in' => $request->punch_in,
                 'punch_out' => $request->punch_out,
             ]);
-           
+
             DB::commit();
 
             Toastr::success('Added attendence successfully :)', 'Success');
@@ -168,9 +169,9 @@ class AttendanceController extends Controller
             Toastr::error('Add Attendance fail :)', 'Error');
             return redirect()->back();
         }
-       
+
     }
-   
+
 
     /** update record attendance */
     public function updateAttendance(Request $request)
@@ -229,7 +230,7 @@ class AttendanceController extends Controller
         // Download the PDF with a custom filename
         return $pdf->download('form/attendance/pdf');
     }
- 
+
     public function download(Employee $employee) {
         $current_month = date('m');
         $current_year = date('Y');
@@ -245,7 +246,7 @@ class AttendanceController extends Controller
         })->count();
         $holidays = Holiday::pluck('date_holiday');
         $holiday_working_count = $attendances->whereIn('date', $holidays)->count();
-        
+
         $pdf = Pdf::loadView('pdf', compact(
             'employee',
             'attendances',

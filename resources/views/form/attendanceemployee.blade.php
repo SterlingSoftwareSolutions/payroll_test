@@ -249,22 +249,36 @@
                                 <div class="form-group">
                                     <label class="col-form-label">Attendance ID <span class="text-danger">*</span></label>
                                     <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="attendance_id" name="attendance_id" value="{{$next_id}}" disabled>
-                                    @error('attendance_id')<span class="text-danger">{{$message}}</span>@enderror                                
+                                    @error('attendance_id')<span class="text-danger">{{$message}}</span>@enderror
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-group">
                                     <label class="col-form-label">Select Employee <span class="text-danger">*</span></label>
-                                    <datalist id="employees">
-                                        @for($i = 0; $i < $employees->count(); $i++)
-                                            <option value="{{$employees[$i]->id}}">{{$employees[$i]->full_name}}
-                                            </option>
-                                            @endfor
-                                    </datalist>
-                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="empolyee_name" type="text" name="employee_id">
+                                    <input list="browsers" name="employee_id" id="employee_id" class="form-control" style="width: 100%;">
                                     @error('employee_id')<span class="text-danger">{{$message}}</span>@enderror
+                                    @error('selected_employee_id')<span class="text-danger">Enter Correct employee ID</span>@enderror
+                                    <datalist id="browsers">
+                                        @foreach ($employees as $employee)
+                                            <option value="{{ $employee->id }} - {{ $employee->full_name }}">
+                                                {{ $employee->employee_id }}
+                                            </option>
+                                        @endforeach
+                                    </datalist>
                                 </div>
                             </div>
+
+                            <!-- Add an invisible input field -->
+                            <input type="hidden" name="selected_employee_id" id="selected_employee_id" value="{{ $employee->id }}">
+
+                            <script>
+                                // Add event listener to update the hidden input field value
+                                document.getElementById('employee_id').addEventListener('input', function() {
+                                    var selectedEmployeeId = this.value.split(' - ')[0]; // Extracting the ID from the selected option
+                                    document.getElementById('selected_employee_id').value = selectedEmployeeId;
+                                });
+                            </script>
+
                             <div class="col-md">
                                 <div class="form-group">
                                     <label class="col-form-label">Select Date <span class="text-danger">*</span></label>
