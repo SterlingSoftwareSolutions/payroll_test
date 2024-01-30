@@ -58,22 +58,23 @@ class HolidayController extends Controller
     // update
     public function updateRecord(Request $request)
     {
+        // dd($request);
         DB::beginTransaction();
         try {
-            $id           = $request->id;
+
+            // $id           = $request->id;
             $holidayId    = $request->holidayId;
             $holidayName  = $request->holidayName;
             $holidayDate  = $request->holidayDate;
 
             $update = [
 
-                'id'           => $id,
+                // 'id'           => $id,
                 'holiday_id'   => $holidayId,
                 'name_holiday' => $holidayName,
                 'date_holiday' => $holidayDate,
             ];
-
-            Holiday::where('id', $request->id)->update($update);
+            Holiday::where('holiday_id', $holidayId)->update($update);
             DB::commit();
             Toastr::success('Holiday updated successfully :)', 'Success');
             return redirect()->back();
