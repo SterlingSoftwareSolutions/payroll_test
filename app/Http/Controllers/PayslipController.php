@@ -60,7 +60,7 @@ class PayslipController extends Controller
     public function print(Payslip $payslip)
     {
         $pdf = Pdf::loadView('payslip_pdf', compact('payslip'))->setPaper('a4', 'portrait');;
-        return $pdf->stream();
+        return $pdf->download(strtoupper(preg_split('#\s+#', $payslip->employee->full_name)[0]));
     }
 
     public function create_payslip(Employee $employee)
