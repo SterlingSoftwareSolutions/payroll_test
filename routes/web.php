@@ -9,7 +9,7 @@ use App\Http\Controllers\LeavesController;
 use App\Http\Controllers\PhotosController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\PayrollController;
-use App\Http\Controllers\PaySlipController;
+use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
@@ -25,7 +25,6 @@ use App\Http\Controllers\ExpenseReportsController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PersonalInformationController;
-use App\Http\Controllers\PayslipController;
 
 
 /*
