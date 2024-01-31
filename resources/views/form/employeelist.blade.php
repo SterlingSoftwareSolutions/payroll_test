@@ -19,11 +19,11 @@
                         <a href="{{ route('form/employee/new') }}" class="btn add-btn" data-toggle="#" data-target="#"><i
                                 class="fa fa-plus"></i> Add Employee</a>
                         <!-- todo
-                            <div class="view-icons">
-                                <a href="{{ route('all/employee/card') }}" class="grid-view btn btn-link active"><i class="fa fa-th"></i></a>
-                                <a href="{{ route('all/employee/list') }}" class="list-view btn btn-link"><i class="fa fa-bars"></i></a>
-                            </div>
-                        /todo -->
+                                <div class="view-icons">
+                                    <a href="{{ route('all/employee/card') }}" class="grid-view btn btn-link active"><i class="fa fa-th"></i></a>
+                                    <a href="{{ route('all/employee/list') }}" class="list-view btn btn-link"><i class="fa fa-bars"></i></a>
+                                </div>
+                            /todo -->
                     </div>
                 </div>
             </div>
@@ -31,12 +31,13 @@
 
             <!-- Search Filter -->
             <form action="{{ route('all/employee/list') }}" method="GET">
-              
+
                 <div class="row filter-row">
                     <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
                             <label class="focus-label">Employee ID</label>
-                            <input type="text" name="employee_id" value="{{ request('employee_id') }}" class="form-control">
+                            <input type="text" name="employee_id" value="{{ request('employee_id') }}"
+                                class="form-control">
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-4">
@@ -44,7 +45,7 @@
                             <label class="focus-label">Employee Name</label>
                             <input type="text" name="full_name" value="{{ request('full_name') }}" class="form-control">
                         </div>
-                    </div>  
+                    </div>
 
                     <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
@@ -52,21 +53,21 @@
                             {{-- <select class="select form-control floating" name="department">
                                 <option value=""> -- Select Department-- </option>
                                 @foreach ($departments as $department)
-                                <option value="{{ $department->id }}" @if(request('department')==$department->id) selected
+                                <option value="{{ $department->id }}" @if (request('department') == $department->id) selected
                                     @endif>{{ $department->department }}</option>
                                 @endforeach
                             </select> --}}
                         </div>
-                     </div>
+                    </div>
 
-                    
+
                     <div class="col-sm-6 col-md-2">
                         <button type="submit" class="btn btn-success btn-block">Search</button>
                     </div>
                 </div>
             </form>
 
-              
+
 
             <!-- Page Content -->
             <h3 class="page-title">All Employee</h3>
@@ -120,7 +121,9 @@
                                                             class="dropdown-item userUpdate" data-toggle="#"
                                                             data-target="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                                         {{-- <a class="dropdown-item userUpdate" data-toggle="modal" data-id="{{ $employee->employee_id }}" data-target="#edit_employee"><i class="fa fa-pencil m-r-5"></i> Edit</a> --}}
-                                                        <a class="dropdown-item delete_employee" href="#" data-toggle="modal" data-id="{{ $employee->employee_id }}" data-target="#delete_employee">
+                                                        <a class="dropdown-item delete_employee" href="#"
+                                                            data-toggle="modal" data-id="{{ $employee->employee_id }}"
+                                                            data-target="#delete_employee">
                                                             <i class="fa fa-trash-o m-r-5"></i> Delete
                                                         </a>
                                                     </div>
@@ -221,16 +224,28 @@
                                 <p>Are you sure want to delete?</p>
                             </div>
                             <div class="modal-btn delete-action">
-                                <form action="{{ route('deleteEmployee')}}" method="POST" id="deleteEmployeeForm">
+                                <form action="{{ route('deleteEmployee') }}" method="POST" id="deleteEmployeeForm">
                                     @csrf
                                     <input type="hidden" name="id" class="e_id" value="">
                                     <input type="hidden" name="avatar" class="e_avatar" value="">
                                     <div class="row">
-                                        <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
-                                            <button type="submit" class="btn btn-primary continue-btn submit-btn" style="margin-top: 15px; background-color: #337ab7 !important; color: #fff !important; border-color: #337ab7 !important;" onmouseover="this.style.backgroundColor='#0b477c'; this.style.borderColor='#0b477c';" onmouseout="this.style.backgroundColor='#337ab7'; this.style.borderColor='#337ab7';">Delete</button>
+                                        <div class="col-6"
+                                            style="display: flex; align-items: center; justify-content: center;">
+                                            <button type="submit"
+                                                class="btn btn-primary continue-btn submit-btn delete-btn"
+                                                style="margin-top: 15px; background-color: #f53542 !important; color: #fff !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s;"
+                                                onmouseover="this.style.backgroundColor='#f80919'; this.style.borderColor='#f80919';"
+                                                onmouseout="this.style.backgroundColor='#f53542'; this.style.borderColor='#f53542';">Delete</button>
                                         </div>
-                                        <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
-                                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn text-center" style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important; background-color: #337ab7 !important; color: #fff !important; border-color: #337ab7 !important;" onmouseover="this.style.backgroundColor='#0b477c'; this.style.borderColor='#0b477c';" onmouseout="this.style.backgroundColor='#337ab7'; this.style.borderColor='#337ab7';">Cancel</a>
+                                        <div class="col-6"
+                                            style="display: flex; align-items: center; justify-content: center;">
+                                            <a href="javascript:void(0);" data-dismiss="modal"
+                                                class="btn btn-primary cancel-btn text-center"
+                                                style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important; background-color: transparent !important; color: #f53542 !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s;"
+                                                onmouseover="this.style.backgroundColor='#f53542'; this.style.borderColor='#f53542'; this.style.color='#fff';"
+                                                onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='#f53542'; this.style.color='#f53542';">
+                                                Cancel
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -240,8 +255,8 @@
                 </div>
             </div>
 
-             {{-- delete js --}}
-             <script>
+            {{-- delete js --}}
+            <script>
                 $(document).ready(function() {
                     $('.delete_employee').on('click', function() {
                         var employeeId = $(this).data('id');
@@ -321,7 +336,7 @@
                                         } else {
                                             // Display a default user account image
                                             var defaultImageUrl =
-                                            'https://example.com/default-user-image.png'; // Replace with the actual URL of the default image
+                                                'https://example.com/default-user-image.png'; // Replace with the actual URL of the default image
                                             preview.innerHTML = '<img src="' + defaultImageUrl + '" alt="Default Image">';
                                         }
                                     }
