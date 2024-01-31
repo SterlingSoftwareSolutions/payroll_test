@@ -198,7 +198,26 @@
             var _this = $(this).parents('tr');
             $('#e_id').val(_this.find('.id').text());
             $('#holidayName_edit').val(_this.find('.holidayName').text());
-            $('#holidayDate_edit').val(_this.find('.holidayDate').text());
+            var holidayDateText = _this.find('.holidayDate').text();
+
+            // Convert the text to a JavaScript Date object
+            var holidayDate = new Date(holidayDateText);
+
+            // Check if the conversion was successful and the date is valid
+            if (!isNaN(holidayDate.getTime())) {
+                // Construct the formatted date string (dd/mm/yyyy)
+                var formattedDate =
+                    ('0' + holidayDate.getDate()).slice(-2) + '/' +
+                    ('0' + (holidayDate.getMonth() + 1)).slice(-2) + '/' +
+                    holidayDate.getFullYear();
+
+                // Set the value of #holidayDate_edit with the formatted date
+                $('#holidayDate_edit').val(formattedDate);
+            } else {
+                console.error('Invalid date format:', holidayDateText);
+            }
+
+
         });
     </script>
     {{-- delete js --}}
