@@ -25,7 +25,7 @@
 		</tr>
 		<tr>
 			<td style="width: 33.33%;">-</td>
-			<td style="text-align: right;">-</td>
+			<td style="text-align: right;">{{$payslip->br_allowance ? number_format($payslip->br_allowance, 2) : '-'}}</td>
 		</tr>
 		<tr>
 			<td style="width: 33.33%;">Other</td>
@@ -50,6 +50,10 @@
 		<tr>
 			<td style="width: 33.33%;">Earnings for P.A.Y.E</td>
 			<td style="text-align: right;">{{number_format($payslip->basic_salary + $payslip->br_allowance + $payslip->fixed_allowance - $payslip->no_pay_leave_deduction - $payslip->late_deduction, 2)}}</td>
+		</tr>
+		<tr>
+			<td style="width: 33.33%;">Other Increments</td>
+			<td style="text-align: right;">{{$payslip->other_increments ? number_format($payslip->other_increments, 2) : '-'}}</td>
 		</tr>
 		<br>
 		<tr style="width: 50%">
@@ -85,8 +89,16 @@
 			<td style="text-align: right; padding-right: 40%;">{{$payslip->advance ? number_format($payslip->advance, 2) : '-'}}</td>
 		</tr>
 		<tr style="width: 50%">
+			<td style="width: 20%; padding-left: 33.33%;">Loan</td>
+			<td style="text-align: right; padding-right: 40%;">{{$payslip->loan ? number_format($payslip->loan, 2) : '-'}}</td>
+		</tr>
+		<tr style="width: 50%">
 			<td style="width: 20%; padding-left: 33.33%;">Stamp Duty</td>
 			<td style="text-align: right; padding-right: 40%;">{{$payslip->stamp_duty ? number_format($payslip->stamp_duty, 2) : '-'}}</td>
+		</tr>
+		<tr style="width: 50%">
+			<td style="width: 20%; padding-left: 33.33%;">Other Deductions</td>
+			<td style="text-align: right; padding-right: 40%;">{{$payslip->other_deductions ? number_format($payslip->other_deductions, 2) : '-'}}</td>
 		</tr>
 		<br>
 		<tr>
