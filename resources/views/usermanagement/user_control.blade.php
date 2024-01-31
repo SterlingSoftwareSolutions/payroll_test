@@ -13,7 +13,8 @@
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
     </script>
-
+<!-- Main CSS -->
+{{-- <link rel="stylesheet" href="{{ URL::to('assets/css/style.css') }}"> --}}
     <!-- Page Wrapper -->
     <div class="page-wrapper">
         <!-- Page Content -->
@@ -649,13 +650,18 @@
                                 <input type="hidden" name="id" class="e_id" value="">
                                 <input type="hidden" name="avatar" class="e_avatar" value="">
                                 <div class="row">
-                                    <div class="col-6">
-                                        <button type="submit"
-                                            class="btn btn-primary continue-btn submit-btn">Delete</button>
-                                    </div>
                                     <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
-                                        <a href="javascript:void(0);" data-dismiss="modal"
-                                            class="btn btn-primary cancel-btn text-center" style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important;">Cancel</a>
+                                        <button type="submit" class=" continue-btn submit-btn delete-btn" style="margin-top: 15px; border-radius: 100px; background-color: #f53542 !important; color: #fff !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s;" onmouseover="this.style.backgroundColor='#f80919'; this.style.borderColor='#f80919';" onmouseout="this.style.backgroundColor='#f53542'; this.style.borderColor='#f53542';">Delete</button>
+                                    </div>
+                                 
+                                    <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
+                                        <a href="javascript:void(0);" data-dismiss="modal" class="cancel-btn text-center"
+                                           style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important; background-color: transparent !important; color: #f53542 !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s; border-radius: 100px !important;"
+                                           onmouseover="this.style.backgroundColor='#f53542'; this.style.borderColor='#f53542'; this.style.color='#fff';"
+                                           onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='#f53542'; this.style.color='#f53542';"
+                                        >
+                                            Cancel
+                                        </a>
                                     </div>
                                 </div>
                             </form>

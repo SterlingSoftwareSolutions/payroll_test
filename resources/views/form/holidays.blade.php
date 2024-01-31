@@ -172,11 +172,11 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <button type="submit"
-                                            class="btn btn-primary continue-btn submit-btn">Delete</button>
+                                            class="btn  continue-btn submit-btn delete-btn">Delete</button>
                                     </div>
                                     <div class="col-6">
                                         <a href="javascript:void(0);" data-dismiss="modal"
-                                            class="btn btn-primary cancel-btn">Cancel</a>
+                                            class="btn  cancel-btn">Cancel</a>
                                     </div>
                                 </div>
                             </form>
