@@ -120,17 +120,18 @@
                                                     <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
                                                         aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                                     <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item userUpdate" data-toggle="modal"
-                                                            data-id="{{ $payslip->id }}" data-target="#edit_payslip">
-                                                            <i class="fa fa-pencil m-r-5"></i> Edit
-                                                        </a>
-
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_holiday"><i class="fa fa-print m-r-5"></i>
-                                                            Print</a>
-                                                        {{-- <a class="dropdown-item" href="#" data-toggle="modal"
-                                                data-target="#delete_holiday"><i class="fa fa-trash-o m-r-5"></i> Print</a>
-                                            --}}
+                                                        @if($payslip->approved_at)
+                                                            <a class="dropdown-item" href="/form/payslip/print/{{$payslip->id}}">
+                                                                <i class="fa fa-print m-r-5"></i>
+                                                                Print
+                                                            </a>
+                                                        @else
+                                                            <a class="dropdown-item userUpdate" data-toggle="modal"
+                                                                data-id="{{ $payslip->id }}" data-target="#edit_payslip">
+                                                                <i class="fa fa-pencil m-r-5"></i>
+                                                                Edit
+                                                            </a>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </td>
