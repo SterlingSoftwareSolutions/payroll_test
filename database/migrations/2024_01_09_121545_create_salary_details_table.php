@@ -20,10 +20,11 @@ return new class extends Migration
             $table->string('increment_name');
             $table->decimal('increment_amount', 10, 2);
             $table->date('date');
+            $table->boolean('active')->default(true);
+            $table->boolean('recurring')->default(true);
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
