@@ -363,15 +363,12 @@ Route::get('/employees', [EmployeeController::class, 'cardAllEmployee'])->name('
 
 //----------------------------Payslip Approve--------------------------------------------------------//
 Route::controller(PayslipController::class)->group(function () {
-
+    Route::get('form/payslip/show/{payslip}', 'show')->middleware('auth')->name('form/payslip/show'); //for payslip approve
     Route::get('form/payslip/approve', 'index')->middleware('auth')->name('form/payslip/approve'); //for payslip approve
     Route::post('form/payslip/generate', 'generate_payslips')->middleware('auth')->name('form/payslip/generate_payslips');
     Route::get('salary/report', 'get_salary_report')->middleware('auth')->name('salary/report'); //for salary report
-    // Route::post('form/payslip/save', 'saveRecord')->middleware('auth')->name('form/payslip/save');
-    Route::post('form/payslip/update', 'updateRecord')->middleware('auth')->name('form/payslip/update');
-    // Route::post('form/payslip/print', 'printRecord')->middleware('auth')->name('form/payslip/print');
+    Route::post('form/payslip/update', 'update')->middleware('auth')->name('form/payslip/update');
     Route::get('form/payslip/download', 'downloardfile')->middleware('auth')->name('form/payslip/download'); //for payslip download
-
 });
 
 Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');
