@@ -87,20 +87,33 @@ class HolidayController extends Controller
     // delete
     public function deleteRecord(Request $request)
     {
+        // Uncomment this line for debugging to see the entire request
+        // dd($request);
+
         DB::beginTransaction();
         try {
-            $id = $request->id;
+            $holiday_id = $request->id;
 
-            Holiday::destroy($id);
+            // Find the Holiday record with the given 'holiday_id' and delete it
+            $holiday = Holiday::where('holiday_id', $holiday_id)->first();
+
+            // Uncomment the following line for debugging to see the found record
+            // dd($holiday);
+
+            if ($holiday) {
+                $holiday->delete();
+            } else {
+                Toastr::error('Holiday not found :(', 'Error');
+                return redirect()->back();
+            }
 
             DB::commit();
 
             Toastr::success('Holiday deleted successfully :)', 'Success');
             return redirect()->back();
         } catch (\Exception $e) {
-
             DB::rollback();
-            Toastr::error('Holiday delete fail :)', 'Error');
+            Toastr::error('Holiday delete failed :(', 'Error');
             return redirect()->back();
         }
     }

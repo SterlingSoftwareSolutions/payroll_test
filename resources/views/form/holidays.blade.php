@@ -60,7 +60,7 @@
                                                     <a class="dropdown-item userUpdate" data-toggle="modal"
                                                         data-id="'.$items->holiday_id.'" data-target="#edit_holiday"><i
                                                             class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item userDelete" href="#" data-toggle="modal"
+                                                    <a class="dropdown-item userDelete" data-toggle="modal"
                                                         ata-id="'.$items->holiday_id.'" data-target="#delete_holiday"><i
                                                             class="fa fa-trash-o m-r-5"></i>
                                                         Delete</a>
@@ -167,7 +167,8 @@
                         <div class="modal-btn delete-action">
                             <form action="{{ route('form/holidays/delete') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="id" class="holiday_id" value="">
+                                <input type="hidden" name="id" class="holiday_id" value=""
+                                    id="holidayd_id">
                                 <div class="row">
                                     <div class="col-6">
                                         <button type="submit"
@@ -222,9 +223,9 @@
     </script>
     {{-- delete js --}}
     <script>
-        $(document).on('click', '.userdelete', function() {
+        $(document).on('click', '.userDelete', function() {
             var _this = $(this).parents('tr');
-            $('.holiday_id').val(_this.find('holiday_id').text());
+            $('#holidayd_id').val(_this.find('.id').text());
         });
     </script>
 @endsection
