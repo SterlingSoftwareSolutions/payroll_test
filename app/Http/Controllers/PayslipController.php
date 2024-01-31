@@ -19,6 +19,43 @@ class PayslipController extends Controller
         return view('reports/payslip-approve', compact(['payslips']));
     }
 
+    public function show(Payslip $payslip)
+    {
+        $payslipdata = $payslip->attributesToArray();
+        $payslipdata['employee_employee_id'] = $payslip->employee->employee_id;
+        $payslipdata['net_salary'] = $payslip->net_salary();
+        return response()->json($payslipdata);
+    }
+
+    public function update(Request $request)
+    {
+        $payslip = Payslip::findOrFail($request->payslip_id);
+        $validated = $request->validate([
+              "basic_salary" => 'required',
+              "br_allowance" => 'required',
+              "fixed_allowance" => 'required',
+              "attendance_allowance" => 'required',
+              "holiday_payment" => 'required',
+              "incentives" => 'required',
+              "ot" => 'required',
+              "other_increments" => 'required',
+              "no_pay_leave_deduction" => 'required',
+              "late_deduction" => 'required',
+              "employee_epf" => 'required',
+              "paye" => 'required',
+              "stamp_duty" => 'required',
+              "advance" => 'required',
+              "loan" => 'required',
+              "other_deductions" => 'required',
+              "company_epf" => 'required',
+              "etf" => 'required',
+        ]);
+        $validated['approved_at'] = now();
+        $payslip->update($validated);
+        Toastr::success('Payslip updated', 'success');
+        return back();
+    }
+
     public function create_payslip(Employee $employee)
     {
         $basic_salary = $employee->basic_Salary;
@@ -78,12 +115,15 @@ class PayslipController extends Controller
         $gross_salary_day = $gross_salary / 30;
         $gross_salary_hour = $gross_salary_day / 10;
 
+        // Attendance data
+        $attandance_data = $employee->attendance_data();
+
         // Overtime
         $ot_hours = 0;
         $ot = ($gross_salary / 240) * $ot_hours;
 
         // No pay leave deduction
-        $no_pay_leaves = 0;
+        $no_pay_leaves = $attandance_data['absent_days'];
         $no_pay_leave_deduction =  $gross_salary_day * $no_pay_leaves;
 
         // Late hours deduction

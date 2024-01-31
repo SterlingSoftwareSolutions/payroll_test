@@ -18,6 +18,22 @@ class Payslip extends Model
     }
 
     public function net_salary(){
-        return $this->basic_salary;
+        $gross_salary = $this->basic_salary + $this->br_allowance + $this->fixed_allowance;
+
+        $increments = $this->holiday_payment
+                    + $this->incentives
+                    + $this->ot
+                    + $this->other_increments;
+
+        $deductions = $this->no_pay_leave_deduction
+                    + $this->late_deductions
+                    + $this->employee_epf
+                    + $this->paye
+                    + $this->stamp_duty
+                    + $this->advance
+                    + $this->loan
+                    + $this->other_deductions;
+
+        return $gross_salary + $increments - $deductions;
     }
 }
