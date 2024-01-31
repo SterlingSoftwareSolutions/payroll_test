@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHolidaysTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,17 @@ class CreateHolidaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('holidays', function (Blueprint $table) {
+        Schema::create('salary_details', function (Blueprint $table) {
             $table->id();
-            $table->string('holiday_id')->nullable();
-            $table->string('name_holiday')->nullable();
-            $table->string('date_holiday')->nullable();
+            $table->string('employee_id');
+            $table->string('type');
+            $table->string('increment_name');
+            $table->decimal('increment_amount', 10, 2);
+            $table->date('date');
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
@@ -29,6 +32,6 @@ class CreateHolidaysTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('holidays');
+        Schema::dropIfExists('salary_details');
     }
-}
+};
