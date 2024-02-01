@@ -364,6 +364,7 @@ Route::get('/employees', [EmployeeController::class, 'cardAllEmployee'])->name('
 //----------------------------Payslip Approve--------------------------------------------------------//
 Route::controller(PayslipController::class)->group(function () {
     Route::get('form/payslip/show/{payslip}', 'show')->middleware('auth')->name('form/payslip/show'); //for payslip approve
+    Route::get('form/payslip/print/{payslip}', 'print')->middleware('auth')->name('form/payslip/show'); //for payslip approve
     Route::get('form/payslip/approve', 'index')->middleware('auth')->name('form/payslip/approve'); //for payslip approve
     Route::post('form/payslip/generate', 'generate_payslips')->middleware('auth')->name('form/payslip/generate_payslips');
     Route::get('salary/report', 'get_salary_report')->middleware('auth')->name('salary/report'); //for salary report

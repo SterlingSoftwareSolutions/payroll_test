@@ -26,7 +26,7 @@ class Payslip extends Model
                     + $this->other_increments;
 
         $deductions = $this->no_pay_leave_deduction
-                    + $this->late_deductions
+                    + $this->late_deduction
                     + $this->employee_epf
                     + $this->paye
                     + $this->stamp_duty

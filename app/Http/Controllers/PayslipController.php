@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\department;
 use App\Models\Payslip;
 use App\Models\SalaryDetail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Brian2694\Toastr\Facades\Toastr;
@@ -54,6 +55,12 @@ class PayslipController extends Controller
         $payslip->update($validated);
         Toastr::success('Payslip updated', 'success');
         return back();
+    }
+
+    public function print(Payslip $payslip)
+    {
+        $pdf = Pdf::loadView('payslip_pdf', compact('payslip'))->setPaper('a4', 'portrait');;
+        return $pdf->download(strtoupper(preg_split('#\s+#', $payslip->employee->full_name)[0]));
     }
 
     public function create_payslip(Employee $employee)
@@ -130,12 +137,15 @@ class PayslipController extends Controller
         $late_hours = 0;
         $late_deduction = $gross_salary_hour * $late_hours;
 
+        // Total basic pay
+        $total_basic_pay = $gross_salary  - $no_pay_leave_deduction - $late_deduction;
+
         // Employee EPF
-        $employee_epf = ($gross_salary / 100) * 8;
+        $employee_epf = ($total_basic_pay / 100) * 8;
 
         // Company EPF/ETF
-        $company_epf = ($gross_salary / 100) * 12;
-        $etf = ($gross_salary / 100) * 3;
+        $company_epf = ($total_basic_pay / 100) * 12;
+        $etf = ($total_basic_pay / 100) * 3;
 
         $payslip = Payslip::firstOrCreate([
             'employee_id' => $employee->id,
@@ -190,31 +200,6 @@ class PayslipController extends Controller
             $this->create_payslip($employee);
         });
         return redirect('/form/payslip/approve');
-    }
-
-    public function updateRecord(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            $id           = $request->id;
-            $incentive  = $request->incentive;
-            $late_deduction  = $request->late_deduction;
-
-            $update = [
-
-                'id'           => $id,
-                'incentive' => $incentive,
-                'late_deduction' => $late_deduction,
-            ];
-            pay_slip::where('id', $request->id)->update($update);
-            DB::commit();
-            Toastr::success('Payslip updated successfully :)', 'Success');
-            return redirect()->back();
-        } catch (\Exception $e) {
-            DB::rollback();
-            Toastr::error('payslip update fail :)', 'Error');
-            return redirect()->back();
-        }
     }
 
     public function get_salary_report()
