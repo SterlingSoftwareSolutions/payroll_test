@@ -18,45 +18,40 @@
                     <div class="col-auto float-right ml-auto">
                         <a href="{{ route('form/employee/new') }}" class="btn add-btn" data-toggle="#" data-target="#"><i
                                 class="fa fa-plus"></i> Add Employee</a>
-                        <!-- todo
-                                <div class="view-icons">
-                                    <a href="{{ route('all/employee/card') }}" class="grid-view btn btn-link active"><i class="fa fa-th"></i></a>
-                                    <a href="{{ route('all/employee/list') }}" class="list-view btn btn-link"><i class="fa fa-bars"></i></a>
-                                </div>
-                            /todo -->
+
                     </div>
                 </div>
             </div>
             <!-- /Page Header -->
 
             <!-- Search Filter -->
-            <form action="{{ route('all/employee/list') }}" method="GET">
+            <form action="{{ route('all/employee/list/search') }}" method="GET">
 
                 <div class="row filter-row">
                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Employee ID</label>
+                        <div class="form-group">
                             <input type="text" name="employee_id" value="{{ request('employee_id') }}"
-                                class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-4">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Employee Name</label>
-                            <input type="text" name="full_name" value="{{ request('full_name') }}" class="form-control">
+                                class="form-control" placeholder="Employee ID">
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Department</label>
-                            {{-- <select class="select form-control floating" name="department">
-                                <option value=""> -- Select Department-- </option>
-                                @foreach ($departments as $department)
-                                <option value="{{ $department->id }}" @if (request('department') == $department->id) selected
-                                    @endif>{{ $department->department }}</option>
+                        <div class="form-group">
+                            {{-- <label class="focus-label">Employee Name</label> --}}
+                            <input type="text" name="full_name" value="{{ request('full_name') }}" class="form-control" placeholder="Employee Name">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3">
+                        <div class="form-group">
+                            <select class="form-control" name="d_name" id="department">
+                                <option value="" selected disabled>-- Select Department --</option>
+                                @foreach ($department as $departments)
+                                    <option value="{{ $departments->id }}">
+                                        {{ $departments->department }}
+                                    </option>
                                 @endforeach
-                            </select> --}}
+                            </select>
                         </div>
                     </div>
 

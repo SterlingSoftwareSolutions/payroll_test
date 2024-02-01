@@ -49,38 +49,42 @@ class EmployeeController extends Controller
     // all employee list
     public function listAllEmployee(Request $request)
     {
+        // dd($request);
+
         $users = DB::table('users')
-        ->join('employees', 'users.user_id', '=', 'employees.employee_id')
-        ->select('users.*', 'employees.dob', 'employees.gender')
-        ->get();
+            ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+            ->select('users.*', 'employees.dob', 'employees.gender')
+            ->get();
 
 
-    
+
 
         $userList = DB::table('users')->get();
         $permission_lists = DB::table('permission_lists')->get();
         $employees = Employee::all();
-       
-        $departments = department::all();
 
-    $query = Employee::query();
+        $department = DB::table('departments')->get();
 
-   
+        $query = Employee::query();
 
-        if ($request->has('employee_id')) {
-            $query->where('employee_id', 'like', '%'. $request->input('employee_id') . '%');
+        if ($request->department) {
+            $result = User::where('department', 'LIKE', '%' . $request->department . '%')->get();
         }
+
+        // if ($request->has('employee_id')) {
+        //     $query->where('employee_id', 'like', '%'. $request->input('employee_id') . '%');
+        // }
 
         if ($request->has('full_name')) {
             $query->where('full_name', 'like', '%' . $request->input('full_name') . '%');
         }
 
         $employees = $query->get();
-    
 
-       
 
-        return view('form.employeelist', compact('employees', 'departments'));
+
+
+        return view('form.employeelist', compact('employees', 'department'));
     }
     // Add employee view
     public function createEmployee()
@@ -485,6 +489,7 @@ class EmployeeController extends Controller
     // employee search
     public function employeeSearch(Request $request)
     {
+        // dd($request);
         $users = DB::table('users')
             ->join('employees', 'users.user_id', '=', 'employees.employee_id')
             ->select('users.*', 'employees.dob', 'employees.gender')
@@ -558,14 +563,35 @@ class EmployeeController extends Controller
     }
     public function employeeListSearch(Request $request)
     {
-        
+
+        //  dd($request);
+        $users = DB::table('users')
+            ->join('employees', 'users.user_id', '=', 'employees.employee_id')
+            ->select('users.*', 'employees.dob', 'employees.gender')
+            ->get();
+
+        $userList = DB::table('users')->get();
+        $permission_lists = DB::table('permission_lists')->get();
         $employees = Employee::all();
-      
-        $employeeListSearch = $request->employeeListSearch;
-        $data =  Employee::where('full_name','LIKE','%'.$employeeListSearch. '%')->get();
+        $department = DB::table('departments')->get();
 
+        $query = Employee::query();
 
-        return view('form.employeelist',compact('data','employees'));
+        if ($request->has('d_name')) {
+            // Assuming 'd_name' is a column in the 'employees' table
+            $query->where('d_name', 'LIKE', '%' . $request->input('d_name') . '%');
+        }
+
+        if ($request->has('full_name')) {
+            $query->where('full_name', 'LIKE', '%' . $request->input('full_name') . '%');
+        }
+        if ($request->has('employee_id')) {
+            $query->where('employee_id', 'like', '%' . $request->input('employee_id') . '%');
+        }
+
+        $employees = $query->get();
+
+        return view('form.employeelist', compact('employees', 'department'));
 
         //dd($request);
         // $users = DB::table('users')
@@ -637,24 +663,24 @@ class EmployeeController extends Controller
         //         ->where('users.department', 'LIKE', '%' . $request->department . '%')
         //         ->get();
         // }
-        // return view('form.employeelist', compact('users', 'userList', 'permission_lists'));    
+        // return view('form.employeelist', compact('users', 'userList', 'permission_lists'));
 
 
 
 
         // $employeeId = $request->input('employee_id');
-    
+
 
 
         // $data = DB::table('employees')->where(['employee_id'=>$employeeId])->first();
-    
+
         // return $data;
 
-            
 
 
 
-       
+
+
     }
 
     // employee profile with all controller user
@@ -677,7 +703,7 @@ class EmployeeController extends Controller
 
 
 
-                                /**    page departments */
+    /**    page departments */
     public function index()
     {
         $departments = Department::all();
@@ -725,7 +751,7 @@ class EmployeeController extends Controller
     {
         DB::beginTransaction();
         try {
-            // update table departments               
+            // update table departments
             $department = [
                 'id' => IdGenerator::generate(['table' => 'departments', 'length' => 7, 'prefix' => 'D']),
                 'department' => $request->department,
@@ -785,6 +811,7 @@ class EmployeeController extends Controller
     }
     public function someMethod()
     {
+
         $url = route('save.record'); // Include the correct namespace
     }
 }
