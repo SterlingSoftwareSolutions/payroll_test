@@ -308,22 +308,30 @@ class EmployeeController extends Controller
         ));
     }
 
-    public function EditEmployee($user)
-    {
-        //   dd($user);
-        $employee_id = $user;
+    // use Carbon\Carbon;
 
-        $userList = DB::table('users')->get();
-        $permission_lists = DB::table('permission_lists')->get();
-        $employee = Employee::where('employee_id', $employee_id)->first();
-        $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+public function EditEmployee($user)
+{
+    $employee_id = $user;
 
-        // dd($salary);
+    $userList = DB::table('users')->get();
+    $permission_lists = DB::table('permission_lists')->get();
 
+    // Retrieve the employee and salary details
+    $employee = Employee::where('employee_id', $employee_id)->first();
+    $salary = SalaryDetail::where('employee_id', $employee_id)->get();
 
-        $departments = department::all();
-        return view('form.edit.employeeedit', compact('employee', 'departments', 'salary'));
+    // Format the date in the salary details
+    foreach ($salary as $s) {
+        $formattedDate = Carbon::parse($s->date)->format('d-m-Y');
+        $s->date = $formattedDate;
     }
+
+    $departments = Department::all();
+
+    return view('form.edit.employeeedit', compact('employee', 'departments', 'salary'));
+}
+
 
 
     // view edit record

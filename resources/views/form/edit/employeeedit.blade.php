@@ -513,28 +513,58 @@ border-color: red !important;
                                                 <div class="increment-container">
                                                     <div class="row">
                                                         <div class="col-sm-6">
-                                                            <label for="type{{ $index }}"
-                                                                class="col-form-label">Type :</label>
-                                                            <select class="form-control" style="width: 100%;"
-                                                                id="type{{ $index }}" name="type[]">
+                                                            <label for="type{{ $index }}" class="col-form-label">Type :</label>
+                                                            <select class="form-control" style="width: 100%;" id="type{{ $index }}" name="type[]">
                                                                 <option value="" disabled>Select a type</option>
-                                                                <option value="increments"
-                                                                    @if (old('type.' . $index, $record->type) == 'increments') selected @endif>
-                                                                    Increments</option>
-                                                                <option value="deductions"
-                                                                    @if (old('type.' . $index, $record->type) == 'deductions') selected @endif>
-                                                                    Deductions</option>
+                                                                <option value="increments" @if (old('type.' . $index, $record->type) == 'increments') selected @endif>
+                                                                    Increments
+                                                                </option>
+                                                                <option value="deductions" @if (old('type.' . $index, $record->type) == 'deductions') selected @endif>
+                                                                    Deductions
+                                                                </option>
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <label for="incrementName{{ $index }}"
-                                                                class="col-form-label">Name :</label>
-                                                            <input type="text" class="form-control"
-                                                                id="incrementName{{ $index }}"
-                                                                name="increment_name[]"
-                                                                value="{{ old('increment_name.' . $index, $record->increment_name) }}">
+                                                            <label for="incrementName{{ $index }}" class="col-form-label">Name :</label>
+                                                            <select class="form-control" id="incrementName{{ $index }}" name="increment_name[]">
+                                                                <option value="{{ old('increment_name.' . $index, $record->increment_name) }}">
+                                                                    {{ old('increment_name.' . $index, $record->increment_name) }}
+                                                                </option>
+                                                            </select>
                                                         </div>
                                                     </div>
+
+                                                    <script>
+                                                        // Attach an event listener to the "Type" select element
+                                                        document.getElementById('type{{ $index }}').addEventListener('change', function () {
+                                                            // Get the selected type
+                                                            var selectedType = this.value;
+
+                                                            // Get the "Name" select element
+                                                            var nameInput = document.getElementById('incrementName{{ $index }}');
+
+                                                            // Clear existing options
+                                                            nameInput.innerHTML = '';
+
+                                                            // Define options based on the selected type
+                                                            var options = [];
+
+                                                            if (selectedType === "increments") {
+                                                                options = ["BR allowance", "Incentive 1", "Incentive 2", "Others"];
+                                                            } else if (selectedType === "deductions") {
+                                                                options = ["Bodim", "Advanced", "Others"];
+                                                            }
+
+                                                            // Add the options to the "Name" input field
+                                                            for (var i = 0; i < options.length; i++) {
+                                                                var option = document.createElement("option");
+                                                                option.value = options[i];
+                                                                option.text = options[i];
+                                                                nameInput.add(option);
+                                                            }
+                                                        });
+                                                    </script>
+
                                                     <div class="row">
                                                         <div class="col-sm-6">
                                                             <label for="incrementAmount{{ $index }}"
@@ -626,37 +656,42 @@ border-color: red !important;
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <label for="incrementName${incrementCount}" class="col-form-label">Name :</label>
-                                                    <input type="text" class="form-control" name="increment_name[]" required>
+                                                    <select class="form-control" id="incrementName${incrementCount}" name="increment_name[]" required>
+                                                        <!-- Placeholder option -->
+                                                        <option value="" disabled selected>Select a type first</option>
+                                                    </select>
                                                 </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-sm-6 mb-3">
-                                                        <label for="incrementAmount${incrementCount}" class="col-form-label">Amount :</label>
-                                                        <input style="width: 102%;" type="number" class="form-control" name="increment_amount[]" required>
-                                                    </div>
-                                                    <div class="col-sm-6 mb-3">
-                                                        <label for="deductionDate${incrementCount}" class="col-form-label">Date :<span style="color: darkgray"> (dd-mm-yyyy)</span></label>
-                                                        <div class="cal-icon ml-2">
-                                                            <input style="width: 105%;" class="form-control datetimepicker incrementDate" type="text" id="deductionDate${incrementCount}" name="deduction_dates[]" required>
-                                                            <div class="invalid-feedback">
-                                                                <!-- This will display the custom validation message -->
-                                                                Please enter a valid date in the format dd-mm-yyyy.
-                                                            </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="incrementAmount${incrementCount}" class="col-form-label">Amount :</label>
+                                                    <input style="width: 100%;" type="number" class="form-control" name="increment_amount[]" required>
+                                                </div>
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="deductionDate${incrementCount}" class="col-form-label">Date :<span style="color: darkgray"> (dd-mm-yyyy)</span></label>
+                                                    <div class="cal-icon ml-2">
+                                                        <input style="width: 100%;" class="form-control datetimepicker incrementDate" type="text" id="deductionDate${incrementCount}" name="deduction_dates[]" required>
+                                                        <div class="invalid-feedback">
+                                                            <!-- This will display the custom validation message -->
+                                                            Please enter a valid date in the format dd-mm-yyyy.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <button type="button" class="btn btn" onclick="deleteRow('${incrementId}')" style="color: black; background: transparent;">
-                                                        <h4 style="color: #FB0101;"><span><i class="fa-solid fa-circle-minus" style="color: #fa0505;"></i></span> Remove Field</h4>
-                                                    </button>
-                                                </div>
                                             </div>
-                                            `;
+                                            <div class="col-sm-3">
+                                                <button type="button" class="btn btn" onclick="deleteRow('${incrementId}')" style="color: black; background: transparent;">
+                                                    <h4 style="color: #FB0101;"><span><i class="fa-solid fa-circle-minus" style="color: #fa0505;"></i></span> Remove Field</h4>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        `;
 
                                         // Append the new div element to the container
                                         container.appendChild(newIncrementDiv);
 
                                         // Initialize date picker for the newly added field
                                         initializeDatePicker(`#deductionDate${incrementCount}`);
+                                        initializeTypeChangeHandler(`type${incrementCount}`, `incrementName${incrementCount}`);
 
                                         // Increment counters
                                         incrementCount++;
@@ -672,31 +707,31 @@ border-color: red !important;
 
                                         // Append the HTML content to the new div element
                                         newDeductionDiv.innerHTML = `
-                                                <span><i class="fa-solid fa-circle-minus" style="color: #fa0505;"></i></span><div id="${deductionId}">
-                                                    <div class="row mb-3">
-                                                        <label for="deductionName${deductionCount}" class=" col-form-label">Name :</label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" class="form-control" id="deductionName${deductionCount}" name="deduction_name[]">
-                                                        </div>
+                                            <span><i class="fa-solid fa-circle-minus" style="color: #fa0505;"></i></span><div id="${deductionId}">
+                                                <div class="row mb-3">
+                                                    <label for="deductionName${deductionCount}" class=" col-form-label">Name :</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="deductionName${deductionCount}" name="deduction_name[]">
                                                     </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-sm-6">
-                                                            <label for="deductionAmount${deductionCount}" class="col-form-label">Amount :</label>
-                                                            <input type="number" class="form-control" id="deductionAmount${deductionCount}" name="deduction_amount[]">
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <label for="deductionDate${deductionCount}" class="col-form-label">Date :<span style="color: darkgray"> (dd-mm-yyyy)</span></label>
-                                                            <div class="cal-icon">
-                                                                <input class="form-control datetimepicker" type="text" id="deductionDate${deductionCount}" name="deduction_dates[]" required>
-                                                                <div class="invalid-feedback">
-                                                                    <!-- This will display the custom validation message -->
-                                                                    Please enter a valid date in the format dd-mm-yyyy.
-                                                                </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-sm-6">
+                                                        <label for="deductionAmount${deductionCount}" class="col-form-label">Amount :</label>
+                                                        <input type="number" class="form-control" id="deductionAmount${deductionCount}" name="deduction_amount[]">
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label for="deductionDate${deductionCount}" class="col-form-label">Date :<span style="color: darkgray"> (dd-mm-yyyy)</span></label>
+                                                        <div class="cal-icon">
+                                                            <input class="form-control datetimepicker" type="text" id="deductionDate${deductionCount}" name="deduction_dates[]" required>
+                                                            <div class="invalid-feedback">
+                                                                <!-- This will display the custom validation message -->
+                                                                Please enter a valid date in the format dd-mm-yyyy.
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            `;
+                                            </div>
+                                        `;
 
                                         // Append the new div element to the container
                                         container.appendChild(newDeductionDiv);
@@ -716,6 +751,45 @@ border-color: red !important;
                                     function initializeDatePicker(elementId) {
                                         $(elementId).datetimepicker({
                                             format: 'DD-MM-YYYY', // You can add more options based on your library's documentation
+                                        });
+                                    }
+
+                                    function initializeTypeChangeHandler(typeId, nameId) {
+                                        // Attach an event listener to the "Type" select element
+                                        document.getElementById(typeId).addEventListener('change', function () {
+                                            // Get the selected type
+                                            var selectedType = this.value;
+
+                                            // Get the "Name" select element
+                                            var nameInput = document.getElementById(nameId);
+
+                                            // Clear existing options
+                                            nameInput.innerHTML = '';
+
+                                            // Create a placeholder option
+                                            var placeholderOption = document.createElement("option");
+                                            placeholderOption.value = "";
+                                            placeholderOption.text = "Select a type first";
+                                            placeholderOption.disabled = true;
+                                            placeholderOption.selected = true;
+                                            nameInput.add(placeholderOption);
+
+                                            // Define options based on the selected type
+                                            var options = [];
+
+                                            if (selectedType === "increments") {
+                                                options = ["BR allowance", "Incentive 1", "Incentive 2", "Others"];
+                                            } else if (selectedType === "deductions") {
+                                                options = ["Bodim", "Advanced", "Others"];
+                                            }
+
+                                            // Add the options to the "Name" input field
+                                            for (var i = 0; i < options.length; i++) {
+                                                var option = document.createElement("option");
+                                                option.value = options[i];
+                                                option.text = options[i];
+                                                nameInput.add(option);
+                                            }
                                         });
                                     }
                                 </script>
