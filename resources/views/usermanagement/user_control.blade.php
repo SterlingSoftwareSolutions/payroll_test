@@ -49,8 +49,13 @@
                     </div>
                     <div class="col-sm-6 col-md-4">
                         <div class="form-group ">
-                            <input type="text" class="form-control floating" id="name" name="department" placeholder="Department">
-                            {{-- <label class="focus-label">Department</label> --}}
+                            <select class="form-control" name="department" id="department">
+                                <option value="" selected disabled>-- Select Department --</option>
+                                @foreach ($department as $departments)
+                                    <option value="{{ $departments->department }}">
+                                        {{ $departments->department }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     {{-- <div class="col-sm-6 col-md-3">
@@ -653,7 +658,7 @@
                                     <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
                                         <button type="submit" class=" continue-btn submit-btn delete-btn" style="margin-top: 15px; border-radius: 100px; background-color: #f53542 !important; color: #fff !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s;" onmouseover="this.style.backgroundColor='#f80919'; this.style.borderColor='#f80919';" onmouseout="this.style.backgroundColor='#f53542'; this.style.borderColor='#f53542';">Delete</button>
                                     </div>
-                                 
+
                                     <div class="col-6" style="display: flex; align-items: center; justify-content: center;">
                                         <a href="javascript:void(0);" data-dismiss="modal" class="cancel-btn text-center"
                                            style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important; background-color: transparent !important; color: #f53542 !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s; border-radius: 100px !important;"

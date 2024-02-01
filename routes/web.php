@@ -373,4 +373,3 @@ Route::controller(PayslipController::class)->group(function () {
 
 Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');
 Route::get('/get-positions/{department}', [PositionController::class, 'getPositions'])->name('get-positions');
-
