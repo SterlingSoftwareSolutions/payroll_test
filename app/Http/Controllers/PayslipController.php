@@ -8,7 +8,6 @@ use App\Models\Payslip;
 use App\Models\SalaryDetail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Brian2694\Toastr\Facades\Toastr;
 
 class PayslipController extends Controller
@@ -53,7 +52,6 @@ class PayslipController extends Controller
         ]);
         $validated['approved_at'] = now();
         $payslip->update($validated);
-        Toastr::success('Payslip updated', 'success');
         return back();
     }
 
