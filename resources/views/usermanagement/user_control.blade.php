@@ -253,7 +253,10 @@
                                         <label for="">Position</label><br>
                                         <select class="form-control" name="position" id="position">
                                             <option value="" selected disabled>-- Select Position --</option>
-                                            <!-- Add other position options dynamically if needed -->
+                                            @foreach ($position as $positions)
+                                            <option value="{{ $positions->position }}">{{ $positions->position }}
+                                            </option>
+                                        @endforeach
                                         </select>
                                     </div>
 

@@ -174,24 +174,24 @@ class AttendanceController extends Controller
     /** update record attendance */
     public function updateAttendance(Request $request)
     {
+        //  dd($request)->all();
         DB::beginTransaction();
         try {
-            $id             = $request->id;
-            $employeeId     = $request->employee_id; // Update field name
-            $attendanceDate = $request->date; // Update field name
-            $punchIn        = $request->punch_in; // Update field name
-            $punchOut       = $request->punch_out; // Update field name
+            $attendance_id = $request->attendance_id;
+            $employee_id = $request->employee_id;
+            $date = $request->date;
+            $punch_in = $request->punch_in;
+            $punch_out = $request->punch_out;
 
             // Update the attendance record
             $update = [
-                'employee_id'  => $employeeId,
-                'date'         => $attendanceDate,
-                'punch_in'     => $punchIn,
-                'punch_out'    => $punchOut,
-                'attendance'   => $request->attendance,
+                'employee_id'  => $employee_id,
+                'date'         => $date,
+                'punch_in'     => $punch_in,
+                'punch_out'    => $punch_out,
             ];
 
-            Attendance::where('id', $id)->update($update);
+            Attendance::where('id', $attendance_id)->update($update);
             DB::commit();
             // Use Toastr for flash messages
             Toastr::success('Record updated successfully :)', 'Success');
@@ -240,7 +240,7 @@ class AttendanceController extends Controller
         $next_id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
         $attendance= DB::table('attendances')->get();
         $employees = Employee::all();
-        
+
         if($attendance != null){
             $attendance = Attendance::where('employee_id', 'LIKE', '%' . $request->employee_id . '%')->get();
         }
