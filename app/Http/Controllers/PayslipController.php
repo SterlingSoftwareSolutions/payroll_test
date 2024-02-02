@@ -8,7 +8,6 @@ use App\Models\Payslip;
 use App\Models\SalaryDetail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Brian2694\Toastr\Facades\Toastr;
 
 class PayslipController extends Controller
@@ -53,7 +52,6 @@ class PayslipController extends Controller
         ]);
         $validated['approved_at'] = now();
         $payslip->update($validated);
-        Toastr::success('Payslip updated', 'success');
         return back();
     }
 
@@ -65,6 +63,9 @@ class PayslipController extends Controller
 
     public function create_payslip(Employee $employee)
     {
+        // Attendance data
+        $attandance_data = $employee->attendance_data();
+
         $basic_salary = $employee->basic_Salary;
 
         // Increments
@@ -119,22 +120,25 @@ class PayslipController extends Controller
 
         // Salary amounts
         $gross_salary = $basic_salary + $br_allowance + $fixed_allowance;
-        $gross_salary_day = $gross_salary / 30;
-        $gross_salary_hour = $gross_salary_day / 10;
+        $gross_salary_day = $gross_salary / $attandance_data['work_days'];
+        $gross_salary_hour = $gross_salary_day / $attandance_data['work_hours'];
 
-        // Attendance data
-        $attandance_data = $employee->attendance_data();
+        // Holiday payment
+        $holiday_payment = $attandance_data['days_worked_holiday']->count() * $gross_salary_day * 2;
+
+        // Extra days payment
+        $extra_days = ($attandance_data['days_worked_weekend']->count() - $attandance_data['days_worked_holiday_weekend']->count());
+        $extra_days_payment = $extra_days * $gross_salary_day;
 
         // Overtime
-        $ot_hours = 0;
-        $ot = ($gross_salary / 240) * $ot_hours;
+        $ot_hours = $attandance_data['ot_minutes'] / 60;
+        $ot = $gross_salary / 240 * 1.5 * $ot_hours;
 
         // No pay leave deduction
-        $no_pay_leaves = $attandance_data['absent_days'];
-        $no_pay_leave_deduction =  $gross_salary_day * $no_pay_leaves;
+        $no_pay_leave_deduction =  $gross_salary_day * $attandance_data['no_pay_leaves'];
 
         // Late hours deduction
-        $late_hours = 0;
+        $late_hours = $attandance_data['late_minutes'] / 60;
         $late_deduction = $gross_salary_hour * $late_hours;
 
         // Total basic pay
@@ -169,7 +173,8 @@ class PayslipController extends Controller
             'loan' => $loan,
             'other_deductions' => $other_deductions,
 
-            'holiday_payment' => 0,
+            'holiday_payment' => $holiday_payment,
+            'extra_days_payment' => $extra_days_payment,
             'incentives' => $incentives,
             'ot' => $ot,
             'other_increments' => $other_incrmeents,
@@ -199,6 +204,16 @@ class PayslipController extends Controller
         $employees->each(function ($employee){
             $this->create_payslip($employee);
         });
+        return redirect('/form/payslip/approve');
+    }
+
+    // Approve all paylips for the current month
+    public function approve_all()
+    {
+        $date = now()->startOfMonth()->subMonth();
+        Payslip::whereDate('date', $date)->update([
+            'approved_at' => now()
+        ]);
         return redirect('/form/payslip/approve');
     }
 

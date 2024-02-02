@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
 use App\Models\Holiday;
+use Carbon\Carbon;
 use DB;
 
 class HolidayController extends Controller
@@ -35,25 +36,15 @@ class HolidayController extends Controller
         $request->validate([
             'holidayId' => 'required|string|max:255',
             'nameHoliday' => 'required|string|max:255',
-            'holidayDate' => 'required|string|max:255',
+            'holidayDate' => 'required|date|max:255',
         ]);
-
-        DB::beginTransaction();
-        try {
-            $holiday = new Holiday;
-            $holiday->holiday_id = $request->holidayId;
-            $holiday->name_holiday = $request->nameHoliday;
-            $holiday->date_holiday  = $request->holidayDate;
-            $holiday->save();
-
-            DB::commit();
-            Toastr::success('Create new holiday successfully :)', 'Success');
-            return redirect()->back();
-        } catch (\Exception $e) {
-            DB::rollback();
-            Toastr::error('Add Holiday fail :)', 'Error');
-            return redirect()->back();
-        }
+        Holiday::create([
+            'holiday_id' => $request->holidayId,
+            'name_holiday' => $request->nameHoliday,
+            'date_holiday' => Carbon::create($request->holidayDate)
+        ]);
+        Toastr::success('Create new holiday successfully :)', 'Success');
+        return redirect()->back();
     }
     // update
     public function updateRecord(Request $request)

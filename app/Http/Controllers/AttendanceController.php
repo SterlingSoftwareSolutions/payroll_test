@@ -231,6 +231,7 @@ class AttendanceController extends Controller
 
     public function download(Employee $employee) {
         $data = $employee->attendance_data();
+        $data['employee'] = $employee;
         $pdf = Pdf::loadView('pdf', $data)->setPaper('a5', 'landscape');;
         return $pdf->download();
     }

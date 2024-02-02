@@ -59,68 +59,81 @@ class Employee extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'd_name');
     }
 
     public function attendance_data($year  = null, $month = null){
-        $employee = $this;
-        $current_month = $year ?? date('m');
-        $current_year = $month ?? date('Y');
-        $total_days = $this->getDaysInMonth($current_month, $current_year);
-        $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current_month)->whereYear('date', $current_year);
-        $weekend_days = $this->getWeekendCount($current_month, $current_year);
-        $holidays = Holiday::whereMonth('date_holiday', $current_month)->whereYear('date_holiday', $current_year)->pluck('date_holiday');
-        $holiday_working_count = $attendances->whereIn('date', $holidays)->count();
-        $working_days = $total_days - $weekend_days - count($holidays);
-        $attended_days = $attendances->count();
-        $absent_days = $working_days - $attended_days - $holiday_working_count;
-        $extra_days_count = $attendances->get()->filter(function ($attendance) {
-            $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
-            return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
-        })->count();
+        $department = $this->department->department;
+
+        // Month details
+        $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
+        $month_days_count = $current->daysInMonth;
+        $month_weekends_count = $current->diffInDaysFiltered(function (Carbon $date){
+            return $date->isSaturday() || $date->isSunday();
+        }, $current->copy()->lastOfMonth());
+        $month_holidays = Holiday::whereMonth('date_holiday', $current->month)->whereYear('date_holiday', $current->year)->get();
+        $month_holiday_weekends = with(clone $month_holidays)->filter(function ($holiday){
+            return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
+        });
+        $work_days = $month_days_count - $month_weekends_count;
+        $work_hours = $department == 'Local' ? 10 : 9;
+
+        // Employee details
+        $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
+
+        $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
+            if($department == 'Local'){
+                return !$attendance->date->isSunday();
+            }
+            return !$attendance->date->isSaturday() && !$attendance->date->isSunday();
+        });
+        
+        $days_worked_holiday = with(clone $attendances)->whereIn('date', $month_holidays->pluck('date_holiday'))->get();
+        
+        $days_worked_weekend = with(clone $attendances)->get()->filter(function($attendance){
+            return $attendance->date->isSaturday() || $attendance->date->isSunday();
+        });
+        
+        $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department){
+            if($department == 'Local'){
+                return $attendance->date->isSunday();
+            }
+            return $attendance->date->isSaturday() || $attendance->date->isSunday();
+        });
+        
+        $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
+        
+        $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
+            if($department == 'Local' && $attendance->date->isSaturday()){
+                $diff = ($work_hours * 60 / 2) - $attendance->duration();
+            } else{
+                $diff = $work_hours * 60 - $attendance->duration();
+            }
+            return $diff > 0 ? $diff : 0;
+        });
+
+        $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
+            if($department == 'Local' && $attendance->date->isSaturday()){
+                $diff = $attendance->duration() - ($work_hours * 60 / 2);
+            } else{
+                $diff = $attendance->duration() - $work_hours * 60;
+            }
+            return $diff > 0 ? $diff : 0;
+        });
 
         return compact(
-            'employee',
-            'attendances',
-            'current_month',
-            'current_year',
-            'total_days',
-            'weekend_days',
-            'working_days',
-            'attended_days',
-            'absent_days',
-            'extra_days_count',
-            'holidays',
-            'holiday_working_count',
+            'month_days_count',
+            'month_weekends_count',
+            'month_holidays',
+            'work_days',
+            'work_hours',
+            'days_worked',
+            'days_worked_holiday',
+            'days_worked_weekend',
+            'days_worked_holiday_weekend',
+            'no_pay_leaves',
+            'late_minutes',
+            'ot_minutes'
         );
-    }
-
-    private function getDaysInMonth($month, $year)
-    {
-        if ($month == "02") {
-            return ($year % 4 == 0) ? 29 : 28;
-        } elseif (in_array($month, ["01", "03", "05", "07", "08", "10", "12"])) {
-            return 31;
-        } else {
-            return 30;
-        }
-    }
-
-    private function getWeekendCount($month, $year)
-    {
-        $startDate = Carbon::createFromDate($year, $month, 1);
-        $endDate = $startDate->copy()->endOfMonth();
-
-        $interval = new DateInterval('P1D');
-        $period = new DatePeriod($startDate, $interval, $endDate);
-
-        $weekendCount = 0;
-
-        foreach ($period as $date) {
-            if ($date->format('N') >= 6) {
-                $weekendCount++;
-            }
-        }
-        return $weekendCount;
     }
 }

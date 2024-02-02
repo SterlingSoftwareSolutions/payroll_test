@@ -21,6 +21,7 @@ class Payslip extends Model
         $gross_salary = $this->basic_salary + $this->br_allowance + $this->fixed_allowance;
 
         $increments = $this->holiday_payment
+                    + $this->extra_days_payment
                     + $this->incentives
                     + $this->ot
                     + $this->other_increments;

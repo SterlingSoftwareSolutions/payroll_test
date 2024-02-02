@@ -37,35 +37,34 @@
                             <li class="breadcrumb-item active">Payslip Report</li>
                         </ul>
                     </div>
-                    <div class="col text-right col-md-3">
-                        <!-- Add the "Approve Payslip" button here -->
-                        <button type="submit" class="btn btn-primary btn-block rounded p-3">Approve All</button>
-                    </div>
+                    <form method="post" action="/form/payslip/generate">
+                        @csrf
+                        <button type="submit" class="btn btn-secondary p-3 mr-2">Generate</button>
+                    </form>
+                    <form method="post" action="/form/payslip/approve_all">
+                        @csrf
+                        <button type="submit" class="btn btn-primary p-3">Approve All</button>
+                    </form>
                 </div>
             </div>
-
             <!-- /Page Header -->
 
             <!-- Search Filter -->
             <form method="GET">
                 <div class="row filter-row">
-                    <div class="col-sm-6 col-md-3">
+                    <div class="col">
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" name="employee_id">
                             <label class="focus-label">Employee ID</label>
                         </div>
                     </div>
-
-                    <div class="col-sm-6 col-md-3">
+                    <div class="col">
                         <div class="form-group form-focus">
+                            <input type="text" class="form-control form-control-1 input-sm from-year">
                             <label class="focus-label">Year</label>
-                            <input type="text" class="form-control form-control-1 input-sm from-year" placeholder="Year">
-                            <div class="input-group-append">
-                                <span class="input-group-text"><i class="far fa-calendar"></i></span>
-                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3">
+                    <div class="col">
                         <div class="form-group form-focus">
                             <select class="form-control floating" id="monthDropdown" name="month">
                                 <option value=""></option>
@@ -85,8 +84,8 @@
                             <label class="focus-label">Month</label>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3">
-                        <button type="submit" class="btn btn-danger btn-block rounded">Search</button>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-danger fa fa-search"></button>
                     </div>
                 </div>
             </form>

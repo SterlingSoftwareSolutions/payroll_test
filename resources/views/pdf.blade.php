@@ -30,12 +30,12 @@
         <tbody>
             <tr>
                 <td>{{ $employee->full_name }}</td>
-                <td>{{ $total_days }}</td>
-                <td>{{ $absent_days }}</td>
-                <td>{{ $weekend_days }}</td>
-                <td>{{ $holiday_working_count }}</td>
-                <td>{{ $attended_days }}</td>
-                <td>{{ $extra_days_count }}</td>
+                <td>{{ $work_days }}</td>
+                <td>{{ $no_pay_leaves }}</td>
+                <td>{{ $month_weekends_count }}</td>
+                <td>{{ $month_holidays->count() }}</td>
+                <td>{{ $days_worked->count() + $days_worked_holiday->count() - $days_worked_holiday_weekend->count() }}</td>
+                <td>{{ $days_worked_weekend->count() }}</td>
             </tr>
         </tbody>
 
