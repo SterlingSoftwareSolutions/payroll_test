@@ -16,6 +16,12 @@ class Attendance extends Model
         'punch_out',
     ];
 
+    protected $dates = [
+        'date',
+        'punch_in',
+        'punch_out',
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -39,6 +45,10 @@ class Attendance extends Model
         return $this->belongsTo(Holiday::class, 'date', 'date_holiday');
     }
 
+    public function duration()
+    {
+        return $this->punch_out->diffInMinutes($this->punch_in);
+    }
 
     protected $casts = [
         'id' => 'string'

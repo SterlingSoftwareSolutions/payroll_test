@@ -26,25 +26,36 @@
         <!-- /Page Header -->
 
         <!-- Search Filter -->
-        <form action="{{ route('all/employee/search') }}" method="POST">
+        <form action="{{ route('all/attendance/search') }}" method="POST">
             @csrf
             <div class="row filter-row">
                 <div class="col-sm-6 col-md-3">
-                    <div class="form-group form-focus">
-                        <input type="text" class="form-control floating" name="employee_id">
-                        <label class="focus-label">Employee ID/Name</label>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4">
-                    <div class="form-group form-focus">
-                        <input type="text" class="form-control floating" name="select_month">
-                        <label class="focus-label">Select Month</label>
+                    <div class="form-group ">
+                        <input type="text" class="form-control floating" name="employee_id" placeholder="Employee ID">
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group form-focus">
-                        <input type="text" class="form-control floating" name="select_year">
-                        <label class="focus-label">Select Year</label>
+                        <select class="select floating" name="month">
+                            <option disabled selected>-- Select Month --</option>
+                            <option value="01">Jan</option>
+                            <option value="02">Feb</option>
+                            <option value="03">Mar</option>
+                            <option value="04">Apr</option>
+                            <option value="05">May</option>
+                            <option value="06">Jun</option>
+                            <option value="07">Jul</option>
+                            <option value="08">Aug</option>
+                            <option value="09">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="form-group">
+                        <input type="text" class="form-control floating" name="select_year" placeholder="Select Year">
                     </div>
                 </div>
 
@@ -75,7 +86,9 @@
                 </script>
 
                 <div class="col-sm-6 col-md-2">
-                    <button type="sumit" class="btn btn-success btn-block"> Search </button>
+                    {{-- <button type="sumit" class="btn btn-success btn-block"> Search </button> --}}
+                    <button type="submit" class="btn btn-success btn-block"> Search </button>
+
                 </div>
             </div>
         </form>
@@ -107,11 +120,12 @@
                             @foreach ($attendance as $key=>$items)
                             <tr class="attendance-completed">
                                     <td>{{ ++$key }}</td>
-                                    <td class="text-left">{{ $items->id }}</td>
-                                    <td class="text-left">{{ $items->employee->full_name }}</td>
-                                    <td class="text-left">{{ $items->date}}</td>
-                                    <td class="text-left">{{ $items->punch_in}}</td>
-                                    <td class="text-left">{{ $items->punch_out}}</td>
+                                    <td class="text-left" id="ids">{{ $items->id }}</td>
+                                    <td class="text-left" id="empname">{{ $items->employee->full_name }}</td>
+                                    <td class="text-left" id="empid" hidden>{{ $items->employee->id }}</td>
+                                    <td class="text-left" id="selctdate">{{ $items->date}}</td>
+                                    <td class="text-left" id="punchin">{{ $items->punch_in}}</td>
+                                    <td class="text-left" id="punchout">{{ $items->punch_out}}</td>
                                     {{-- Calculate Work Hours --}}
                                     @php
                                     $punchIn = new DateTime($items->punch_in);
@@ -135,11 +149,11 @@
                                                 <i class="material-icons">more_vert</i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item userUpdate" data-toggle="modal" data-id="{{ $items->attendance_id }}"
-                                                    data-employee-id="{{ $items->employee_id }}" data-date="{{ $items->date }}"
-                                                    data-punch-in="{{ $items->punch_in }}" data-punch-out="{{ $items->punch_out }}"
+                                                <a class="dropdown-item userUpdate" data-toggle="modal"
+                                                    data-id="{{ $items->id }}"
                                                     data-target="#edit_attendance">
-                                                    <i class="fa fa-pencil m-r-5"></i> Edit </a>
+                                                    <i class="fa fa-pencil m-r-5"></i> Edit
+                                                </a>
                                             </div>
                                         </div>
                                     </td>
@@ -164,27 +178,26 @@
                                                                 <div class="form-group">
                                                                     <label class="col-form-label">Attendance ID <span class="text-danger">*</span></label>
                                                                     <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                                                        id="attendance_id" name="attendance_id" value="{{$next_id}}" disabled>
+                                                                        id="a_id" name="attendance_id" readonly>
                                                                 </div>
                                                             </div>
+                                                            {{-- employee Id send controller --}}
+                                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                                                        id="e_id" name="employee_id" hidden>
+                                                                        
                                                             <div class="col-md">
                                                                 <div class="form-group">
                                                                     <label class="col-form-label">Select Employee <span
                                                                             class="text-danger">*</span></label>
-                                                                    <datalist id="employees">
-                                                                        @for($i = 0; $i < $employees->count(); $i++)
-                                                                            <option value="{{$employees[$i]->id}}">{{$employees[$i]->full_name}}
-                                                                            </option>
-                                                                            @endfor
-                                                                    </datalist>
-                                                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="empolyee_name" type="text" name="employee_id">
+                                                                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                                                            id="e_name" name="employee_name" readonly>
                                                                     @error('employee_id')<span class="text-danger">{{$message}}</span>@enderror
                                                                 </div>
                                                             </div>
                                                             <div class="col-md">
                                                                 <div class="form-group">
                                                                     <label class="col-form-label">Select Date <span class="text-danger">*</span></label>
-                                                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="date" type="date" name="date">
+                                                                    <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="e_date" type="date" name="date">
                                                                     @error('date')<span class="text-danger">{{$message}}</span>@enderror
                                                                 </div>
                                                             </div>
@@ -194,7 +207,7 @@
                                                                             class="text-danger">*</span></label>
                                                                     <div>
                                                                         <input class="form-control" style="width: 100%;" tabindex="-1"
-                                                                            aria-hidden="true" id="punch_in" name="punch_in" type="time">
+                                                                            aria-hidden="true" id="e_punchin" name="punch_in" type="time">
                                                                         @error('punch_in')<span class="text-danger">{{$message}}</span>@enderror
                                                                     </div>
                                                                 </div>
@@ -205,7 +218,7 @@
                                                                             class="text-danger">*</span></label>
                                                                     <div>
                                                                         <input class="form-control" style="width: 100%;" tabindex="-1"
-                                                                            aria-hidden="true" id="punch_out" name="punch_out" type="time">
+                                                                            aria-hidden="true" id="e_punchout" name="punch_out" type="time">
                                                                         @error('punch_out')<span class="text-danger">{{$message}}</span>@enderror
                                                                     </div>
                                                                 </div>
@@ -249,22 +262,36 @@
                                 <div class="form-group">
                                     <label class="col-form-label">Attendance ID <span class="text-danger">*</span></label>
                                     <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="attendance_id" name="attendance_id" value="{{$next_id}}" disabled>
-                                    @error('attendance_id')<span class="text-danger">{{$message}}</span>@enderror                                
+                                    @error('attendance_id')<span class="text-danger">{{$message}}</span>@enderror
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-group">
                                     <label class="col-form-label">Select Employee <span class="text-danger">*</span></label>
-                                    <datalist id="employees">
-                                        @for($i = 0; $i < $employees->count(); $i++)
-                                            <option value="{{$employees[$i]->id}}">{{$employees[$i]->full_name}}
-                                            </option>
-                                            @endfor
-                                    </datalist>
-                                    <input autoComplete="on" list="employees" class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="empolyee_name" type="text" name="employee_id">
+                                    <input list="browsers" name="employee_id" id="employee_id" class="form-control" style="width: 100%;">
                                     @error('employee_id')<span class="text-danger">{{$message}}</span>@enderror
+                                    @error('selected_employee_id')<span class="text-danger">Enter Correct employee ID</span>@enderror
+                                    <datalist id="browsers">
+                                        @foreach ($employees as $employee)
+                                            <option value="{{ $employee->id }} - {{ $employee->full_name }}">
+                                                {{ $employee->employee_id }}
+                                            </option>
+                                        @endforeach
+                                    </datalist>
                                 </div>
                             </div>
+
+                            <!-- Add an invisible input field -->
+                            <input type="hidden" name="selected_employee_id" id="selected_employee_id" value="{{ $employee->id }}">
+
+                            <script>
+                                // Add event listener to update the hidden input field value
+                                document.getElementById('employee_id').addEventListener('input', function() {
+                                    var selectedEmployeeId = this.value.split(' - ')[0]; // Extracting the ID from the selected option
+                                    document.getElementById('selected_employee_id').value = selectedEmployeeId;
+                                });
+                            </script>
+
                             <div class="col-md">
                                 <div class="form-group">
                                     <label class="col-form-label">Select Date <span class="text-danger">*</span></label>
@@ -339,30 +366,17 @@
     <script>
         $(document).on('click', '.userUpdate', function () {
             var _this = $(this).parents('tr');
-            $('#e_id').val(_this.find('.id').text());
-            $('#e_name').val(_this.find('.name').text());
-            $('#e_email').val(_this.find('.email').text());
-            $('#e_phone_number').val(_this.find('.phone_number').text());
-            $('#e_image').val(_this.find('.image').text());
-
-            var name_role = (_this.find(".role_name").text());
-            var _option = '<option selected value="' + name_role + '">' + _this.find('.role_name').text() + '</option>'
-            $(_option).appendTo("#e_role_name");
-
-            var position = (_this.find(".position").text());
-            var _option = '<option selected value="' + position + '">' + _this.find('.position').text() + '</option>'
-            $(_option).appendTo("#e_position");
-
-            var department = (_this.find(".department").text());
-            var _option = '<option selected value="' + department + '">' + _this.find('.department').text() + '</option>'
-            $(_option).appendTo("#e_department");
-
-            var statuss = (_this.find(".statuss").text());
-            var _option = '<option selected value="' + statuss + '">' + _this.find('.statuss').text() + '</option>'
-            $(_option).appendTo("#e_status");
+            $('#a_id').val(_this.find('#ids').text());
+            $('#e_name').val(_this.find('#empname').text());
+            $('#e_id').val(_this.find('#empid').text());
+            $('#e_date').val(_this.find('#selctdate').text());
+            $('#e_punchin').val(_this.find('#punchin').text());
+            $('#e_punchout').val(_this.find('#punchout').text());
+            console.log(_this.find('#empid').text());
 
         });
     </script>
+
     <script>
         // Function to reload table data
         function reloadTableData() {

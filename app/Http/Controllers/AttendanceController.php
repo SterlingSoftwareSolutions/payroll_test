@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use DB;
 use DateTime;
 use Validator;
@@ -9,18 +8,17 @@ use DatePeriod;
 use DateInterval;
 use App\Models\Holiday;
 use App\Models\Employee;
-use Barryvdh\DomPDF\PDF;
 use App\Models\Attendance;
 use App\Models\department;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+
 use Brian2694\Toastr\Facades\Toastr;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class AttendanceController extends Controller
 {
-
-
     public function index(Request $request)
     {
         $query = Employee::query();
@@ -29,18 +27,14 @@ class AttendanceController extends Controller
             $filterDep = department::find($request->department);
             $query->where('d_name', $filterDep->department);
         }
-        if ($request->year) {
-            $query->whereYear('created_at', $request->year);
-        }
 
-        if ($request->month) {
-            $query->whereMonth('created_at', $request->month);
-        }
+        $current_month = $request->month ?? date('m');
+        $current_year = $request->year ?? date('Y');
 
         $employees = $query->get();
         $departments = department::all();
         $holiday = Holiday::all();
-        $attendances = Attendance::with('employee', 'holiday')->get();
+        $attendances = Attendance::with('employee', 'holiday')->whereMonth('date', $current_month)->whereYear('date', $current_year)->get();
 
         $employeeHolidayCounts = [];                //for holidays count
 
@@ -68,10 +62,9 @@ class AttendanceController extends Controller
             ->groupBy('employee_id')
             ->get();
 
-        $curmnth = date('m');
-        $curyear = date('Y');
-        $totDays = $this->getDaysInMonth($curmnth, $curyear);
-        $weekendCount = $this->getWeekendCount($curmnth, $curyear);
+
+        $totDays = $this->getDaysInMonth($current_month, $current_year);
+        $weekendCount = $this->getWeekendCount($current_month, $current_year);
 
         $extraDaysCount = $attendances->filter(function ($attendance) {
             $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
@@ -79,7 +72,7 @@ class AttendanceController extends Controller
         })->count();
 
 
-        
+
         $departments = department::select('id','department')->distinct()->get();
 
         $department = $request->input('department', null);                  //for search feature
@@ -89,17 +82,17 @@ class AttendanceController extends Controller
         $dataQuery = department::when($department, function ($query) use ($department) {
             return $query->where('department', $department);
         })
-   
-        ->whereYear('created_at', '=', $selectedYear)       
+
+        ->whereYear('created_at', '=', $selectedYear)
         ->whereMonth('created_at', '=', $selectedMonth);
 
         $data = $dataQuery->get();
 
-        
+
 
         return view('reports.attendance-report', compact([
             'departments', 'employees', 'attendances',
-            'attendanceCounts', 'holiday', 'curmnth', 'curyear', 'totDays',
+            'attendanceCounts', 'holiday', 'current_month', 'current_year', 'totDays',
             'weekendCount', 'extraDaysCount', 'employeeHolidayCounts','selectedYear', 'selectedMonth','data'
         ]));
     }
@@ -146,10 +139,11 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
-
+        // dd($request);
         // Validate the form data
         $request->validate([
-            'employee_id' => 'required|numeric|exists:employees,id',
+            'employee_id' => 'required',
+            'selected_employee_id' => 'required|numeric|exists:employees,id',
             'date' => 'required|date|date_format:Y-m-d',
             'punch_in' => 'required|date_format:H:i',
             'punch_out' => 'required|date_format:H:i',
@@ -158,12 +152,12 @@ class AttendanceController extends Controller
         try {
 
             $attendance = Attendance::create([
-                'employee_id' => $request->employee_id,
+                'employee_id' => $request->selected_employee_id,
                 'date' => $request->date,
                 'punch_in' => $request->punch_in,
                 'punch_out' => $request->punch_out,
             ]);
-           
+
             DB::commit();
 
             Toastr::success('Added attendence successfully :)', 'Success');
@@ -173,31 +167,31 @@ class AttendanceController extends Controller
             Toastr::error('Add Attendance fail :)', 'Error');
             return redirect()->back();
         }
-       
+
     }
-   
+
 
     /** update record attendance */
     public function updateAttendance(Request $request)
     {
+        //  dd($request)->all();
         DB::beginTransaction();
         try {
-            $id             = $request->id;
-            $employeeId     = $request->employee_id; // Update field name
-            $attendanceDate = $request->date; // Update field name
-            $punchIn        = $request->punch_in; // Update field name
-            $punchOut       = $request->punch_out; // Update field name
+            $attendance_id = $request->attendance_id;
+            $employee_id = $request->employee_id;
+            $date = $request->date;
+            $punch_in = $request->punch_in;
+            $punch_out = $request->punch_out;
 
             // Update the attendance record
             $update = [
-                'employee_id'  => $employeeId,
-                'date'         => $attendanceDate,
-                'punch_in'     => $punchIn,
-                'punch_out'    => $punchOut,
-                'attendance'   => $request->attendance,
+                'employee_id'  => $employee_id,
+                'date'         => $date,
+                'punch_in'     => $punch_in,
+                'punch_out'    => $punch_out,
             ];
 
-            Attendance::where('id', $id)->update($update);
+            Attendance::where('id', $attendance_id)->update($update);
             DB::commit();
             // Use Toastr for flash messages
             Toastr::success('Record updated successfully :)', 'Success');
@@ -235,4 +229,82 @@ class AttendanceController extends Controller
         return $pdf->download('form/attendance/pdf');
     }
 
+    public function download(Employee $employee) {
+        $data = $employee->attendance_data();
+        $data['employee'] = $employee;
+        $pdf = Pdf::loadView('pdf', $data)->setPaper('a5', 'landscape');;
+        return $pdf->download();
+    }
+
+    public function attendanceSearch(Request $request){
+        // dd($request->all());
+        $next_id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
+        $attendance= DB::table('attendances')->get();
+        $employees = Employee::all();
+
+        if($attendance != null){
+            $attendance = Attendance::where('employee_id', 'LIKE', '%' . $request->employee_id . '%')->get();
+        }
+        if ($request->has('month')) {
+            $month = $request->month;
+
+            $attendance = Attendance::whereMonth('date', '=', $month)->get();
+
+            // Now $attendance contains all the attendance records for the specified month
+        }
+        if ($request->has('select_year')) {
+            $year = $request->select_year;
+            if ($year != null) {
+                // Validate if $year is a valid four-digit year
+                if (strlen($year) === 4 && is_numeric($year)) {
+                    $attendance = Attendance::whereYear('date', '=', $year)->get();
+
+                    // Now $attendance contains all the attendance records for the specified year
+                } else {
+                    // Handle invalid year, perhaps return an error response
+                    return response()->json(['error' => 'Invalid year format'], 400);
+                }
+            }
+        }
+        if ($attendance !== null && $request->has('month')) {
+            $month = $request->month;
+            $employeeId = $request->employee_id;
+
+            $attendance = Attendance::whereMonth('date', '=', $month)
+                                    ->where('employee_id', 'LIKE', '%' . $employeeId . '%')
+                                    ->get();
+        }
+        if ($attendance !== null && $request->has('select_year')) {
+            $year = $request->select_year;
+            $employeeId = $request->employee_id;
+
+            if ($year != null) {
+                // Validate if $year is a valid four-digit year
+                if (strlen($year) === 4 && is_numeric($year)) {
+                    $attendance = Attendance::whereYear('date', '=', $year)
+                        ->where('employee_id', 'LIKE', '%' . $employeeId . '%')
+                        ->get();
+                } else {
+                    // Handle invalid year, perhaps return an error response
+                    return response()->json(['error' => 'Invalid year format'], 400);
+                }
+            }
+        }
+        if($request->has('month')&& $request->has('select_year')){
+            $month = $request->month;
+            $year = $request->select_year;
+
+            if($year != null){
+                if (strlen($year) === 4 && is_numeric($year)) {
+                    $attendance = Attendance::whereMonth('date', '=', $month)
+                        ->whereYear('date', '=', $year)
+                        ->get();
+                }else{
+                    // Handle invalid year, perhaps return an error response
+                    return response()->json(['error' => 'Invalid year format'], 400);
+                }
+            }
+        }
+        return view('form.Attendanceemployee' ,compact('attendance','next_id','employees'));
+    }
 }

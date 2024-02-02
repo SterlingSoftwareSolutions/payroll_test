@@ -268,7 +268,7 @@
                                 <td>{{ $attendance->overtime ?? 'N/A' }}</td>
                                 <td>{{ $extraDaysCount }}</td>
                                 <td>
-                                    <button onclick="generateAndDownloadEmployeePDF({{ $attendance->employee->id }})">Download PDF</button>
+                                    <a href="/form/attendance/download/{{ $attendance->employee->id}}"><button>Download PDF</button></a>
                                 </td>
                             </tr>
                             @endforeach
@@ -368,40 +368,19 @@
 
 
 
-{{-- <script>
-    function downloadPDF() {
-        var element = document.getElementById('attendanceTable');
-
-        var options = {
-            margin: 10,
-            filename: 'attendance_table.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf(element, options);
-    }
-</script> --}}
 
 
 
 
-<script>
-    function generateAndDownloadEmployeePDF(employeeId) {
-        // Get the specific row of the employee
-        var row = document.getElementById('attendanceTable').querySelector('[data-employee-id="' + employeeId + '"]');
 
-        // Configure the PDF options
-        var options = {
-            margin: 10,
-            filename: 'employee_report.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
 
-        // Use html2pdf.js to generate and download the PDF for the specific row
-        html2pdf(row, options);
-    }
-</script>
+
+
+
+
+
+
+
+
+
+

@@ -18,78 +18,51 @@
                     <div class="col-auto float-right ml-auto">
                         <a href="{{ route('form/employee/new') }}" class="btn add-btn" data-toggle="#" data-target="#"><i
                                 class="fa fa-plus"></i> Add Employee</a>
-                        <!-- todo
-                            <div class="view-icons">
-                                <a href="{{ route('all/employee/card') }}" class="grid-view btn btn-link active"><i class="fa fa-th"></i></a>
-                                <a href="{{ route('all/employee/list') }}" class="list-view btn btn-link"><i class="fa fa-bars"></i></a>
-                            </div>
-                        /todo -->
+
                     </div>
                 </div>
             </div>
             <!-- /Page Header -->
 
             <!-- Search Filter -->
-            <form action="{{ route('all/employee/search') }}" method="POST">
-                @csrf
+            <form action="{{ route('all/employee/list/search') }}" method="GET">
+
                 <div class="row filter-row">
                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" name="employee_id">
-                            <label class="focus-label">Employee ID</label>
+                        <div class="form-group">
+                            <input type="text" name="employee_id" value="{{ request('employee_id') }}"
+                                class="form-control" placeholder="Employee ID">
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-4">
-                        <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" name="full_name">
-                            <label class="focus-label">Employee Name</label>
-                        </div>
-                    </div>
-                    <!-- Include this section where you want the dropdown to appear -->
+
                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <select class="select floating" name="department">
-                                <option value=""> -- Select Department-- </option>
-                                @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}">{{ $department->department }}</option>
+                        <div class="form-group">
+                            {{-- <label class="focus-label">Employee Name</label> --}}
+                            <input type="text" name="full_name" value="{{ request('full_name') }}" class="form-control" placeholder="Employee Name">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3">
+                        <div class="form-group">
+                            <select class="form-control" name="d_name" id="department">
+                                <option value="" selected disabled>-- Select Department --</option>
+                                @foreach ($department as $departments)
+                                    <option value="{{ $departments->id }}">
+                                        {{ $departments->department }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
 
-                    <!-- Include this script at the end of your Blade view -->
-                    <script>
-                        // Fetch departments and populate the dropdown
-                        window.addEventListener('DOMContentLoaded', (event) => {
-                            fetch('/get-departments')
-                                .then(response => response.json())
-                                .then(departments => {
-                                    const dropdown = document.getElementById('departmentDropdown');
-
-                                    departments.forEach(department => {
-                                        const option = document.createElement('option');
-                                        option.value = department
-                                        .id; // Assuming your department model has an 'id' field
-                                        option.textContent = department
-                                        .name; // Assuming your department model has a 'name' field
-                                        dropdown.appendChild(option);
-                                    });
-                                });
-                        });
-
-                        // Handle department selection
-                        document.getElementById('departmentDropdown').addEventListener('change', function() {
-                            const selectedDepartment = this.value;
-                            document.getElementById('selectedDepartment').innerText = `Selected Department: ${selectedDepartment}`;
-
-                        });
-                    </script>
 
                     <div class="col-sm-6 col-md-2">
-                        <button type="sumit" class="btn btn-success btn-block"> Search </button>
+                        <button type="submit" class="btn btn-success btn-block">Search</button>
                     </div>
                 </div>
             </form>
+
+
 
             <!-- Page Content -->
             <h3 class="page-title">All Employee</h3>
@@ -114,7 +87,7 @@
                                 @if (!empty($employees))
                                     @foreach ($employees as $employee)
                                         <tr>
-                                            <td class="text-left"><a class="dropdown-item"
+                                            <td class="text-left"><a class="dropdown-item" id="eid"
                                                     href="{{ route('form.employee.view', $employee->employee_id) }}"
                                                     data-toggle="#" data-target="#">
                                                     {{ $employee->employee_id }}</a></td>
@@ -143,9 +116,11 @@
                                                             class="dropdown-item userUpdate" data-toggle="#"
                                                             data-target="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                                         {{-- <a class="dropdown-item userUpdate" data-toggle="modal" data-id="{{ $employee->employee_id }}" data-target="#edit_employee"><i class="fa fa-pencil m-r-5"></i> Edit</a> --}}
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_employee"><i
-                                                                class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                        <a class="dropdown-item delete_employee" href="#"
+                                                            data-toggle="modal" data-id="{{ $employee->employee_id }}"
+                                                            data-target="#delete_employee">
+                                                            <i class="fa fa-trash-o m-r-5"></i> Delete
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -235,6 +210,55 @@
                 </div>
             </div>
             <!-- /Page Content -->
+            <div class="modal custom-modal fade" id="delete_employee" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="form-header">
+                                <h3>Delete Employee</h3>
+                                <p>Are you sure want to delete?</p>
+                            </div>
+                            <div class="modal-btn delete-action">
+                                <form action="{{ route('deleteEmployee') }}" method="POST" id="deleteEmployeeForm">
+                                    @csrf
+                                    <input type="hidden" name="id" class="e_id" value="">
+                                    <input type="hidden" name="avatar" class="e_avatar" value="">
+                                    <div class="row">
+                                        <div class="col-6"
+                                            style="display: flex; align-items: center; justify-content: center;">
+                                            <button type="submit"
+                                                class="btn btn-primary continue-btn submit-btn delete-btn"
+                                                style="margin-top: 15px; background-color: #f53542 !important; color: #fff !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s;"
+                                                onmouseover="this.style.backgroundColor='#f80919'; this.style.borderColor='#f80919';"
+                                                onmouseout="this.style.backgroundColor='#f53542'; this.style.borderColor='#f53542';">Delete</button>
+                                        </div>
+                                        <div class="col-6"
+                                            style="display: flex; align-items: center; justify-content: center;">
+                                            <a href="javascript:void(0);" data-dismiss="modal"
+                                                class="btn btn-primary cancel-btn text-center"
+                                                style="width: 210px; height: 50px; display: flex; align-items: center !important; justify-content: center !important; background-color: transparent !important; color: #f53542 !important; border-color: #f53542 !important; transition: background-color 0.3s, border-color 0.3s;"
+                                                onmouseover="this.style.backgroundColor='#f53542'; this.style.borderColor='#f53542'; this.style.color='#fff';"
+                                                onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='#f53542'; this.style.color='#f53542';">
+                                                Cancel
+                                            </a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- delete js --}}
+            <script>
+                $(document).ready(function() {
+                    $('.delete_employee').on('click', function() {
+                        var employeeId = $(this).data('id');
+                        $('#deleteEmployeeForm .e_id').val(employeeId);
+                    });
+                });
+            </script>
 
             <!-- Add Employee Modal -->
             <div id="add_employee" class="modal custom-modal fade" role="dialog">
@@ -307,7 +331,7 @@
                                         } else {
                                             // Display a default user account image
                                             var defaultImageUrl =
-                                            'https://example.com/default-user-image.png'; // Replace with the actual URL of the default image
+                                                'https://example.com/default-user-image.png'; // Replace with the actual URL of the default image
                                             preview.innerHTML = '<img src="' + defaultImageUrl + '" alt="Default Image">';
                                         }
                                     }
@@ -390,14 +414,14 @@
                                                     class="text-danger">*</span></label>
                                             {{-- <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name"> --}}
 
-                                            <select class="select form-control floating" name="department">
+                                            {{-- <select class="select form-control floating" name="department">
                                                 <option value=""> --Select Department-- </option>
                                                 @foreach ($departments as $department)
                                                     <option value="{{ $department->id }}">{{ $department->department }}
                                                     </option>
                                                 @endforeach
 
-                                            </select>
+                                            </select> --}}
                                         </div>
                                     </div>
                                     <div class="col-md-6">

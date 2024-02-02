@@ -75,7 +75,7 @@
                      <form action="{{ route('form/departments/save') }}" method="POST">
                             @csrf
                              <div class="form-group">
-                              <label>Department ID <span class="text-danger">*</span></label><br> 
+                              <label>Department ID <span class="text-danger">*</span></label><br>
                               <input class="form-control @error('department') is-invalid @enderror" type="text" id="department" name="department" value="{{ $next_id }}"readonly>
 
                                         @error('department')
@@ -127,7 +127,7 @@
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                            @enderror                         
+                            @enderror
                             </div>
                             <div class="submit-section">
                                 <button type="submit" class="btn btn-primary submit-btn">Save</button>
@@ -154,10 +154,10 @@
                                 <input type="hidden" name="id" class="e_id" value="">
                                 <div class="row">
                                     <div class="col-6">
-                                        <button type="submit" class="btn btn-primary continue-btn submit-btn">Delete</button>
+                                        <button type="submit" class="btn continue-btn submit-btn delete-btn">Delete</button>
                                     </div>
                                     <div class="col-6">
-                                        <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                                        <a href="javascript:void(0);" data-dismiss="modal" class="btn  cancel-btn">Cancel</a>
                                     </div>
                                 </div>
                             </form>

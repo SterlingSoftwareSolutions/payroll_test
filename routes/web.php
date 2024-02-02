@@ -1,29 +1,30 @@
 <?php
 
-use App\Http\Controllers\AttendanceController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SettingController;
-use App\Http\Controllers\PhotosController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\UserManagementController;
-use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LockScreen;
-use App\Http\Controllers\PayrollController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
-use App\Http\Controllers\HolidayController;
-use App\Http\Controllers\LeavesController;
-use App\Http\Controllers\ExpenseReportsController;
-use App\Http\Controllers\PerformanceController;
-use App\Http\Controllers\TrainingController;
-use App\Http\Controllers\TrainersController;
-use App\Http\Controllers\TrainingTypeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\LeavesController;
+use App\Http\Controllers\PhotosController;
+use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\PayslipController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\TrainersController;
+use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\PerformanceController;
+use App\Http\Controllers\TrainingTypeController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\ExpenseReportsController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PersonalInformationController;
-use App\Http\Controllers\PaySlipController;
 
 
 /*
@@ -185,13 +186,14 @@ Route::controller(EmployeeController::class)->group(function () {
     // Route::post('all/employee/update', 'updateRecord')->middleware('auth')->name('all/employee/update');
     Route::get('all/employee/delete/{employee_id}', 'deleteRecord')->middleware('auth');
     Route::post('all/employee/search', 'employeeSearch')->name('all/employee/search');
-    Route::post('all/employee/list/search', 'employeeListSearch')->name('all/employee/list/search');
+    Route::get('all/employee/list/search', 'employeeListSearch')->name('all/employee/list/search');
     Route::get('form/employee/new', 'createEmployee')->middleware('auth')->name('form/employee/new');
     Route::get('form/employee/edit/{user}', [EmployeeController::class, 'EditEmployee'])->name('form.employee.edit');
     Route::put('form/employee/edit/{user}', [EmployeeController::class, 'EditEmployee'])->name('form.employee.edit');
     Route::post('all/employee/update/{employeeId}', 'updateRecord')->middleware('auth')->name('all/employee/update');
     Route::put('form/employee/view/{user}', [EmployeeController::class, 'ViewEmployee'])->name('form.employee.view');
     Route::get('form/employee/view/{user}', [EmployeeController::class, 'ViewEmployee'])->name('form.employee.view');
+    Route::post('all/employee/delete', [EmployeeController::class, 'deleteRecords'])->middleware('auth')->name('deleteEmployee');
 
     Route::get('form/departments/page', 'index')->middleware('auth')->name('form/departments/page');
     Route::post('form/departments/save', 'saveRecordDepartment')->middleware('auth')->name('form/departments/save');
@@ -244,13 +246,15 @@ Route::controller(AttendanceController::class)->group(function () {
     Route::get('form/attendance/new', 'attendance')->middleware('auth')->name('form.attendance.new');
     Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
     Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
-    Route::post('form/attendance/update', 'updateRecordAttendance')->middleware('auth')->name('form/attendance/update');
+    Route::post('form/attendance/update', 'updateAttendance')->middleware('auth')->name('form/attendance/update');
 
-    Route::get('form/attendance/download', 'downloardAtte')->middleware('auth')->name('form/attendance/download'); //for attendance download
+    Route::get('form/attendance/download/{employee}', 'download')->middleware('auth')->name('form/attendance/download'); //for attendance download
     Route::get('form/attendance/pdf', 'AttendanceController@downloadPDF');
 
     // Route::get('form/attendance/search/page', 'getDataByYearMonth')->middleware('auth')->name('form.attendance.search.page');
 });
+
+Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');
 
 
 // ATTENDACNE ROUTES
@@ -361,12 +365,15 @@ Route::get('/employees', [EmployeeController::class, 'cardAllEmployee'])->name('
 
 //----------------------------Payslip Approve--------------------------------------------------------//
 Route::controller(PayslipController::class)->group(function () {
-
+    Route::get('form/payslip/show/{payslip}', 'show')->middleware('auth')->name('form/payslip/show'); //for payslip approve
+    Route::get('form/payslip/print/{payslip}', 'print')->middleware('auth')->name('form/payslip/show'); //for payslip approve
     Route::get('form/payslip/approve', 'index')->middleware('auth')->name('form/payslip/approve'); //for payslip approve
+    Route::post('form/payslip/generate', 'generate_payslips')->middleware('auth')->name('form/payslip/generate_payslips');
+    Route::post('form/payslip/approve_all', 'approve_all')->middleware('auth')->name('form/payslip/approve_all');
     Route::get('salary/report', 'get_salary_report')->middleware('auth')->name('salary/report'); //for salary report
-    // Route::post('form/payslip/save', 'saveRecord')->middleware('auth')->name('form/payslip/save');
-    Route::post('form/payslip/update', 'updateRecord')->middleware('auth')->name('form/payslip/update');
-    // Route::post('form/payslip/print', 'printRecord')->middleware('auth')->name('form/payslip/print');
+    Route::post('form/payslip/update', 'update')->middleware('auth')->name('form/payslip/update');
     Route::get('form/payslip/download', 'downloardfile')->middleware('auth')->name('form/payslip/download'); //for payslip download
-
 });
+
+Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');
+Route::get('/get-positions/{department}', [PositionController::class, 'getPositions'])->name('get-positions');

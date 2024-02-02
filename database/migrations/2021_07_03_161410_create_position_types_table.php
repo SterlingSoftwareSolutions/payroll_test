@@ -16,19 +16,21 @@ class CreatePositionTypesTable extends Migration
         Schema::create('position_types', function (Blueprint $table) {
             $table->id();
             $table->string('position')->nullable();
+            $table->string('department')->nullable();
             $table->timestamps();
         });
 
         DB::table('position_types')->insert([
-            ['position' => 'CEO'],
-            ['position' => 'CFO'],
-            ['position' => 'Manager'],
-            ['position' => 'Web Designer'],
-            ['position' => 'Web Developer'],
-            ['position' => 'Android Developer'],
-            ['position' => 'IOS Developer'],
-            ['position' => 'Team Leader'],
+            ['position' => 'CEO', 'department' => 'Local', 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'CFO', 'department' => 'Local', 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Manager', 'department' => 'Local', 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Web Designer', 'department' => 'IT', 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Web Developer', 'department' => 'IT', 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Android Developer', 'department' => 'IT', 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'IOS Developer', 'department' => 'IT', 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Team Leader', 'department' => 'IT', 'created_at' => now(), 'updated_at' => now()],
         ]);
+
     }
 
     /**

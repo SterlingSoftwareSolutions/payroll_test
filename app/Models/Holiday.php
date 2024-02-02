@@ -12,4 +12,10 @@ class Holiday extends Model
         'name_holiday',
         'date_holiday',
     ];
+    protected $dates = [
+        'date_holiday'
+    ];
+    // protected $casts = [
+    //     'date_holiday' => 'date'
+    // ];
 }
