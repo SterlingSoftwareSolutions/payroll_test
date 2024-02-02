@@ -367,6 +367,7 @@ Route::controller(PayslipController::class)->group(function () {
     Route::get('form/payslip/print/{payslip}', 'print')->middleware('auth')->name('form/payslip/show'); //for payslip approve
     Route::get('form/payslip/approve', 'index')->middleware('auth')->name('form/payslip/approve'); //for payslip approve
     Route::post('form/payslip/generate', 'generate_payslips')->middleware('auth')->name('form/payslip/generate_payslips');
+    Route::post('form/payslip/approve_all', 'approve_all')->middleware('auth')->name('form/payslip/approve_all');
     Route::get('salary/report', 'get_salary_report')->middleware('auth')->name('salary/report'); //for salary report
     Route::post('form/payslip/update', 'update')->middleware('auth')->name('form/payslip/update');
     Route::get('form/payslip/download', 'downloardfile')->middleware('auth')->name('form/payslip/download'); //for payslip download

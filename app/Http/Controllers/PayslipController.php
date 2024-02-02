@@ -132,7 +132,7 @@ class PayslipController extends Controller
 
         // Overtime
         $ot_hours = $attandance_data['ot_minutes'] / 60;
-        $ot = ($gross_salary / 240) * $ot_hours;
+        $ot = $gross_salary / 240 * 1.5 * $ot_hours;
 
         // No pay leave deduction
         $no_pay_leave_deduction =  $gross_salary_day * $attandance_data['no_pay_leaves'];
@@ -204,6 +204,16 @@ class PayslipController extends Controller
         $employees->each(function ($employee){
             $this->create_payslip($employee);
         });
+        return redirect('/form/payslip/approve');
+    }
+
+    // Approve all paylips for the current month
+    public function approve_all()
+    {
+        $date = now()->startOfMonth()->subMonth();
+        Payslip::whereDate('date', $date)->update([
+            'approved_at' => now()
+        ]);
         return redirect('/form/payslip/approve');
     }
 
