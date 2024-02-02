@@ -234,4 +234,76 @@ class AttendanceController extends Controller
         $pdf = Pdf::loadView('pdf', $data)->setPaper('a5', 'landscape');;
         return $pdf->download();
     }
+
+    public function attendanceSearch(Request $request){
+        // dd($request->all());
+        $next_id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
+        $attendance= DB::table('attendances')->get();
+        $employees = Employee::all();
+        
+        if($attendance != null){
+            $attendance = Attendance::where('employee_id', 'LIKE', '%' . $request->employee_id . '%')->get();
+        }
+        if ($request->has('month')) {
+            $month = $request->month;
+
+            $attendance = Attendance::whereMonth('date', '=', $month)->get();
+
+            // Now $attendance contains all the attendance records for the specified month
+        }
+        if ($request->has('select_year')) {
+            $year = $request->select_year;
+            if ($year != null) {
+                // Validate if $year is a valid four-digit year
+                if (strlen($year) === 4 && is_numeric($year)) {
+                    $attendance = Attendance::whereYear('date', '=', $year)->get();
+
+                    // Now $attendance contains all the attendance records for the specified year
+                } else {
+                    // Handle invalid year, perhaps return an error response
+                    return response()->json(['error' => 'Invalid year format'], 400);
+                }
+            }
+        }
+        if ($attendance !== null && $request->has('month')) {
+            $month = $request->month;
+            $employeeId = $request->employee_id;
+
+            $attendance = Attendance::whereMonth('date', '=', $month)
+                                    ->where('employee_id', 'LIKE', '%' . $employeeId . '%')
+                                    ->get();
+        }
+        if ($attendance !== null && $request->has('select_year')) {
+            $year = $request->select_year;
+            $employeeId = $request->employee_id;
+
+            if ($year != null) {
+                // Validate if $year is a valid four-digit year
+                if (strlen($year) === 4 && is_numeric($year)) {
+                    $attendance = Attendance::whereYear('date', '=', $year)
+                        ->where('employee_id', 'LIKE', '%' . $employeeId . '%')
+                        ->get();
+                } else {
+                    // Handle invalid year, perhaps return an error response
+                    return response()->json(['error' => 'Invalid year format'], 400);
+                }
+            }
+        }
+        if($request->has('month')&& $request->has('select_year')){
+            $month = $request->month;
+            $year = $request->select_year;
+
+            if($year != null){
+                if (strlen($year) === 4 && is_numeric($year)) {
+                    $attendance = Attendance::whereMonth('date', '=', $month)
+                        ->whereYear('date', '=', $year)
+                        ->get();
+                }else{
+                    // Handle invalid year, perhaps return an error response
+                    return response()->json(['error' => 'Invalid year format'], 400);
+                }
+            }
+        }
+        return view('form.Attendanceemployee' ,compact('attendance','next_id','employees'));
+    }
 }
