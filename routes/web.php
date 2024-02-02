@@ -254,6 +254,8 @@ Route::controller(AttendanceController::class)->group(function () {
     // Route::get('form/attendance/search/page', 'getDataByYearMonth')->middleware('auth')->name('form.attendance.search.page');
 });
 
+Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');
+
 
 // ATTENDACNE ROUTES
 

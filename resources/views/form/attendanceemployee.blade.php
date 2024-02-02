@@ -26,25 +26,36 @@
         <!-- /Page Header -->
 
         <!-- Search Filter -->
-        <form action="{{ route('all/employee/search') }}" method="POST">
+        <form action="{{ route('all/attendance/search') }}" method="POST">
             @csrf
             <div class="row filter-row">
                 <div class="col-sm-6 col-md-3">
-                    <div class="form-group form-focus">
-                        <input type="text" class="form-control floating" name="employee_id">
-                        <label class="focus-label">Employee ID/Name</label>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4">
-                    <div class="form-group form-focus">
-                        <input type="text" class="form-control floating" name="select_month">
-                        <label class="focus-label">Select Month</label>
+                    <div class="form-group ">
+                        <input type="text" class="form-control floating" name="employee_id" placeholder="Employee ID">
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group form-focus">
-                        <input type="text" class="form-control floating" name="select_year">
-                        <label class="focus-label">Select Year</label>
+                        <select class="select floating" name="month">
+                            <option disabled selected>-- Select Month --</option>
+                            <option value="01">Jan</option>
+                            <option value="02">Feb</option>
+                            <option value="03">Mar</option>
+                            <option value="04">Apr</option>
+                            <option value="05">May</option>
+                            <option value="06">Jun</option>
+                            <option value="07">Jul</option>
+                            <option value="08">Aug</option>
+                            <option value="09">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="form-group">
+                        <input type="text" class="form-control floating" name="select_year" placeholder="Select Year">
                     </div>
                 </div>
 
@@ -75,7 +86,9 @@
                 </script>
 
                 <div class="col-sm-6 col-md-2">
-                    <button type="sumit" class="btn btn-success btn-block"> Search </button>
+                    {{-- <button type="sumit" class="btn btn-success btn-block"> Search </button> --}}
+                    <button type="submit" class="btn btn-success btn-block"> Search </button>
+
                 </div>
             </div>
         </form>
