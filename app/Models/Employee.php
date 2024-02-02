@@ -59,10 +59,12 @@ class Employee extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'd_name');
     }
 
     public function attendance_data($year  = null, $month = null){
+        $department = $this->department->department;
+
         // Month details
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
         $month_days_count = $current->daysInMonth;
@@ -74,30 +76,48 @@ class Employee extends Model
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
         });
         $work_days = $month_days_count - $month_weekends_count;
-        $work_hours = 10;
+        $work_hours = $department == 'Local' ? 10 : 9;
 
         // Employee details
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
-        $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance){
+
+        $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
+            if($department == 'Local'){
+                return !$attendance->date->isSunday();
+            }
             return !$attendance->date->isSaturday() && !$attendance->date->isSunday();
         });
+        
         $days_worked_holiday = with(clone $attendances)->whereIn('date', $month_holidays->pluck('date_holiday'))->get();
-        $days_worked_weekend = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance){
+        
+        $days_worked_weekend = with(clone $attendances)->get()->filter(function($attendance){
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
         });
-        $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
-        $late_minutes = with(clone $attendances)->get()->sum(function ($attendance){
-            if($attendance->date->isSaturday() || $attendance->date->isSunday()){
-                return 0;
+        
+        $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department){
+            if($department == 'Local'){
+                return $attendance->date->isSunday();
             }
-            $diff = 10 * 60 - $attendance->duration();
+            return $attendance->date->isSaturday() || $attendance->date->isSunday();
+        });
+        
+        $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
+        
+        $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
+            if($department == 'Local' && $attendance->date->isSaturday()){
+                $diff = ($work_hours * 60 / 2) - $attendance->duration();
+            } else{
+                $diff = $work_hours * 60 - $attendance->duration();
+            }
             return $diff > 0 ? $diff : 0;
         });
-        $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance){
-            if($attendance->date->isSaturday() || $attendance->date->isSunday()){
-                return 0;
+
+        $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
+            if($department == 'Local' && $attendance->date->isSaturday()){
+                $diff = $attendance->duration() - ($work_hours * 60 / 2);
+            } else{
+                $diff = $attendance->duration() - $work_hours * 60;
             }
-            $diff = $attendance->duration() - 10 * 60;
             return $diff > 0 ? $diff : 0;
         });
 
@@ -108,8 +128,9 @@ class Employee extends Model
             'work_days',
             'work_hours',
             'days_worked',
-            'days_worked_weekend',
             'days_worked_holiday',
+            'days_worked_weekend',
+            'days_worked_holiday_weekend',
             'no_pay_leaves',
             'late_minutes',
             'ot_minutes'

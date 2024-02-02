@@ -34,7 +34,7 @@
                 <td>{{ $no_pay_leaves }}</td>
                 <td>{{ $month_weekends_count }}</td>
                 <td>{{ $month_holidays->count() }}</td>
-                <td>{{ $days_worked->count() + $days_worked_holiday->count() }}</td>
+                <td>{{ $days_worked->count() + $days_worked_holiday->count() - $days_worked_holiday_weekend->count() }}</td>
                 <td>{{ $days_worked_weekend->count() }}</td>
             </tr>
         </tbody>

@@ -20,8 +20,6 @@ return new class extends Migration
             $table->time('punch_in');
             $table->time('punch_out');
             $table->timestamps();
-
-            $table->unique('employee_id', 'date');
         });
     }
 
