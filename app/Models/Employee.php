@@ -59,7 +59,7 @@ class Employee extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class, 'd_name');
+        return $this->belongsTo(department::class, 'd_name');
     }
 
     public function attendance_data($year  = null, $month = null){
