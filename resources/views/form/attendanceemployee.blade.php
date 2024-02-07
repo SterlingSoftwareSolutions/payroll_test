@@ -364,47 +364,33 @@
     </script>
 
 
+<!-- Include punch in and punch out time adjust -->
 <script>
     $(document).ready(function () {
-        // Get the current time
-        var currentTime = new Date();
-        var currentHour = currentTime.getHours();
-        var currentMinutes = currentTime.getMinutes();
+        $('#punch_in, #e_punchin').attr('max', getCurrentTime());
 
-       
-        var formattedCurrentTime = currentHour.toString().padStart(2, '0') + ':' + currentMinutes.toString().padStart(2, '0');
-
-        // Set the Punch In time  to the current time
-        $('#punch_in, #e_punchin').attr('max', formattedCurrentTime);
-
-       
+        // Handle Punch In time changes
         $('#punch_in, #e_punchin').on('input', function () {
-            var selectedTime = $(this).val();
+            var punchInTime = $(this).val();
 
-          
-            if (selectedTime > formattedCurrentTime) {
-                $(this).val(formattedCurrentTime);
+            $('#punch_out, #e_punchout').attr('min', punchInTime);
+
+            $('#punch_out, #e_punchout').attr('max', getCurrentTime());
+
+            var selectedTime = $('#punch_out, #e_punchout').val();
+
+            if (selectedTime < punchInTime) {
+                $('#punch_out, #e_punchout').val(punchInTime);
             }
         });
 
-        //  Punch Out (at least one minute after the current time)
-        var minPunchOutTime = new Date(currentTime.getTime() + 60000); // 60000 milliseconds = 1 minute
-        var minHour = minPunchOutTime.getHours();
-        var minMinutes = minPunchOutTime.getMinutes();
-
-       
-        var formattedMinPunchOutTime = minHour.toString().padStart(2, '0') + ':' + minMinutes.toString().padStart(2, '0');
-
-        // Set Punch Out time to at least one minute after the current time
-        $('#punch_out, #e_punchout').attr('min', formattedMinPunchOutTime);
-
-        $('#punch_out, #e_punchout').on('input', function () {
-            var selectedTime = $(this).val();
-
-            if (selectedTime < formattedMinPunchOutTime) {
-                $(this).val(formattedMinPunchOutTime);
-            }
-        });
+        // Function to get the current time in HH:mm format
+        function getCurrentTime() {
+            var currentTime = new Date();
+            var currentHour = currentTime.getHours();
+            var currentMinutes = currentTime.getMinutes();
+            return currentHour.toString().padStart(2, '0') + ':' + currentMinutes.toString().padStart(2, '0');
+        }
     });
 </script>
 
