@@ -362,6 +362,56 @@
             $('#email').val($(this).find(':selected').data('email'));
         });
     </script>
+
+
+<script>
+    $(document).ready(function () {
+        // Get the current time
+        var currentTime = new Date();
+        var currentHour = currentTime.getHours();
+        var currentMinutes = currentTime.getMinutes();
+
+       
+        var formattedCurrentTime = currentHour.toString().padStart(2, '0') + ':' + currentMinutes.toString().padStart(2, '0');
+
+        // Set the Punch In time  to the current time
+        $('#punch_in, #e_punchin').attr('max', formattedCurrentTime);
+
+       
+        $('#punch_in, #e_punchin').on('input', function () {
+            var selectedTime = $(this).val();
+
+          
+            if (selectedTime > formattedCurrentTime) {
+                $(this).val(formattedCurrentTime);
+            }
+        });
+
+        //  Punch Out (at least one minute after the current time)
+        var minPunchOutTime = new Date(currentTime.getTime() + 60000); // 60000 milliseconds = 1 minute
+        var minHour = minPunchOutTime.getHours();
+        var minMinutes = minPunchOutTime.getMinutes();
+
+       
+        var formattedMinPunchOutTime = minHour.toString().padStart(2, '0') + ':' + minMinutes.toString().padStart(2, '0');
+
+        // Set Punch Out time to at least one minute after the current time
+        $('#punch_out, #e_punchout').attr('min', formattedMinPunchOutTime);
+
+        $('#punch_out, #e_punchout').on('input', function () {
+            var selectedTime = $(this).val();
+
+            if (selectedTime < formattedMinPunchOutTime) {
+                $(this).val(formattedMinPunchOutTime);
+            }
+        });
+    });
+</script>
+
+
+
+
+
     {{-- update js --}}
     <script>
         $(document).on('click', '.userUpdate', function () {
