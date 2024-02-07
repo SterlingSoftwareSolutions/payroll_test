@@ -364,6 +364,21 @@
     </script>
 
 
+
+<script>
+    // Disable future dates
+    document.getElementById('date').addEventListener('input', function() {
+        var today = new Date().toISOString().split('T')[0];
+        if (this.value > today) {
+            this.value = today;
+        }
+    });
+</script>
+
+
+
+
+
 <!-- Include punch in and punch out time adjust -->
 <script>
     $(document).ready(function () {
