@@ -60,10 +60,9 @@
                 @csrf
                 <div class="row filter-row">
                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Department</label>
+                        <div class="form-group ">
                             <select class="select form-control floating" name="department">
-                                <option value=""> -- Select Department-- </option>
+                                <option value=""disabled selected> -- Select Department-- </option>
                                 @foreach ($departments as $department)
                                     <option value="{{ $department->id }}" @if (request('department') == $department->id) selected @endif>
                                         {{ $department->department }}</option>
@@ -72,17 +71,15 @@
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Year</label>
+                        <div class="form-group ">
                             <input type="number" class="form-control form-control-1 input-sm from-year" name="year"
                                 placeholder="Year" value="{{ request('year') }}">
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div class="form-group form-focus">
-                            <label class="focus-label">Month</label>
+                        <div class="form-group ">
                             <select class="form-control floating" id="monthDropdown" name="month">
-                                <option value=""></option>
+                                <option value=""disabled selected>--Select Month--</option>
                                 @for ($i = 1; $i <= 12; $i++)
                                     <option value="{{ $i }}" @if (request('month') == $i) selected @endif>
                                         {{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
@@ -90,7 +87,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3 border-radius border">
+                    <div class="col-sm-6 col-md-3 ">
                         <button type="submit" class="btn btn-danger btn-block rounded">Search</button>
                     </div>
                 </div>
