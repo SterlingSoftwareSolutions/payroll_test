@@ -256,6 +256,10 @@ Route::controller(AttendanceController::class)->group(function () {
 
 Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');
 
+Route::post('attendance/report/search', [AttendanceController::class, 'attendanceReportSearch'])->name('attendance/report/search');
+
+
+Route::get('attendance/report/search', [AttendanceController::class, 'attendanceReportSearch'])->name('attendance/report/search');
 
 // ATTENDACNE ROUTES
 
