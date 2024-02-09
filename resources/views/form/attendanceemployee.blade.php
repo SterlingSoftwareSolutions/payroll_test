@@ -55,7 +55,7 @@
                 </div>
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group">
-                        <input type="text" class="form-control floating" name="select_year" placeholder="Select Year">
+                        <input type="number" class="form-control floating" name="select_year" placeholder="Select Year">
                     </div>
                 </div>
 
@@ -85,11 +85,12 @@
                     });
                 </script>
 
-                <div class="col-sm-6 col-md-2">
-                    {{-- <button type="sumit" class="btn btn-success btn-block"> Search </button> --}}
-                    <button type="submit" class="btn btn-success btn-block"> Search </button>
-
-                </div>
+<div class="col-sm-6 col-md-3 ">
+    <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+        <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+        &nbsp;&nbsp;Search
+    </button>
+</div>
             </div>
         </form>
 
@@ -184,7 +185,7 @@
                                                             {{-- employee Id send controller --}}
                                                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                                                         id="e_id" name="employee_id" hidden>
-                                                                        
+
                                                             <div class="col-md">
                                                                 <div class="form-group">
                                                                     <label class="col-form-label">Select Employee <span

@@ -22,8 +22,8 @@
         </div>
         <!-- /Page Header -->
 
-        <div class="border border">
-           
+        <div class="border ">
+
                 {{-- <style>
                     table {
                         border-collapse: collapse;
@@ -62,7 +62,7 @@
 
                 <h5>Monthly Attendance Summery</h5>
                 <h4>Month of ............</h4>
-                
+
 <div class="border border-dark">
     <div style="overflow-x:auto;">
         <table>
@@ -121,7 +121,7 @@
 
 
 </div>
-              
+
 
 
 

@@ -88,7 +88,10 @@
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 ">
-                        <button type="submit" class="btn btn-danger btn-block rounded">Search</button>
+                        <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+                            <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+                            &nbsp;&nbsp;Search
+                        </button>
                     </div>
                 </div>
             </form>
