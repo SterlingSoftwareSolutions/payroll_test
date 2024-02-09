@@ -65,8 +65,8 @@
                         {{-- <button type="button" class="btn btn-success"
                             style="background-color: #05c46b; width: 200px;">Print Salary Report</button> --}}
 
-                          <button onclick="downloadPDF()" class="btn btn-primary">Download PDF</button>     
-                            
+                          <button onclick="downloadPDF()" class="btn btn-primary">Download PDF</button>
+
                     </div>
                 </div>
             </div>
@@ -89,8 +89,8 @@
 
 
                 <div class="col-sm-6 col-md-3">
-                    <div class="form-group form-focus">
-                        <label class="focus-label">Year</label>
+                    <div class="form-group ">
+                        {{-- <label class="focus-label">Year</label> --}}
                         <input type="text" class="form-control form-control-1 input-sm from-year" placeholder="Year">
                         <div class="input-group-append">
                             <span class="input-group-text"><i class="far fa-calendar"></i></span>
@@ -98,9 +98,9 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                    <div class="form-group form-focus">
-                        <select class="form-control floating" id="monthDropdown" name="month">
-                            <option value=""></option>
+                    <div class="form-group ">
+                        <select class="select form-control floating" id="monthDropdown" name="month">
+                            <option value="" selected disabled>--Select Month--</option>
                             <option value="1" @selected(request('month')==1)>January</option>
                             <option value="2" @selected(request('month')==2)>February</option>
                             <option value="3" @selected(request('month')==3)>March</option>
@@ -114,11 +114,14 @@
                             <option value="11" @selected(request('month')==11)>November</option>
                             <option value="12" @selected(request('month')==12)>December</option>
                         </select>
-                        <label class="focus-label">Month</label>
+                        {{-- <label class="focus-label">Month</label> --}}
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-3 border-radius border ">
-                    <button type="submit" class="btn btn-danger btn-block rounded">Search</button>
+                <div class="col-sm-6 col-md-3 ">
+                    <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+                        <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+                        &nbsp;&nbsp;Search
+                    </button>
                 </div>
                 <div>
                 </div>
@@ -132,7 +135,7 @@
             <table class="table table-striped custom-table datatable" id="attendanceTable">
                 {{-- <table class="table table-striped custom-table datatable"> --}}
                     <thead>
-                       
+
                         <tr>
                             <th>Employee ID</th>
                             <th>Employee Name</th>
@@ -151,15 +154,15 @@
                             <td>{{ $employee->branch }}</td>
                             <td>{{ $employee->account_number }}</td>
                             <td>Net Salary</td>   <!--need to calaculation-->
-        
-        
+
+
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </table>
         </div>
-        
+
 
 
         {{-- <table class="table table-striped custom-table datatable">
@@ -217,7 +220,7 @@
 
                 <table>
                     <thead>
-                       
+
                         <tr>
                             <th>Employee ID</th>
                             <th>Employee Name</th>
@@ -240,13 +243,13 @@
                     </tbody>
                 </table>
             </div>
-              
+
         </div>
-           
+
     </div>
-       
+
    </div>
-    
+
 <!------------------------------------------------------------------------------------------------------>
 
 <script>

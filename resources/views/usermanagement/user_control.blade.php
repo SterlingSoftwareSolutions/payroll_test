@@ -49,7 +49,7 @@
                     </div>
                     <div class="col-sm-6 col-md-4">
                         <div class="form-group ">
-                            <select class="form-control" name="department" id="department">
+                            <select class="select form-control" name="department" id="department">
                                 <option value="" selected disabled>-- Select Department --</option>
                                 @foreach ($department as $departments)
                                     <option value="{{ $departments->department }}">
@@ -64,8 +64,11 @@
                             <label class="focus-label">Status</label>
                         </div>
                     </div> --}}
-                    <div class="col-sm-6 col-md-3">
-                        <button type="sumit" class="btn btn-success btn-block"> Search </button>
+                    <div class="col-sm-6 col-md-3 ">
+                        <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+                            <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+                            &nbsp;&nbsp;Search
+                        </button>
                     </div>
                 </div>
             </form>
