@@ -51,7 +51,7 @@ return new class extends Migration
 
             // Bank account details
             $table->string('account_name');
-            $table->decimal('account_number', 10, 2);
+            $table->string('account_number');
             $table->string('bank_name');
             $table->string('branch');
 

@@ -55,7 +55,7 @@
                 </div>
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group">
-                        <input type="text" class="form-control floating" name="select_year" placeholder="Select Year">
+                        <input type="number" class="form-control floating" name="select_year" placeholder="Select Year">
                     </div>
                 </div>
 
@@ -85,11 +85,12 @@
                     });
                 </script>
 
-                <div class="col-sm-6 col-md-2">
-                    {{-- <button type="sumit" class="btn btn-success btn-block"> Search </button> --}}
-                    <button type="submit" class="btn btn-success btn-block"> Search </button>
-
-                </div>
+<div class="col-sm-6 col-md-3 ">
+    <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+        <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+        &nbsp;&nbsp;Search
+    </button>
+</div>
             </div>
         </form>
 
@@ -184,7 +185,7 @@
                                                             {{-- employee Id send controller --}}
                                                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                                                         id="e_id" name="employee_id" hidden>
-                                                                        
+
                                                             <div class="col-md">
                                                                 <div class="form-group">
                                                                     <label class="col-form-label">Select Employee <span
@@ -362,6 +363,57 @@
             $('#email').val($(this).find(':selected').data('email'));
         });
     </script>
+
+
+
+<script>
+    // Disable future dates
+    document.getElementById('date').addEventListener('input', function() {
+        var today = new Date().toISOString().split('T')[0];
+        if (this.value > today) {
+            this.value = today;
+        }
+    });
+</script>
+
+
+
+
+
+<!-- Include punch in and punch out time adjust -->
+<script>
+    $(document).ready(function () {
+        $('#punch_in, #e_punchin').attr('max', getCurrentTime());
+
+        // Handle Punch In time changes
+        $('#punch_in, #e_punchin').on('input', function () {
+            var punchInTime = $(this).val();
+
+            $('#punch_out, #e_punchout').attr('min', punchInTime);
+
+            $('#punch_out, #e_punchout').attr('max', getCurrentTime());
+
+            var selectedTime = $('#punch_out, #e_punchout').val();
+
+            if (selectedTime < punchInTime) {
+                $('#punch_out, #e_punchout').val(punchInTime);
+            }
+        });
+
+        // Function to get the current time in HH:mm format
+        function getCurrentTime() {
+            var currentTime = new Date();
+            var currentHour = currentTime.getHours();
+            var currentMinutes = currentTime.getMinutes();
+            return currentHour.toString().padStart(2, '0') + ':' + currentMinutes.toString().padStart(2, '0');
+        }
+    });
+</script>
+
+
+
+
+
     {{-- update js --}}
     <script>
         $(document).on('click', '.userUpdate', function () {

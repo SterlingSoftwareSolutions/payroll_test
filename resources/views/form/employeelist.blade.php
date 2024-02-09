@@ -44,7 +44,7 @@
 
                     <div class="col-sm-6 col-md-3">
                         <div class="form-group">
-                            <select class="form-control" name="d_name" id="department">
+                            <select class="select form-control" name="d_name" id="department">
                                 <option value="" selected disabled>-- Select Department --</option>
                                 @foreach ($department as $departments)
                                     <option value="{{ $departments->id }}">
@@ -56,8 +56,11 @@
                     </div>
 
 
-                    <div class="col-sm-6 col-md-2">
-                        <button type="submit" class="btn btn-success btn-block">Search</button>
+                    <div class="col-sm-6 col-md-3 ">
+                        <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+                            <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+                            &nbsp;&nbsp;Search
+                        </button>
                     </div>
                 </div>
             </form>

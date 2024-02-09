@@ -35,14 +35,14 @@
 </head>
 
 <body>
-	<style>    
+	<style>
 		.invalid-feedback{
 			font-size: 14px;
 		}
 	</style>
 	<!-- Main Wrapper -->
 	<div class="main-wrapper">
-		
+
 		<!-- Loader -->
 		<div id="loader-wrapper">
 			<div id="loader">
@@ -119,8 +119,8 @@
 					{{-- </a>
 					<div class="dropdown-menu notifications">
 						<div class="topnav-dropdown-header">
-							<span class="notification-title">Notifications</span> 
-							<a href="javascript:void(0)" class="clear-noti"> Clear All </a> 
+							<span class="notification-title">Notifications</span>
+							<a href="javascript:void(0)" class="clear-noti"> Clear All </a>
 						</div>
 						<div class="noti-content">
 							<ul class="notification-list">
@@ -195,8 +195,8 @@
 					</div>
 				</li> --}}
 				<!-- /Notifications -->
-				
-				
+
+
 				<li class="nav-item dropdown  main-drop">
 						{{-- <!--TODO: Message Notifications -->
 				<li class="nav-item dropdown">
@@ -205,7 +205,7 @@
 					</a>
 					<div class="dropdown-menu notifications">
 						<div class="topnav-dropdown-header">
-							<span class="notification-title">Messages</span> 
+							<span class="notification-title">Messages</span>
 							<a href="javascript:void(0)" class="clear-noti"> Clear All </a>
 						 </div>
 						<div class="noti-content">
@@ -219,10 +219,10 @@
 												</span>
 											</div>
 											<div class="list-body">
-												<span class="message-author">Richard Miles </span> 
+												<span class="message-author">Richard Miles </span>
 												<span class="message-time">12:28 AM</span>
 												<div class="clearfix"></div>
-												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span> 
+												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
 											</div>
 										</div>
 									</a>
@@ -236,10 +236,10 @@
 												</span>
 											</div>
 											<div class="list-body">
-												<span class="message-author">John Doe</span> 
+												<span class="message-author">John Doe</span>
 												<span class="message-time">6 Mar</span>
-												<div class="clearfix"></div> 
-												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span> 
+												<div class="clearfix"></div>
+												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
 											</div>
 										</div>
 									</a>
@@ -255,8 +255,8 @@
 											<div class="list-body">
 												<span class="message-author"> Tarah Shropshire </span>
 												<span class="message-time">5 Mar</span>
-												<div class="clearfix"></div> 
-												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span> 
+												<div class="clearfix"></div>
+												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
 											</div>
 										</div>
 									</a>
@@ -273,7 +273,7 @@
 												<span class="message-author">Mike Litorus</span>
 												<span class="message-time">3 Mar</span>
 												<div class="clearfix"></div>
-												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span> 
+												<span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
 											</div>
 										</div>
 									</a>
@@ -310,7 +310,7 @@
 						<span>{{ Session::get('name') }}</span>
 					</a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="{{ route('profile_user') }}">My Profile</a>
+						{{-- <a class="dropdown-item" href="{{ route('profile_user') }}">My Profile</a> --}}
 						{{-- <a class="dropdown-item" href="{{ route('company/settings/page') }}">Settings</a> --}}
 						<a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
 					</div>
@@ -352,7 +352,7 @@
 	<script src="{{ URL::to('assets/plugins/raphael/raphael.min.js') }}"></script>
 	<script src="{{ URL::to('assets/js/chart.js') }}"></script>
 	<script src="{{ URL::to('assets/js/Chart.min.js') }}"></script>
-	<script src="{{ URL::to('assets/js/line-chart.js') }}"></script>	
+	<script src="{{ URL::to('assets/js/line-chart.js') }}"></script>
 	<!-- Slimscroll JS -->
 	<script src="{{ URL::to('assets/js/jquery.slimscroll.min.js') }}"></script>
 	<!-- Select2 JS -->
@@ -364,7 +364,7 @@
 	<script src="{{ URL::to('assets/js/jquery.dataTables.min.js') }}"></script>
 	<script src="{{ URL::to('assets/js/dataTables.bootstrap4.min.js') }}"></script>
 	<!-- Multiselect JS -->
-	<script src="{{ URL::to('assets/js/multiselect.min.js') }}"></script>		
+	<script src="{{ URL::to('assets/js/multiselect.min.js') }}"></script>
 	<!-- Custom JS -->
 	<script src="{{ URL::to('assets/js/app.js') }}"></script>
 	@yield('script')

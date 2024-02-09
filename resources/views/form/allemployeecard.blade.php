@@ -1,7 +1,7 @@
 
 @extends('layouts.master')
 @section('content')
-   
+
     <!-- Page Wrapper -->
     <div class="page-wrapper">
         <!-- Page Content -->
@@ -19,7 +19,7 @@
 
                     <div class="col-auto float-right ml-auto">
                         <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_employee"><i class="fa fa-plus"></i> Add Employee</a>
-                    <!-- todo                         
+                    <!-- todo
                         <div class="view-icons">
                             <a href="{{ route('all/employee/card') }}" class="grid-view btn btn-link active"><i class="fa fa-th"></i></a>
                             <a href="{{ route('all/employee/list') }}" class="list-view btn btn-link"><i class="fa fa-bars"></i></a>
@@ -34,20 +34,20 @@
             <form action="{{ route('all/employee/search') }}" method="POST">
                 @csrf
                 <div class="row filter-row">
-                    <div class="col-sm-6 col-md-3">  
+                    <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" name="employee_id">
                             <label class="focus-label">Employee ID</label>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3">  
+                    <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" name="name">
                             <label class="focus-label">Employee Name</label>
                         </div>
                     </div>
                     <!-- Include this section where you want the dropdown to appear -->
-                    <div class="col-sm-6 col-md-3"> 
+                    <div class="col-sm-6 col-md-3">
                         <div class="form-group form-focus">
                             <select class="form-control floating" id="departmentDropdown">
                                 <option value=""></option>
@@ -85,8 +85,11 @@
                         });
                     </script>
 
-                    <div class="col-sm-6 col-md-3">  
-                        <button type="sumit" class="btn btn-success btn-block"> Search </button>  
+                    <div class="col-sm-6 col-md-3 ">
+                        <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+                            <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+                            &nbsp;&nbsp;Search
+                        </button>
                     </div>
                 </div>
             </form>
@@ -110,7 +113,7 @@
                                 </tr>
                             </thead>
 
-                            <tbody> 
+                            <tbody>
                                 <!-- @if(!empty($employee)) -->
                                 @foreach ($employee as $employe)
                                         <tr>
@@ -145,7 +148,7 @@
                     </div>
                 </div>
             </div>
-         <!-- /Page Content --> 
+         <!-- /Page Content -->
 
         <!-- Add Employee Modal -->
         <div id="add_employee" class="modal custom-modal fade" role="dialog">
@@ -161,7 +164,7 @@
                      <br><h4>Employee Details</h4>
                         <form action="{{ route('save.record') }}" method="POST">
                             @csrf
-                    
+
                             <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
@@ -175,7 +178,7 @@
                                     <!-- Your upload image input goes here -->
                                 </div>
                             </div>
-                            </div>          
+                            </div>
 
                             <style>
                             .circle-image {
@@ -219,7 +222,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="id" name="id">
-                                        
+
                                         </select>
                                     </div>
                                 </div>
@@ -241,7 +244,7 @@
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="full_name" name="full_name">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">  
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-form-label">Email <span class="text-danger">*</span></label>
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="email" name="email">
@@ -253,7 +256,7 @@
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="dob" name="dob">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">  
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-form-label">NIC <span class="text-danger">*</span></label>
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="nic" name="nic">
@@ -265,13 +268,13 @@
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="c_number" name="c_number">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">  
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="j_title" name="j_title">
                                     </div>
                                 </div>
-                                <div class="col-sm-6">  
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
                                         <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="d_name" name="d_name">
@@ -310,9 +313,9 @@
                                         ("0" + currentDate.getSeconds()).slice(-2);
 
                                     // Set the value of the input field to the formatted date
-                                    document.getElementById("createdDate").value = formattedDate;   
+                                    document.getElementById("createdDate").value = formattedDate;
                                 </script>
-                                <div class="col-sm-6">  
+                                <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
                                         <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="status" name="status">
@@ -328,7 +331,7 @@
                                         overflow: hidden;
                                     }
                                 </style>
-                                                                   
+
                             </div>
                             <!-- ... existing form fields ... -->
                                 <div class="row">
@@ -349,7 +352,7 @@
             </div>
         </div>
         <!-- /Add Employee Modal -->
-        
+
     </div>
     <!-- /Page Wrapper -->
     @section('script')
@@ -410,7 +413,7 @@
             var statuss = (_this.find(".statuss").text());
             var _option = '<option selected value="' +statuss+ '">' + _this.find('.statuss').text() + '</option>'
             $( _option).appendTo("#e_status");
-            
+
         });
     </script>
     <script>
