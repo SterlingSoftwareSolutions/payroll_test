@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Importcsv;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Carbon;
 
 class ImportcsvSeeder extends Seeder
 {
@@ -19,21 +18,21 @@ class ImportcsvSeeder extends Seeder
         Importcsv::truncate();
         $csvData = fopen(base_path('database/csv/recordList.csv'), 'r');
         $csvRaw = true;
+
         while (($data = fgetcsv($csvData, '555', ',')) !== false) {
             if (!$csvRaw) {
-                // Check for 'NULL' string in time values and handle accordingly
-                $punchIn = $this->parseTime($data[2]);
-                $punchOut = $this->parseTime($data[3]);
+                $time = Carbon::parse($data[4])->format('H:i:s');
 
                 Importcsv::create([
-                    'workID' => $data[0],
+                    'workID' => $data[1],
                     'csv_date' => Carbon::parse($data[3])->format('Y-m-d'),
-                    'punch_in' => $punchIn ?? now(), // Set a default value or handle null appropriately
-                    'punch_out' => $punchOut ?? now(), // Set a default value or handle null appropriately
-                ]);                
+                    'punch_in' => Carbon::parse($data[3] . ' ' . $time),
+                    'punch_out' => Carbon::parse($data[3] . ' ' . $time),
+                ]);
             }
             $csvRaw = false;
         }
+
         fclose($csvData);
     }
 
@@ -50,8 +49,14 @@ class ImportcsvSeeder extends Seeder
             return null; // or you can set a default time value
         }
 
-        // Use Carbon to parse the valid time string
-        return Carbon::parse($time);
-    }
+        // Check if the time format is 'HH:mm:ss'
+        if (preg_match('/^\d{2}:\d{2}:\d{2}$/', $time)) {
+            return Carbon::parse($time);
+        }
 
+        // Handle other time formats if necessary
+
+        // If none of the formats match, return null or set a default value
+        return null;
+    }
 }
