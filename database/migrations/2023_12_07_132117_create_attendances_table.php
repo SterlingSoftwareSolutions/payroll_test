@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->string('id')->unique()->primary();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            // $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('employee_id')->nullable(); // Add nullable here
+
             $table->date('date');
             $table->time('punch_in');
             $table->time('punch_out');

@@ -27,7 +27,7 @@ class CreateEmployeesTable extends Migration
             $table->string('c_number')->nullable();
             $table->string('j_title')->nullable();
             $table->date('joinedDate')->nullable();
-            $table->date('createdDate')->nullable();
+            $table->date('createdDate')->nullable(); 
             $table->string('status')->nullable();            
             $table->string('address')->nullable();  
             $table->string('account_name')->nullable();

@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('importcsvs', function (Blueprint $table) {
+        Schema::create('csv_files', function (Blueprint $table) {
             $table->id();
-            $table->string('workID');
-            $table->date('csv_date');
-            $table->time('punch_in');
-            $table->time('punch_out')->default('00:00:00'); // Set default value to '00:00:00'
+            $table->string('file_path');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_importcsv');
+        Schema::dropIfExists('csv_files');
     }
 };

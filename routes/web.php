@@ -3,6 +3,7 @@
 use App\Http\Controllers\LockScreen;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\LeavesController;
@@ -381,3 +382,7 @@ Route::controller(PayslipController::class)->group(function () {
 
 Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');
 Route::get('/get-positions/{department}', [PositionController::class, 'getPositions'])->name('get-positions');
+
+//CSV file upload for attendance report
+Route::get('/upload-form', [FileController::class, 'showForm']);
+Route::post('/upload', [FileController::class, 'upload'])->name('upload');

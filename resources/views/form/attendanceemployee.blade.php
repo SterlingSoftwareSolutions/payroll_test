@@ -21,6 +21,40 @@
                             id="add_attendence"><i class="fa fa-plus"></i> Add Attendance</a>
 
                     </div>
+
+                    <!------------------Import Attendance CSV file----------------------------->
+                    {{-- <div class="col-auto float-left ml-auto">
+                        <a href="#" class="btn add-btn bg-green-900 text-white" id="import_csv">
+                            <i class="fa fa-plus"></i> Import CSV
+                        </a>
+                    </div> --}}
+<form action="{{ route('upload') }}" method="post" enctype="multipart/form-data">
+    @csrf
+    <div class="col-auto float-left ml-auto">
+        {{-- <label for="csv_file" class="btn add-btn bg-green-900 text-white">
+            <i class="fa fa-plus"></i> Upload CSV
+        </label> --}}
+        <input type="file" id="csv_file" name="csv_file" class="hidden" onchange="displayFileName(this)">
+        <button type="submit" class="btn add-btn bg-green-900 text-white" id="submitBtn" disabled>
+            <i class="fa fa-upload"></i> Submit
+        </button>
+    </div>
+</form>
+
+<script>
+    function displayFileName(input) {
+        var fileName = input.files[0].name;
+        document.getElementById('submitBtn').innerHTML = '<i class="fa fa-upload"></i> Submit ' + fileName;
+        document.getElementById('submitBtn').disabled = false;
+    }
+</script>
+
+                    
+                    
+                    
+
+            <!-------------------End Import Attendance CSV file------------------------------------>
+
                 </div>
             </div>
             <!-- /Page Header -->
@@ -375,7 +409,8 @@
             </div>
             <!-- /Add Employee Modal -->
 
-        </div>
+        
+ </div>
         <!-- /Page Wrapper -->
     @section('script')
         <script>
