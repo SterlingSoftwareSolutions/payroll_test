@@ -9,17 +9,9 @@ class csvupload extends Model
 {
     use HasFactory;
 
-    protected $table = 'csv_data'; // Set the table name if it's different from the model's plural name
-
-    protected $fillable = [
-        'user',
-        'work_id',
-        'card_no',
-        'date',
-        'punch_in',
-        'punch_out',
-        'event_code',
-        'IN/OUT',
-    ];
+  
+ 
+        protected $fillable = ['user', 'work_id', 'card_no', 'date', 'punch_in', 'punch_out', 'event_code'];
+   
 
 }

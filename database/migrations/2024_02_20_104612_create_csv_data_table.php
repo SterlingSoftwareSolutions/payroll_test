@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('card_no');
             $table->date('date');
             $table->time('punch_in');
+            $table->string('in_out'); 
+
             $table->time('punch_out');
             $table->string('event_code');
             $table->timestamps();
