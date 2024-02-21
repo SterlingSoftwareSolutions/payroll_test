@@ -15,6 +15,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\TrainersController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\CsvUploadController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PerformanceController;
@@ -381,3 +382,16 @@ Route::controller(PayslipController::class)->group(function () {
 
 Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');
 Route::get('/get-positions/{department}', [PositionController::class, 'getPositions'])->name('get-positions');
+
+
+// Route::get('/upload', [CsvUploadController::class, 'index']);
+// Route::post('/upload', [CsvUploadController::class, 'upload'])->name('upload');
+
+Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
+
+Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
+
+
+
+// Add this code in your routes/web.php file
+// Route::post('/upload-csv', [AttendanceController::class, 'uploadCSV'])->name('upload.csv');

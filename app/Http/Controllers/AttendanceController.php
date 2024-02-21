@@ -394,4 +394,42 @@ class AttendanceController extends Controller
         return view('reports.attendance-report', compact('holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount'));
     }
 
+
+
+//     public function uploadCSV(Request $request)
+// {
+//     $request->validate([
+//         'csv_file' => 'required|mimes:csv,txt',
+//     ]);
+
+//     $file = $request->file('csv_file');
+//     $csvData = array_map('str_getcsv', file($file));
+//     $header = array_shift($csvData); // Remove header row
+
+//     foreach ($csvData as $row) {
+//         $data = array_combine($header, $row);
+
+//         // Check if 'date' key exists in the $data array
+//         if (isset($data['date'])) {
+//             $workId = $data['WorkId'];
+//             $date = $data['date'];
+//             $punch_in = $data['punch_in'];
+//             $punch_out = $data['punch_out'];
+
+//             // Create or update the attendance record
+//             Attendance::updateOrCreate(
+//                 ['employee_id' => $workId, 'date' => $date],
+//                 ['punch_in' => $punch_in, 'punch_out' => $punch_out]
+//             );
+//         } else {
+//             // Handle the case where 'date' key is missing in the row
+//             // You may log an error, skip the row, or handle it based on your requirements
+//             // For now, we'll skip this row
+//             continue;
+//         }
+//     }
+
+//     return redirect()->route('attendance/employee/page')->with('success', 'CSV data uploaded successfully');
+// }
+
 }

@@ -25,6 +25,13 @@
             </div>
             <!-- /Page Header -->
 
+           <!-- Add this code in your Blade view file where you want to upload CSV -->
+<form action="{{ route('upload.csv') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <input type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">Upload CSV</button>
+</form>
+
             <!-- Search Filter -->
             <form action="{{ route('all/attendance/search') }}" method="POST">
                 @csrf
@@ -97,6 +104,7 @@
                     </div>
                 </div>
             </form>
+          
 
             <!-- Page Content -->
             <h3 class="page-title">Attendance</h3>
