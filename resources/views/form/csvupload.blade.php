@@ -158,10 +158,10 @@
 
                     <tbody>
                         <!-- Autofill fields based on CSV data headers -->
-                        @if(isset($csvData) && count($csvData) > 0)
-                            @foreach($csvData as $record)
+                        @if(isset($CsvData) && count($CsvData) > 0)
+                            @foreach($CsvData as $data)
                                 <tr>
-                                    @foreach($record as $header => $value)
+                                    @foreach($data as $header => $value)
                                         <td>{{ $value }}</td>
                                     @endforeach
                                 </tr>

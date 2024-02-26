@@ -15,15 +15,13 @@ return new class extends Migration
     {
         Schema::create('csv_data', function (Blueprint $table) {
             $table->id();
-            $table->string('user')->default(''); 
-            $table->integer('work_id');
-            $table->string('card_no');
-            $table->date('date');
+            $table->string('User')->default(''); 
+            $table->integer('WorkId');
+            $table->string('CardNo');
+            $table->date('Date');
             $table->time('punch_in');
-            $table->string('in_out'); 
-
             $table->time('punch_out');
-            $table->string('event_code');
+          
             $table->timestamps();
         });
     }

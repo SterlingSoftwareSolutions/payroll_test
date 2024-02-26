@@ -9,17 +9,17 @@ class CsvData extends Model
 {
     use HasFactory;
 
-    // protected $table = 'csv_data'; // Set the table name if it's different from the model's plural name
+    protected $table = 'csv_data'; // Set the table name if it's different from the model's plural name
 
     protected $fillable = [
-        'user',
-        'work_id',
+        'User',
+        'Work_Id',
         'card_no',
         'date',
         'punch_in',
         'punch_out',
-        'event_code',
-        // Add other columns as needed
+       
+      
     ];
 
 }

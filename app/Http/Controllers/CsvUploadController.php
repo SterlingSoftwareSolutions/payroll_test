@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Log;
+use Carbon\Carbon;
 use League\Csv\Reader;
 use App\Models\CsvData;
 use League\Csv\Statement;
@@ -16,184 +17,63 @@ class CsvUploadController extends Controller
         return view('form/csvupload');
     }
 
-    // public function uploadCsv(Request $request)
-    // {
-    //     $request->validate([
-    //         'csv_file' => 'required|mimes:csv,txt|max:2048',
-    //     ]);
+    public function uploadCsv(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file'
+        ]);
+    
+        // Parse the CSV
+        $data = array_map('str_getcsv', file($request->csv_file->getRealPath()));
+        $headings = array_shift($data);
+    
+        foreach ($data as $row) {
+            if (array_key_exists('Date', $row) && array_key_exists('punch_in', $row) && array_key_exists('punch_out', $row)) {
+                $dateTimeStringIn = $row['Date'] . ' ' . $row['punch_in'];
+                $dateTimeStringOut = $row['Date'] . ' ' . $row['punch_out'];
+    
+                // Use Carbon to parse and format punch_in and punch_out
+                $row['punch_in'] = Carbon::createFromFormat('n/j/Y H:i:s', $dateTimeStringIn)->format('Y-m-d H:i:s');
+                $row['punch_out'] = Carbon::createFromFormat('n/j/Y H:i:s', $dateTimeStringOut)->format('Y-m-d H:i:s');
+            }
+    
+            $csv_data[] = array_combine($headings, $row);
+        }
+        // Use insert method to insert multiple records
+        CsvData::insert($csv_data);
+        dd("success");
+        // Additional processing or validation if needed
+    
+        return view('form/csvupload')->with([
+            'CsvData' => $csv_data,
+            'user' => $request->input('User'),
+            'work_id' => $request->input('WorkId'),
+            'card_no' => $request->input('CardNo'),
+            'date' => $request->input('Date'),
+            'punch_in' => $request->input('punch_in'),
+            'punch_out' => $request->input('punch_out'),
+        ]);
+    }
+    
 
-    //     $file = $request->file('csv_file');
-
-    //     // Read CSV file and get headers and records
-    //     $csvData = $this->processCsv($file->getPathname());
-
-    //     // Save data to the database
-    //     $this->saveToDatabase($csvData);
-
-    //     // Pass CSV data and other fields to the view
-    //     return view('form/csvupload')->with([
-    //         'csvData' => $csvData,
-    //         'user' => $request->input('user'),
-    //         'work_id' => $request->input('work_id'),
-    //         'card_no' => $request->input('card_no'),
-    //         'date' => $request->input('date'),
-    //         'punch_in' => $request->input('punch_in'),  // Add other fields as needed
-    //         'IN/OUT' => $request->input('IN/OUT'),
-    //         'event_code' => $request->input('event_code'),
-    //     ]);
-    // }
-
-
-//     public function uploadCsv(Request $request)
-// {
-//     $request->validate([
-//         'csv_file' => 'required|mimes:csv,txt|max:2048',
-//     ]);
-
-//     $file = $request->file('csv_file');
-
-//     // Read CSV file and get headers and records
-//     $csvData = $this->processCsv($file->getPathname());
-
-//     // Test data for testing purposes
-//     $testData = [
-//         'user' => 'test_user',
-//         'WorkId' => '123',
-//         'CardNo' => '456',
-//         'Date' => '2022-01-01',
-//         'Punch In' => '08:00:00',
-//         'Punch Out' => '17:00:00',
-//         'EventCode' => 'ABC123',
-//     ];
-
-//     // Add test data to CSV data
-//     $csvData[] = $testData;
-
-//     // Save data to the database
-//     $this->saveToDatabase($csvData);
-
-//     // Pass CSV data and other fields to the view
-//     return view('form/csvupload')->with([
-//         'csvData' => $csvData,
-//         'user' => $request->input('user'),
-//         'work_id' => $request->input('work_id'),
-//         'card_no' => $request->input('card_no'),
-//         'date' => $request->input('date'),
-//         'punch_in' => $request->input('punch_in'),  // Add other fields as needed
-//         'IN/OUT' => $request->input('IN/OUT'),
-//         'event_code' => $request->input('event_code'),
-//     ]);
-// }
-
-public function uploadCsv(Request $request)
-{
-    $request->validate([
-        'csv_file' => 'required|mimes:csv,txt|max:2048',
-    ]);
-
-    $file = $request->file('csv_file');
-
-    // Read CSV file and get headers and records
-    $csvData = $this->processCsv($file->getPathname());
-
-    // Output CSV data for debugging
-   
-
-    // Save data to the database
-    $this->saveToDatabase($csvData);
-
-    // Pass CSV data and other fields to the view
-    return view('form/csvupload')->with([
-        'csvData' => $csvData,
-        'user' => $request->input('user'),
-        'work_id' => $request->input('work_id'),
-        'card_no' => $request->input('card_no'),
-        'date' => $request->input('date'),
-        'punch_in' => $request->input('punch_in'),  // Add other fields as needed
-        'IN/OUT' => $request->input('IN/OUT'),
-        'event_code' => $request->input('event_code'),
-    ]);
-}
 
 
 
     private function processCsv($filePath)
     {
         $csv = Reader::createFromPath($filePath);
-        $csv->setHeaderOffset(0); // assuming the first row contains headers
+        $csv->setHeaderOffset(0); 
 
-        $stmt = (new Statement())->offset(0); // starts from the first row (skip headers)
+        $stmt = (new Statement())->offset(0); 
 
-        $records = $stmt->process($csv);
+     
+        $data = $stmt->process($csv);
 
-        return iterator_to_array($records); // Convert MapIterator to an array
+       
+        \Log::debug('Processed CSV data: ' . json_encode(iterator_to_array($data)));
+
+        return iterator_to_array($data); 
     }
 
-    // private function saveToDatabase($csvData)
-    // {
-    //     foreach ($csvData as $record) {
-    //         if (array_key_exists('user', $record)) {
-    //             try {
-    //                 CsvData::create([
-    //                     'user' => $record['user'],
-    //                     'work_id' => $record['WorkId'],
-    //                     'card_no' => $record['CardNo'],
-    //                     'date' => $record['Date'],
-    //                     'punch_in' => $record['Punch In'],
-    //                     'punch_out' => $record['Punch Out'],
-    //                     'event_code' => $record['EventCode'],
-    //                     // Add other columns as needed
-    //                 ]);
-    //             } catch (\Exception $e) {
-    //                 // Log the error
-    //                 \Log::error('Error saving record to database: ' . $e->getMessage());
-    //             }
-    //         } else {
-    //             // Handle the case where 'user' key is not present in the record
-    //             // You can log an error, skip the record, or handle it as appropriate
-    //             Log::warning('Record does not have a "user" key: ' . json_encode($record));
-    //         }
-    //     }
-    // }
-
-
-    private function saveToDatabase($csvData)
-    {
-        \DB::beginTransaction();
-    
-        try {
-            foreach ($csvData as $record) {
-                if (array_key_exists('User', $record)) {
-                    CsvData::create([
-                        'user' => $record['User'],
-                        'work_id' => $record['WorkId'],
-                        'card_no' => $record['CardNo'],
-                        'date' => $record['Date'],
-                        'punch_in' => $record['punch_in'],
-                        'punch_out' => $record['punch_out'], // Adjust accordingly if there is a 'punch_out' key in your CSV
-                        'event_code' => $record['EventCode'],
-                        // Add other columns as needed
-                    ]);
-    
-                    // Add a debug statement
-                    \Log::debug('Record saved successfully: ' . json_encode($record));
-                } else {
-                    // Log a warning if 'User' key is not present in the record
-                    \Log::warning('Record does not have a "User" key: ' . json_encode($record));
-                }
-            }
-    
-            \DB::commit();
-            \Log::debug('Transaction committed successfully.');
-        } catch (\Exception $e) {
-            \DB::rollback();
-            \Log::error('Error committing transaction: ' . $e->getMessage());
-        }
-    }
-    
-    
-
-
-    
-    
+  
 }
