@@ -126,6 +126,8 @@ class EmployeeController extends Controller
             'j_title' => 'required',
             'joinedDate' => 'required',
             'createdDate' => 'required',
+            'appointment_date' => 'required',
+            'etf_no' => 'required',
             'status' => 'required',
             'account_name' => 'required',
             'account_number' => 'required|numeric|min:5',

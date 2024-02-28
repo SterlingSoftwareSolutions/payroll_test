@@ -73,7 +73,7 @@ border-color: red !important;
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">Work ID <span class="text-danger">*</span></label>
-                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="false"
+                            <input class="form-control" style="width: 100%;" type="number" tabindex="-1" aria-hidden="false"
                              id="work_id" name="work_id" value="" required>
                         </div>
                     </div>
@@ -293,6 +293,15 @@ border-color: red !important;
                         // Set the value of the input field to the current date
                         document.getElementById("createdDate").value = formattedDate;
                     </script>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Appointment Date <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text" id="appointment_date"
+                                    name="appointment_date" required>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">Status <span class="text-danger">*</span></label>
@@ -302,6 +311,12 @@ border-color: red !important;
                                 <option value="inactiv">Inactive</option>
                                 <option value="disable">Disable</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">ETF No <span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" id="etf_no" name="etf_no" required>
                         </div>
                     </div>
                     <style>
