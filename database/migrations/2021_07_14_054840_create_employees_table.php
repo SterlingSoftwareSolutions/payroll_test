@@ -29,9 +29,11 @@ class CreateEmployeesTable extends Migration
             $table->string('j_title')->nullable();
             $table->date('joinedDate')->nullable();
             $table->date('createdDate')->nullable();
-            $table->string('status')->nullable();            
-            $table->string('address')->nullable();  
+            $table->date('appointment_date')->nullable();
+            $table->string('status')->nullable();
+            $table->string('etf_no')->nullable();
             $table->string('account_name')->nullable();
+            $table->string('address')->nullable();  
             $table->string('account_number')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('branch')->nullable();

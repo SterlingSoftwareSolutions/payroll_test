@@ -27,6 +27,8 @@ class Employee extends Model
         'j_title',
         'joinedDate',
         'createdDate',
+        'appointment_date',
+        'etf_no',
         'status',
         'address',
         'account_name',
@@ -40,6 +42,7 @@ class Employee extends Model
         'dob' => 'date',
         'joinedDate' => 'date',
         'createdDate' => 'date',
+        'appointment_date' => 'date',
     ];
 
     // Employee.php
