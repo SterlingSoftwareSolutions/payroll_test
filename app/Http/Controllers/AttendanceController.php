@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Log;
 use DateTime;
 use Validator;
 use DatePeriod;
 use DateInterval;
+use League\Csv\Reader;
+use App\Models\CsvData;
 use App\Models\Holiday;
 use App\Models\Employee;
+use League\Csv\Statement;
 use App\Models\Attendance;
+
 use App\Models\department;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 use Brian2694\Toastr\Facades\Toastr;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
@@ -130,6 +134,7 @@ class AttendanceController extends Controller
         // Validate the form data
         $request->validate([
             'employee_id' => 'required',
+            'work_id' => 'required',
             'selected_employee_id' => 'required|numeric|exists:employees,id',
             'date' => 'required|date|date_format:Y-m-d',
             'punch_in' => 'required|date_format:H:i',
@@ -140,6 +145,7 @@ class AttendanceController extends Controller
 
             $attendance = Attendance::create([
                 'employee_id' => $request->selected_employee_id,
+                'work_id' => $request->work_id,
                 'date' => $request->date,
                 'punch_in' => $request->punch_in,
                 'punch_out' => $request->punch_out,
@@ -432,4 +438,69 @@ class AttendanceController extends Controller
 //     return redirect()->route('attendance/employee/page')->with('success', 'CSV data uploaded successfully');
 // }
 
+        public function showUploadForm()
+        {
+            return view('form.attendanceemployee');
+        }
+
+        public function uploadCsv(Request $request)
+        {
+            $request->validate([
+                'csv_file' => 'required|file'
+            ]);
+
+            // Parse the CSV
+            $data = array_map('str_getcsv', file($request->csv_file->getRealPath()));
+            $headings = array_shift($data);
+
+            foreach ($data as $row) {
+                dd($row);
+                if (array_key_exists('Date', $row) && array_key_exists('punch_in', $row) && array_key_exists('punch_out', $row)) {
+                    $dateTimeStringIn = $row['Date'] . ' ' . $row['punch_in'];
+                    $dateTimeStringOut = $row['Date'] . ' ' . $row['punch_out'];
+
+                    // Use Carbon to parse and format punch_in and punch_out
+                    $row['punch_in'] = Carbon::createFromFormat('n/j/Y H:i:s', $dateTimeStringIn)->format('Y-m-d H:i:s');
+                    $row['punch_out'] = Carbon::createFromFormat('n/j/Y H:i:s', $dateTimeStringOut)->format('Y-m-d H:i:s');
+
+                    $row['id'] = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
+                }
+
+                $attendances[] = [
+
+                ];
+            }
+            // dd($attendances);
+            Attendance::insert($attendances);
+            dd("success");
+
+            return view('form.attendanceemployee')->with([
+                ' Attendance' => $attendances,
+                'user' => $request->input('User'),
+                'work_id' => $request->input('WorkId'),
+                'date' => $request->input('date'),
+                'punch_in' => $request->input('punch_in'),
+                'punch_out' => $request->input('punch_out'),
+            ]);
+        }
+
+
+      
+
+
+        private function processCsv($filePath)
+        {
+            $csv = Reader::createFromPath($filePath);
+            $csv->setHeaderOffset(0); 
+
+            $stmt = (new Statement())->offset(0); 
+
+        
+            $data = $stmt->process($csv);
+
+        
+            Log::debug('Processed CSV data: ' . json_encode(iterator_to_array($data)));
+
+            return iterator_to_array($data); 
+        }       
 }

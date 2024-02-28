@@ -118,6 +118,7 @@ class EmployeeController extends Controller
         //    dd($request);
         $request->validate([
             'id' => 'required',
+            'work_id' => 'required',
             'd_name' => 'required',
             'f_name' => 'required',
             'l_name' => 'required',
@@ -149,6 +150,7 @@ class EmployeeController extends Controller
                 $employee = new Employee;
 
                 $employee->employee_id = $request->input('id');
+                $employee->work_id = $request->input('work_id');
                 $employee->d_name = $request->input('d_name');
                 $employee->f_name = $request->input('f_name');
                 $employee->email = $request->input('email');

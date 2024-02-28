@@ -122,7 +122,7 @@
                                 href="{{ route('all/employee/list') }}">All Employees</a></li>
                         <li><a class="{{ set_active(['form/holidays/new']) }}"
                                 href="{{ route('form/holidays/new') }}">Holidays</a></li>
-                                <li><a class="{{ set_active(['/csvupload']) }}" href="{{ route('csvupload') }}">upload csv</a></li>
+                                {{-- <li><a class="{{ set_active(['/csvupload']) }}" href="{{ route('csvupload') }}">upload csv</a></li> --}}
 
                                 {{-- <li><a class="{{ set_active(['form/leavesemployee/new']) }}" href="{{ route('form/leavesemployee/new') }}">Leaves (Employee)</a></li> --}}
                         <!---- <li><a class="{{ set_active(['form/leaves/new']) }}" href="{{ route('form/leaves/new') }}">Leaves (Admin)

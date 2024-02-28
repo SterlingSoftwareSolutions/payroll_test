@@ -253,6 +253,11 @@ Route::controller(AttendanceController::class)->group(function () {
     Route::get('form/attendance/pdf', 'AttendanceController@downloadPDF');
 
     // Route::get('form/attendance/search/page', 'getDataByYearMonth')->middleware('auth')->name('form.attendance.search.page');
+    Route::get('form/attendance/csv', 'showUploadForm')->middleware('auth')->name('form/attendance/csv');
+    Route::post('form/attendance/csv', 'uploadCsv')->middleware('auth')->name('form.attendance.upload');
+
+    // Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
+    // Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
 });
 
 Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');
@@ -387,9 +392,10 @@ Route::get('/get-positions/{department}', [PositionController::class, 'getPositi
 // Route::get('/upload', [CsvUploadController::class, 'index']);
 // Route::post('/upload', [CsvUploadController::class, 'upload'])->name('upload');
 
-Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
+// Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
 
-Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
+// Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
+
 
 
 

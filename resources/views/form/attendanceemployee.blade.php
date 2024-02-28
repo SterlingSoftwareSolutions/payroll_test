@@ -16,6 +16,15 @@
                         </ul>
                     </div>
 
+                    <form action="{{ route('form/attendance/csv') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="csv_file">CSV File:</label>
+                            <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+                        </div>               
+                        <button type="submit">Upload CSV</button>
+                    </form>
+
                     <div class="col-auto float-right ml-auto">
                         <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_attendance"
                             id="add_attendence"><i class="fa fa-plus"></i> Add Attendance</a>
@@ -113,6 +122,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Attendance Id</th>
+                                    <th>Work Id</th>
                                     <th>Employee Name</th>
                                     <th>Date</th>
                                     <th>Punch In</th>
@@ -167,6 +177,16 @@
                                         </tr>
                                     @endforeach
                                 @endif
+<!----------------for csv file data get -------------------------->
+                                @if(isset($CsvData) && count($CsvData) > 0)
+                                @foreach($CsvData as $data)
+                                    <tr>
+                                        @foreach($data as $header => $value)
+                                            <td>{{ $value }}</td>
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                            @endif
                                 <!-- Edit Attendance Modal -->
                                 <div class="modal custom-modal fade" id="edit_attendance" role="dialog">
                                     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">

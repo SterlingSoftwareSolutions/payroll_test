@@ -41,7 +41,7 @@ class CsvUploadController extends Controller
         }
         // Use insert method to insert multiple records
         CsvData::insert($csv_data);
-        dd("success");
+        //dd("success");
         // Additional processing or validation if needed
     
         return view('form/csvupload')->with([
