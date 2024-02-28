@@ -15,6 +15,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\TrainersController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\CsvUploadController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PerformanceController;
@@ -252,6 +253,11 @@ Route::controller(AttendanceController::class)->group(function () {
     Route::get('form/attendance/pdf', 'AttendanceController@downloadPDF');
 
     // Route::get('form/attendance/search/page', 'getDataByYearMonth')->middleware('auth')->name('form.attendance.search.page');
+    Route::get('form/attendance/csv', 'showUploadForm')->middleware('auth')->name('form/attendance/csv');
+    Route::post('form/attendance/csv', 'uploadCsv')->middleware('auth')->name('form.attendance.upload');
+
+    // Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
+    // Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
 });
 
 Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');
@@ -381,3 +387,17 @@ Route::controller(PayslipController::class)->group(function () {
 
 Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');
 Route::get('/get-positions/{department}', [PositionController::class, 'getPositions'])->name('get-positions');
+
+
+// Route::get('/upload', [CsvUploadController::class, 'index']);
+// Route::post('/upload', [CsvUploadController::class, 'upload'])->name('upload');
+
+// Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
+
+// Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
+
+
+
+
+// Add this code in your routes/web.php file
+// Route::post('/upload-csv', [AttendanceController::class, 'uploadCSV'])->name('upload.csv');

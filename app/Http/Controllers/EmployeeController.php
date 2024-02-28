@@ -112,12 +112,11 @@ class EmployeeController extends Controller
 
 
     // save data employee
-
     public function saveRecord(Request $request)
     {
-        //    dd($request);
-        $request->validate([
+        $validated = $request->validate([
             'id' => 'required',
+            'work_id' => 'required|unique:employees,work_id',
             'd_name' => 'required',
             'f_name' => 'required',
             'l_name' => 'required',
@@ -134,85 +133,38 @@ class EmployeeController extends Controller
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
         ]);
+        $validated['employee_id'] = $validated['id'];
+        unset($validated['id']);
 
-        try {
-            $this->salary_details(
-                $request->input('id'),
-                $request->input('type'),
-                $request->input('increment_name'),
-                $request->input('increment_amount'),
-                $request->input('deduction_dates')
-            );
+        $employee = Employee::create(array_merge($validated, [
+            'createdDate' => now()
+        ]));
 
-            // Create a new employee
-            try {
-                $employee = new Employee;
+        $this->salary_details(
+            $employee->employee_id,
+            $request->type,
+            $request->increment_name,
+            $request->increment_amount,
+            $request->deduction_dates,
+        );
 
-                $employee->employee_id = $request->input('id');
-                $employee->d_name = $request->input('d_name');
-                $employee->f_name = $request->input('f_name');
-                $employee->email = $request->input('email');
-                $employee->nic = $request->input('nic');
-                $employee->c_number = $request->input('c_number');
-                $employee->address = $request->input('address');
-                $employee->l_name = $request->input('l_name');
-                $employee->full_name = $request->input('full_name');
-                $employee->dob = $request->input('dob');
-                $employee->gender = $request->input('gender');
-                $employee->j_title = $request->input('j_title');
-                $employee->joinedDate = $request->input('joinedDate');
-                $employee->status = $request->input('status');
-                $employee->account_name = $request->input('account_name');
-                $employee->account_number = $request->input('account_number');
-                $employee->bank_name = $request->input('bank_name');
-                $employee->branch = $request->input('branch');
-                $employee->basic_Salary = $request->input('basic_Salary');
-                $employee->createdDate = now();
-                $employee->save();
-                // dd($employee);
-
-                Toastr::success('Employee record added successfully :)', 'Success');
-                return redirect()->route('all/employee/list');
-            } catch (\Exception $e) {
-                Toastr::error('An error occurred while saving the employee record. Please try again.', 'Error');
-                return redirect()->back();
-            }
-        } catch (\Exception $e) {
-            Toastr::error('An error occurred while saving the record. Please try again.', 'Error');
-            return redirect()->back();
-        }
+         return redirect()->back();
     }
-
 
     public function salary_details($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
     {
         if (!is_null($types) && count($types) > 0) {
-            // Debug statements
             $arraySize = count($types);
-            // dd($arraySize,$types[0]);
-
-
-
-            // Check if all arrays have the same size
-
             for ($key = 0; $key < $arraySize; $key++) {
-                // dd($key);
-                try {
-                    $salaryDetail = new SalaryDetail([
-                        'employee_id' => $employee_id,
-                        'type' => $types[$key],
-                        'increment_name' => $incrementNames[$key],
-                        'increment_amount' => $incrementAmounts[$key],
-                        'date' => Carbon::createFromFormat('d-m-Y', $dates[$key])->format('Y-m-d'),
-                    ]);
-                    $salaryDetail->timestamps = false;
-                    ($salaryDetail);
-                    $salaryDetail->save();
-                } catch (\Exception $e) {
-                    // Log or handle the exception
-                    dd("x");
-                    dd($e->getMessage());
-                }
+                $salaryDetail = new SalaryDetail([
+                    'employee_id' => $employee_id,
+                    'type' => $types[$key],
+                    'increment_name' => $incrementNames[$key],
+                    'increment_amount' => $incrementAmounts[$key],
+                    'date' => Carbon::createFromFormat('d-m-Y', $dates[$key])->format('Y-m-d'),
+                ]);
+                $salaryDetail->timestamps = false;
+                $salaryDetail->save();
             }
         }
     }

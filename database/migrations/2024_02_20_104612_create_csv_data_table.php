@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attendances', function (Blueprint $table) {
-            $table->string('id')->unique()->primary();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+        Schema::create('csv_data', function (Blueprint $table) {
+            $table->id();
+            $table->string('User')->default(''); 
             $table->integer('WorkId');
-
-            $table->date('date');
+            $table->string('CardNo');
+            $table->date('Date');
             $table->time('punch_in');
             $table->time('punch_out');
+          
             $table->timestamps();
         });
     }
@@ -32,7 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('csv_data');
     }
-    
 };
