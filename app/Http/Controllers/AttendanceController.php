@@ -400,107 +400,78 @@ class AttendanceController extends Controller
         return view('reports.attendance-report', compact('holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount'));
     }
 
+    public function showUploadForm()
+    {
+        return view('form.attendanceemployee');
+    }
 
+    public function uploadCsv(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file'
+        ]);
 
-//     public function uploadCSV(Request $request)
-// {
-//     $request->validate([
-//         'csv_file' => 'required|mimes:csv,txt',
-//     ]);
+        // Parse the CSV
+        $entries = array_map('str_getcsv', file($request->csv_file->getRealPath()));
+        $headers = array_shift($entries);
+        $attendances = [];
+        $errors = [];
 
-//     $file = $request->file('csv_file');
-//     $csvData = array_map('str_getcsv', file($file));
-//     $header = array_shift($csvData); // Remove header row
-
-//     foreach ($csvData as $row) {
-//         $data = array_combine($header, $row);
-
-//         // Check if 'date' key exists in the $data array
-//         if (isset($data['date'])) {
-//             $workId = $data['WorkId'];
-//             $date = $data['date'];
-//             $punch_in = $data['punch_in'];
-//             $punch_out = $data['punch_out'];
-
-//             // Create or update the attendance record
-//             Attendance::updateOrCreate(
-//                 ['employee_id' => $workId, 'date' => $date],
-//                 ['punch_in' => $punch_in, 'punch_out' => $punch_out]
-//             );
-//         } else {
-//             // Handle the case where 'date' key is missing in the row
-//             // You may log an error, skip the row, or handle it based on your requirements
-//             // For now, we'll skip this row
-//             continue;
-//         }
-//     }
-
-//     return redirect()->route('attendance/employee/page')->with('success', 'CSV data uploaded successfully');
-// }
-
-        public function showUploadForm()
-        {
-            return view('form.attendanceemployee');
+        // Attendances grouped by date.
+        // First punch_in of the day will be taken as punch_in, and the last one as punch_out.
+        foreach ($entries as $row) {
+            $entry = array_combine($headers, $row);
+            if(isset( $attendances [$entry['Date']] [$entry['WorkId']] ['punch_in'])){
+                $attendances [$entry['Date']] [$entry['WorkId']] ['punch_out'] = $entry['punch_in'];
+            } else{
+                $attendances [$entry['Date']] [$entry['WorkId']] ['punch_in'] = $entry['punch_in'];
+            }
         }
 
-        public function uploadCsv(Request $request)
-        {
-            $request->validate([
-                'csv_file' => 'required|file'
-            ]);
+        foreach($attendances as $date => $attendances_current_day){
+            foreach ($attendances_current_day as $WorkId => $attendance) {
+                $employee = Employee::where('work_id', $WorkId)->first();
 
-            // Parse the CSV
-            $data = array_map('str_getcsv', file($request->csv_file->getRealPath()));
-            $headings = array_shift($data);
-
-            foreach ($data as $row) {
-                dd($row);
-                if (array_key_exists('Date', $row) && array_key_exists('punch_in', $row) && array_key_exists('punch_out', $row)) {
-                    $dateTimeStringIn = $row['Date'] . ' ' . $row['punch_in'];
-                    $dateTimeStringOut = $row['Date'] . ' ' . $row['punch_out'];
-
-                    // Use Carbon to parse and format punch_in and punch_out
-                    $row['punch_in'] = Carbon::createFromFormat('n/j/Y H:i:s', $dateTimeStringIn)->format('Y-m-d H:i:s');
-                    $row['punch_out'] = Carbon::createFromFormat('n/j/Y H:i:s', $dateTimeStringOut)->format('Y-m-d H:i:s');
-
-                    $row['id'] = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
+                // Check if employee exists in the system
+                if(!$employee){
+                    $errors [$date] [$WorkId] = "Employee not found.";
+                    continue;
                 }
 
-                $attendances[] = [
+                // Check if the employee has punched out
+                if(!isset($attendance['punch_out'])){
+                    $errors [$date] [$WorkId] = "Punch out time not found";
+                    continue;
+                }
 
-                ];
+                // Create attendance entry
+                $attendance = Attendance::updateOrCreate([
+                    'employee_id' => $employee->id,
+                    'date' => Carbon::parse($date)
+                ],[
+                    'WorkId' => $WorkId,
+                    'punch_in' => $attendance['punch_in'],
+                    'punch_out' => $attendance['punch_out'],
+                ]);
             }
-            // dd($attendances);
-            Attendance::insert($attendances);
-            dd("success");
-
-            return view('form.attendanceemployee')->with([
-                ' Attendance' => $attendances,
-                'user' => $request->input('User'),
-                'work_id' => $request->input('WorkId'),
-                'date' => $request->input('date'),
-                'punch_in' => $request->input('punch_in'),
-                'punch_out' => $request->input('punch_out'),
-            ]);
         }
 
+        return back()->with('import_errors', $errors);
+    }
 
-      
+    private function processCsv($filePath)
+    {
+        $csv = Reader::createFromPath($filePath);
+        $csv->setHeaderOffset(0); 
 
+        $stmt = (new Statement())->offset(0); 
 
-        private function processCsv($filePath)
-        {
-            $csv = Reader::createFromPath($filePath);
-            $csv->setHeaderOffset(0); 
+    
+        $data = $stmt->process($csv);
 
-            $stmt = (new Statement())->offset(0); 
+    
+        Log::debug('Processed CSV data: ' . json_encode(iterator_to_array($data)));
 
-        
-            $data = $stmt->process($csv);
-
-        
-            Log::debug('Processed CSV data: ' . json_encode(iterator_to_array($data)));
-
-            return iterator_to_array($data); 
-        }       
+        return iterator_to_array($data); 
+    }
 }
