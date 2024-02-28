@@ -440,7 +440,7 @@ class AttendanceController extends Controller
 
                 // Check if the employee has punched out
                 if(!isset($attendance['punch_out'])){
-                    $errors [$date] [$WorkId] = "Punch out time not found";
+                    $errors [$date] [$WorkId] = "Punch out time not found.";
                     continue;
                 }
 
