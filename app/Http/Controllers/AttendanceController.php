@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Log;
 use DateTime;
 use Validator;
 use DatePeriod;
 use DateInterval;
+use League\Csv\Reader;
+use App\Models\CsvData;
 use App\Models\Holiday;
 use App\Models\Employee;
+use League\Csv\Statement;
 use App\Models\Attendance;
+
 use App\Models\department;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 use Brian2694\Toastr\Facades\Toastr;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
@@ -130,6 +134,7 @@ class AttendanceController extends Controller
         // Validate the form data
         $request->validate([
             'employee_id' => 'required',
+            'work_id' => 'required',
             'selected_employee_id' => 'required|numeric|exists:employees,id',
             'date' => 'required|date|date_format:Y-m-d',
             'punch_in' => 'required|date_format:H:i',
@@ -140,6 +145,7 @@ class AttendanceController extends Controller
 
             $attendance = Attendance::create([
                 'employee_id' => $request->selected_employee_id,
+                'work_id' => $request->work_id,
                 'date' => $request->date,
                 'punch_in' => $request->punch_in,
                 'punch_out' => $request->punch_out,
@@ -394,4 +400,78 @@ class AttendanceController extends Controller
         return view('reports.attendance-report', compact('holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount'));
     }
 
+    public function showUploadForm()
+    {
+        return view('form.attendanceemployee');
+    }
+
+    public function uploadCsv(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file'
+        ]);
+
+        // Parse the CSV
+        $entries = array_map('str_getcsv', file($request->csv_file->getRealPath()));
+        $headers = array_shift($entries);
+        $attendances = [];
+        $errors = [];
+
+        // Attendances grouped by date.
+        // First punch_in of the day will be taken as punch_in, and the last one as punch_out.
+        foreach ($entries as $row) {
+            $entry = array_combine($headers, $row);
+            if(isset( $attendances [$entry['Date']] [$entry['WorkId']] ['punch_in'])){
+                $attendances [$entry['Date']] [$entry['WorkId']] ['punch_out'] = $entry['punch_in'];
+            } else{
+                $attendances [$entry['Date']] [$entry['WorkId']] ['punch_in'] = $entry['punch_in'];
+            }
+        }
+
+        foreach($attendances as $date => $attendances_current_day){
+            foreach ($attendances_current_day as $WorkId => $attendance) {
+                $employee = Employee::where('work_id', $WorkId)->first();
+
+                // Check if employee exists in the system
+                if(!$employee){
+                    $errors [$date] [$WorkId] = "Employee not found.";
+                    continue;
+                }
+
+                // Check if the employee has punched out
+                if(!isset($attendance['punch_out'])){
+                    $errors [$date] [$WorkId] = "Punch out time not found.";
+                    continue;
+                }
+
+                // Create attendance entry
+                $attendance = Attendance::updateOrCreate([
+                    'employee_id' => $employee->id,
+                    'date' => Carbon::parse($date)
+                ],[
+                    'WorkId' => $WorkId,
+                    'punch_in' => $attendance['punch_in'],
+                    'punch_out' => $attendance['punch_out'],
+                ]);
+            }
+        }
+
+        return back()->with('import_errors', $errors);
+    }
+
+    private function processCsv($filePath)
+    {
+        $csv = Reader::createFromPath($filePath);
+        $csv->setHeaderOffset(0); 
+
+        $stmt = (new Statement())->offset(0); 
+
+    
+        $data = $stmt->process($csv);
+
+    
+        Log::debug('Processed CSV data: ' . json_encode(iterator_to_array($data)));
+
+        return iterator_to_array($data); 
+    }
 }

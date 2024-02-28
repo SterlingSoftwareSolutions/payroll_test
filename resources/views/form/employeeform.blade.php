@@ -72,6 +72,14 @@ border-color: red !important;
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
+                            <label class="col-form-label">Work ID <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="false"
+                             id="work_id" name="work_id" value="" required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
                             <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                 id="d_name" name="d_name">
