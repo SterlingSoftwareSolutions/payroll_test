@@ -117,14 +117,20 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'id' => 'required',
             'work_id' => 'required|unique:employees,work_id',
+            'etf_no' => 'required|numeric',
             'd_name' => 'required',
             'f_name' => 'required',
             'l_name' => 'required',
             'full_name' => 'required',
             'dob' => 'required',
+            'email' => 'required',
+            'nic' => 'required',
+            'c_number' => 'required',
+            'address' => 'required',
             'gender' => 'required',
             'j_title' => 'required',
             'joinedDate' => 'required',
+            'appointmentDate' => 'required',
             'createdDate' => 'required',
             'status' => 'required',
             'account_name' => 'required',
@@ -148,7 +154,8 @@ class EmployeeController extends Controller
             $request->deduction_dates,
         );
 
-         return redirect()->back();
+        return redirect()->route('all/employee/list');    
+
     }
 
     public function salary_details($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
@@ -305,10 +312,16 @@ public function EditEmployee($user)
         $request->validate([
             'd_name' => 'required',
             'f_name' => 'required',
+            'work_id' => 'required',
+            'etf_no' => 'required',
             'l_name' => 'required',
             'full_name' => 'required',
             'dob' => 'required',
             'gender' => 'required',
+            'c_number' => 'required',
+            'nic' => 'required',
+            'email' => 'required',
+            'address' => 'required',
             'j_title' => 'required',
             'joinedDate' => 'required',
             'status' => 'required',
@@ -338,6 +351,8 @@ public function EditEmployee($user)
             // Update employee details
             $employee->d_name = $request->input('d_name');
             $employee->f_name = $request->input('f_name');
+            $employee->work_id = $request->input('work_id');
+            $employee->etf_no = $request->input('etf_no');
             $employee->email = $request->input('email');
             $employee->nic = $request->input('nic');
             $employee->c_number = $request->input('c_number');
@@ -348,6 +363,7 @@ public function EditEmployee($user)
             $employee->gender = $request->input('gender');
             $employee->j_title = $request->input('j_title');
             $employee->joinedDate = $request->input('joinedDate');
+            $employee->appointmentDate = $request->input('appointmentDate');
             $employee->status = $request->input('status');
             $employee->account_name = $request->input('account_name');
             $employee->account_number = $request->input('account_number');

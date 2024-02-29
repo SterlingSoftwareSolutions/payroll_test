@@ -73,8 +73,16 @@ border-color: red !important;
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">Work ID <span class="text-danger">*</span></label>
-                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="false"
-                             id="work_id" name="work_id" value="" required>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                             id="work_id" name="work_id" required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">ETF No <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                             id="etf_no" name="etf_no" required>
                         </div>
                     </div>
 
@@ -274,6 +282,17 @@ border-color: red !important;
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Appointment Date <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text" id="appointmentDate"
+                                    name="appointmentDate" required>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Created Date <span class="text-danger">*</span></label>
@@ -524,9 +543,9 @@ border-color: red !important;
 
                                                             // Populate options based on the selected "Type"
                                                             if (selectedType === "increments") {
-                                                                var options = ["BR allowance", "Incentive 1", "Incentive 2", "Others"];
+                                                                var options = ["Incentive 1", "Incentive 2", "Others"];
                                                             } else if (selectedType === "deductions") {
-                                                                var options = ["Bodim", "Advanced", "Others"];
+                                                                var options = ["Hostal", "Salary Advanced",  "Electricity", "Loan", "Others"];
                                                             }
 
                                                             // Add the options to the "Name" input field
@@ -684,9 +703,9 @@ border-color: red !important;
 
                                             // Populate options based on the selected "Type"
                                             if (selectedType === "increments") {
-                                                var options = ["BR allowance", "Incentive 1", "Incentive 2", "Others"];
+                                                var options = [ "Incentive 1", "Incentive 2", "Others"];
                                             } else if (selectedType === "deductions") {
-                                                var options = ["Bodim", "Advanced", "Others"];
+                                                var options = ["Hostal", "Salary Advance", "Electricity", "Loan", "Others"];
                                             }
 
                                             // Add the options to the "Name" input field

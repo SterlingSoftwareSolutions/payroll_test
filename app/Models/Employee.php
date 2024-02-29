@@ -15,6 +15,7 @@ class Employee extends Model
         'id',
         'employee_id',
         'work_id',
+        'etf_no',
         'd_name',
         'f_name',
         'l_name',
@@ -26,6 +27,7 @@ class Employee extends Model
         'c_number',
         'j_title',
         'joinedDate',
+        'appointmentDate',
         'createdDate',
         'status',
         'address',
@@ -40,6 +42,7 @@ class Employee extends Model
         'dob' => 'date',
         'joinedDate' => 'date',
         'createdDate' => 'date',
+        'appointmentDate' => 'date',
     ];
 
     // Employee.php
