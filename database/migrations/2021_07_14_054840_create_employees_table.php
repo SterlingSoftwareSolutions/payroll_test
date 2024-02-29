@@ -17,6 +17,7 @@ class CreateEmployeesTable extends Migration
             $table->id();
             $table->string('employee_id')->unique();
             $table->integer('work_id')->unique();
+            $table->integer('etf_no')->unique();
             $table->string('d_name')->nullable();
             $table->string('f_name')->nullable();
             $table->string('l_name')->nullable();
@@ -28,6 +29,7 @@ class CreateEmployeesTable extends Migration
             $table->string('c_number')->nullable();
             $table->string('j_title')->nullable();
             $table->date('joinedDate')->nullable();
+            $table->date('appointmentDate')->nullable();
             $table->date('createdDate')->nullable();
             $table->string('status')->nullable();            
             $table->string('address')->nullable();  

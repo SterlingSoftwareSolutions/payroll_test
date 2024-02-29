@@ -71,6 +71,23 @@ border-color: red !important;
                             </select>
                         </div>
                     </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Work ID <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                             id="work_id" name="work_id" value="{{ $employee->work_id }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">ETF No <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                             id="etf_no" name="etf_no" value="{{ $employee->etf_no }}" required>
+                        </div>
+                    </div>
+
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
@@ -93,7 +110,7 @@ border-color: red !important;
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="col-form-label">Larst Name <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Last Name <span class="text-danger">*</span></label>
                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                 id="l_name" name="l_name" value="{{ $employee->l_name }}" required>
                         </div>
@@ -269,6 +286,17 @@ border-color: red !important;
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Appointment Date <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text" id="appointmentDate"
+                                    name="appointmentDate" value="{{ $employee->appointmentDate }}" required>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Created Date <span class="text-danger">*</span></label>
