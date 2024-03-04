@@ -63,7 +63,7 @@
                         {{-- <button type="button" class="btn btn-success"
                             style="background-color: #05c46b; width: 200px;">Print Salary Report</button> --}}
 
-                          <button onclick="downloadPDF()" class="btn btn-primary">Download PDF</button>
+                        <button onclick="downloadPDF()" class="btn btn-primary">Download PDF</button>
 
                     </div>
                 </div>
@@ -130,82 +130,90 @@
 
 
 
-            <table class="table table-striped custom-table datatable" id="attendanceTable">
-                {{-- <table class="table table-striped custom-table datatable"> --}}
-                    <thead>
+        <table class="table table-striped custom-table datatable" id="attendanceTable">
+            {{-- <table class="table table-striped custom-table datatable"> --}}
+                <thead>
 
-                        <tr>
-                            <th>Employee ID</th>
-                            <th>Employee Name</th>
-                            <th>Bank Name</th>
-                            <th>Branch Name</th>
-                            <th>Account No</th>
-                            <th>Net Salary</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($employees as $employee)
-                        <tr>
-                            <td>{{ $employee->id }}</td>
-                            <td>{{ $employee->full_name }}</td>
-                            <td>{{ $employee->bank_name }}</td>
-                            <td>{{ $employee->branch }}</td>
-                            <td>{{ $employee->account_number }}</td>
-                            <td>Net Salary</td>   <!--need to calaculation-->
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Employee Name</th>
+                        <th>Bank Name</th>
+                        <th>Branch Name</th>
+                        <th>Account No</th>
+                        <th>Net Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($employees as $employee)
+                    <tr>
+                        <td>{{ $employee->id }}</td>
+                        <td>{{ $employee->full_name }}</td>
+                        <td>{{ $employee->bank_name }}</td>
+                        <td>{{ $employee->branch }}</td>
+                        <td>{{ $employee->account_number }}</td>
+                    
+                        <td>
+                            @foreach ($payslips as $payslip)
+                            @if($payslip->employee->id === $employee->id)
+                            {{ number_format($payslip->net_salary()) }}
+                            @break
+                            @endif
+                            @endforeach
+                        </td>
 
-
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                    </tr>
+                    @endforeach
+                </tbody>
             </table>
-        </div>
-
-
-
-        {{-- <table class="table table-striped custom-table datatable">
-            <thead>
-                <tr>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Bank Name</th>
-                    <th>Branch Name</th>
-                    <th>Account No</th>
-                    <th>Net Salary</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($employees as $employee)
-                <tr>
-                    <td>{{ $employee->id }}</td>
-                    <td>{{ $employee->full_name }}</td>
-                    <td>{{ $employee->bank_name }}</td>
-                    <td>{{ $employee->branch }}</td>
-                    <td>{{ $employee->account_number }}</td>
-                    <td>Net Salary</td>   <!--need to calaculation-->
-
-
-                </tr>
-                @endforeach
-            </tbody>
-        </table> --}}
-
-
-
-
-
-
-
-
-        <!-- /Page Header -->
+        </table>
     </div>
+
+
+
+    {{-- <table class="table table-striped custom-table datatable">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Bank Name</th>
+                <th>Branch Name</th>
+                <th>Account No</th>
+                <th>Net Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($employees as $employee)
+            <tr>
+                <td>{{ $employee->id }}</td>
+                <td>{{ $employee->full_name }}</td>
+                <td>{{ $employee->bank_name }}</td>
+                <td>{{ $employee->branch }}</td>
+                <td>{{ $employee->account_number }}</td>
+                <td>Net Salary</td>
+                <!--need to calaculation-->
+
+
+            </tr>
+            @endforeach
+        </tbody>
+    </table> --}}
+
+
+
+
+
+
+
+
+    <!-- /Page Header -->
+</div>
 </div>
 
 
 <!--------------------------------------------------------------------------------------------------->
 
-   <!-- Print Modal -->
-   <div class="modal custom-modal fade" id="print_salary_report" role="dialog">
+<!-- Print Modal -->
+<div class="modal custom-modal fade" id="print_salary_report" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -246,7 +254,7 @@
 
     </div>
 
-   </div>
+</div>
 
 <!------------------------------------------------------------------------------------------------------>
 
