@@ -24,6 +24,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ExpenseReportsController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PersonalInformationController;
 
@@ -243,7 +244,6 @@ Route::controller(LeavesController::class)->group(function () {
 // ATTENDACNE ROUTES
 Route::controller(AttendanceController::class)->group(function () {
 
-    Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index'); //for report
     Route::get('form/attendance/new', 'attendance')->middleware('auth')->name('form.attendance.new');
     Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
     Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
@@ -258,6 +258,12 @@ Route::controller(AttendanceController::class)->group(function () {
 
     // Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
     // Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
+});
+
+//Attendance Report 
+Route::controller(AttendanceReportController::class)->group(function () {
+    Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index'); //for report
+
 });
 
 Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');
