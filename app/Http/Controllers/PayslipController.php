@@ -222,9 +222,10 @@ class PayslipController extends Controller
 
         $query = Employee::query();
         $employees = $query->get();
-
+        $payslips = Payslip::all();
         $departments = department::all();
-        return view('reports/salary-report', compact('departments', 'employees'));
+
+        return view('reports/salary-report', compact('departments', 'employees','payslips'));
     }
 
     public function getDetails($employeeId)
