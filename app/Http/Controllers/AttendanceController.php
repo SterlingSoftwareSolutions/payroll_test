@@ -32,7 +32,10 @@ class AttendanceController extends Controller
         $current_year = now()->year;
 
         $employees = $query->get();
+       
         $departments = Department::all();
+
+      
         $holiday = Holiday::all();
         $attendances = Attendance::with('employee', 'holiday')
             ->whereMonth('date', $current_month)
@@ -60,13 +63,12 @@ class AttendanceController extends Controller
 
             $attendance->overtime = $overtime;
         });
-
+      
         $attendanceCounts = DB::table('attendances')                    //attendance count
             ->select('employee_id', DB::raw('count(*) as attendance_count'))
             ->groupBy('employee_id')
             ->get();
-
-
+        
         $totDays = $this->getDaysInMonth($current_month, $current_year);
         $weekendCount = $this->getWeekendCount($current_month, $current_year);
 
