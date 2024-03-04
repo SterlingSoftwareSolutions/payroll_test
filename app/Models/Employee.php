@@ -80,7 +80,7 @@ class Employee extends Model
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
         });
         $work_days = $month_days_count - $month_weekends_count;
-        $work_hours = $department == 'Local' ? 10 : 9;
+        $work_hours = $department == 'Local' ? 9 : 10;
 
         // Employee details
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
@@ -109,7 +109,7 @@ class Employee extends Model
         
         $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
             if($department == 'Local' && $attendance->date->isSaturday()){
-                $diff = ($work_hours * 60 / 2) - $attendance->duration();
+                $diff = 5 * 60 - $attendance->duration();
             } else{
                 $diff = $work_hours * 60 - $attendance->duration();
             }
@@ -118,7 +118,7 @@ class Employee extends Model
 
         $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
             if($department == 'Local' && $attendance->date->isSaturday()){
-                $diff = $attendance->duration() - ($work_hours * 60 / 2);
+                $diff = $attendance->duration() - 5 * 60;
             } else{
                 $diff = $attendance->duration() - $work_hours * 60;
             }
@@ -137,7 +137,8 @@ class Employee extends Model
             'days_worked_holiday_weekend',
             'no_pay_leaves',
             'late_minutes',
-            'ot_minutes'
+            'ot_minutes',
         );
+
     }
 }

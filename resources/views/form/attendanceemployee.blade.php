@@ -175,11 +175,12 @@
                                 <tr class="attendance-completed">
                                     <td>{{ ++$key }}</td>
                                     <td class="text-left" id="ids">{{ $items->id }}</td>
+                                    <td class="text-left" id="ids">{{ $items->WorkId }}</td>
                                     <td class="text-left" id="empname">{{ $items->employee->full_name }}</td>
                                     <td class="text-left" id="empid" hidden>{{ $items->employee->id }}</td>
-                                    <td class="text-left" id="selctdate">{{ $items->date }}</td>
-                                    <td class="text-left" id="punchin">{{ $items->punch_in }}</td>
-                                    <td class="text-left" id="punchout">{{ $items->punch_out }}</td>
+                                    <td class="text-left" id="selctdate">{{ $items->date->format('Y-m-d') }}</td>
+                                    <td class="text-left" id="punchin">{{ $items->punch_in->format('H:i') }}</td>
+                                    <td class="text-left" id="punchout">{{ $items->punch_out->format('H:i') }}</td>
                                     {{-- Calculate Work Hours --}}
                                     @php
                                         $punchIn = new DateTime($items->punch_in);
