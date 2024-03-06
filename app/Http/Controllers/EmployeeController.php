@@ -48,7 +48,7 @@ class EmployeeController extends Controller
         return redirect()->back()->with('success', 'Salary details submitted successfully!');
     }
 
-
+// 
     // all employee list
     public function listAllEmployee(Request $request)
     {
