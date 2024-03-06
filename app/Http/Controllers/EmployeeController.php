@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Holiday;
 use App\Models\Employee;
+use App\Models\JobTitle;
+use App\Models\JobStatus;
 use App\Models\Attendance;
 use App\Models\department;
 use App\Models\SalaryDetail;
@@ -17,6 +19,7 @@ use Illuminate\Http\Request;
 use App\Models\module_permission;
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
+use App\Models\DepartmentTitleStatus;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
@@ -88,32 +91,76 @@ class EmployeeController extends Controller
     }
     // Add employee view
     public function createEmployee()
+{
+    $departments = Department::pluck('department', 'id');
+    $maxId = \App\Models\Employee::max('employee_id');
+
+    if ($maxId) {
+        $userId = $maxId;
+        $nextUserId = 'E' . str_pad((int)substr($userId, 1) + 1, 6, '0', STR_PAD_LEFT);
+    } else {
+        $nextUserId = 'E000001';
+    }
+
+    // Retrieve other data
+    $jobTitles = JobTitle::all();
+    $jobStatuses = JobStatus::all();
+    $departmentTitleStatuses = DepartmentTitleStatus::all();
+
+    return view('form.employeeform', compact('nextUserId', 'departments', 'jobTitles', 'jobStatuses', 'departmentTitleStatuses'));
+}
+public function getJobStatuses(Request $request)
+{
+        // dd('$request');
+    // $departmentId = $request->input('department_id');
+
+    // // Fetch job statuses based on the department ID
+    // $jobStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
+
+    // return response()->json($jobStatuses);
+    $departmentId = $request->input('department_id');
+
+    // Fetch job statuses based on the department ID
+    $departmentTitleStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
+
+    // Extract job status IDs from the department title statuses
+    $jobStatusIds = $departmentTitleStatuses->pluck('job_status_id');
+
+    // Fetch job statuses using the IDs
+    $jobStatuses = JobStatus::whereIn('id', $jobStatusIds)->get();
+
+    return response()->json($jobStatuses);
+
+    }
+    public function getJobTitles(Request $request)
     {
+        $jobStatusName = $request->input('job_status_id');
 
-        $departments = Department::pluck('department', 'id');
-        $maxId = \App\Models\Employee::max('employee_id');
+        $jobStatus = JobStatus::where('id', $jobStatusName)->first();
 
-        if ($maxId) {
-            $userId = $maxId;
-            $nextUserId = 'E' . str_pad((int)substr($userId, 1) + 1, 6, '0', STR_PAD_LEFT);
-        } else {
-            $nextUserId = 'E000001';
+        if (!$jobStatus) {
+            return response()->json(['error' => 'Job status not found'], 404);
         }
 
-        // The rest of your code...
+        $departmentId = $request->input('department_id');
 
-        return view('form.employeeform', compact('nextUserId', 'departments'));
+        $jobTitles = DepartmentTitleStatus::where('job_status_id', $jobStatus->id)
+            ->where('department_id', $departmentId)
+            ->pluck('job_title_id'); // Pluck the job_title_id values from the collection
 
-        $departments = department::all();
+        $jobTitles = JobTitle::whereIn('id', $jobTitles)->get(); // Find JobTitle records with the extracted IDs
 
-
-        return view('form.employeeform', compact('departments'));
+        return response()->json($jobTitles);
     }
+
+
+
 
 
     // save data employee
     public function saveRecord(Request $request)
     {
+        // dd($request);
         $validated = $request->validate([
             'id' => 'required',
             'work_id' => 'required|unique:employees,work_id',
@@ -129,6 +176,7 @@ class EmployeeController extends Controller
             'address' => 'required',
             'gender' => 'required',
             'j_title' => 'required',
+            'j_status' => 'required',
             'joinedDate' => 'required',
             'appointmentDate' => 'required',
             'createdDate' => 'required',
@@ -139,6 +187,7 @@ class EmployeeController extends Controller
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
         ]);
+        // dd($validated);
         $validated['employee_id'] = $validated['id'];
         unset($validated['id']);
 
@@ -154,7 +203,7 @@ class EmployeeController extends Controller
             $request->deduction_dates,
         );
 
-        return redirect()->route('all/employee/list');    
+        return redirect()->route('all/employee/list');
 
     }
 

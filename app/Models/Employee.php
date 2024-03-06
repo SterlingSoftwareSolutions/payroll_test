@@ -26,6 +26,7 @@ class Employee extends Model
         'nic',
         'c_number',
         'j_title',
+        'j_status',
         'joinedDate',
         'appointmentDate',
         'createdDate',
@@ -91,22 +92,22 @@ class Employee extends Model
             }
             return !$attendance->date->isSaturday() && !$attendance->date->isSunday();
         });
-        
+
         $days_worked_holiday = with(clone $attendances)->whereIn('date', $month_holidays->pluck('date_holiday'))->get();
-        
+
         $days_worked_weekend = with(clone $attendances)->get()->filter(function($attendance){
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
         });
-        
+
         $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department){
             if($department == 'Local'){
                 return $attendance->date->isSunday();
             }
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
         });
-        
+
         $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
-        
+
         $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
             if($department == 'Local' && $attendance->date->isSaturday()){
                 $diff = 5 * 60 - $attendance->duration();

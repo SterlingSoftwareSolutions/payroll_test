@@ -28,11 +28,12 @@ class CreateEmployeesTable extends Migration
             $table->string('nic')->nullable();
             $table->string('c_number')->nullable();
             $table->string('j_title')->nullable();
+            $table->string('j_status')->nullable();
             $table->date('joinedDate')->nullable();
             $table->date('appointmentDate')->nullable();
             $table->date('createdDate')->nullable();
-            $table->string('status')->nullable();            
-            $table->string('address')->nullable();  
+            $table->string('status')->nullable();
+            $table->string('address')->nullable();
             $table->string('account_name')->nullable();
             $table->string('account_number')->nullable();
             $table->string('bank_name')->nullable();
