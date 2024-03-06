@@ -77,7 +77,6 @@ border-color: red !important;
                                 id="work_id" name="work_id" required>
                         </div>
                     </div>
-
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">ETF No <span class="text-danger">*</span></label>
