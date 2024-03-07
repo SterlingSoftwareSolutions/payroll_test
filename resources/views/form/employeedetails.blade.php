@@ -42,7 +42,7 @@
                                 {{-- <button type="submit" class="edit-icon">
                                     <i class="fa fa-pencil"></i>
                                 </button> --}}
-                                <p class="text-secondary">{{ $employee->j_title }}</p>
+                                <p class="text-secondary">{{ $job_title }}</p>
                             </h3>
                     </div>
 
@@ -58,6 +58,14 @@
                                     <td class="title">Phone</td>
                                     <td class="text">{{ $employee->c_number }}</td>
                                 </tr>
+                                <tr class="table-default">
+                                    <td class="title">Work ID</td>
+                                    <td class="text">{{ $employee->work_id }}</td>
+                                    <td></td>
+
+                                    <td class="title">ETF NO</td>
+                                    <td class="text">{{ $employee->etf_no }}</td>
+                                </tr>
                                 <tr>
                                     <td class="title">Date Of Join</td>
                                     <td class="text">{{ $employee->joinedDate->format('Y-m-d') }}</td>
@@ -69,8 +77,8 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td class="title">Address</td>
-                                    <td class="text">{{ $employee->address }}</td>
+                                    {{-- <td class="title">Address</td>
+                                    <td class="text">{{ $employee->address }}</td> --}}
                                 </tr>
                             </table>
                         </div>
@@ -190,7 +198,7 @@
 
         <div class="tab-content">
             <!-- Profile Info Tab -->
-            <div id="emp_profile" class="pro-overview tab-pane fade show active">
+            <div id="emp_profile" class="pro-overview tab-pane fade show active  m-3">
                 <div class="content container-fluid mt-4">
                     <div class="card profile-box flex-fill">
                         <div class="card-body">
@@ -229,43 +237,50 @@
                                             <td class="title">Full Name</td>
                                             <td class="text">{{ $employee->full_name }}</td>
                                             <td></td>
-                                            <td class="title">Job title</td>
-                                            <td class="text">{{ $employee->j_title }}</td>
+                                            <td class="title">Work ID</td>
+                                            <td class="text">{{ $employee->work_id }}</td>
                                         </tr>
                                         <tr>
                                             <td class="title">Date of Birth</td>
                                             <td class="text">{{ $employee->dob->format('Y-m-d') }}</td>
                                             <td></td>
-                                            <td class="title">Created Date</td>
-                                            <td class="text">{{ $employee->createdDate->format('Y-m-d') }}</td>
+                                            <td class="title">ETF NO</td>
+                                            <td class="text">{{ $employee->etf_no }}</td>
                                         </tr>
                                         <tr>
                                             <td class="title">NIC</td>
                                             <td class="text">{{ $employee->nic }}</td>
                                             <td></td>
-                                            <td class="title">Joined Date</td>
-                                            <td class="text">{{ $employee->joinedDate->format('Y-m-d') }}</td>
+                                            <td class="title">Job title</td>
+                                            <td class="text">{{ $job_title }}</td>
                                         </tr>
                                         <tr>
                                             <td class="title">Phone</td>
                                             <td class="text">{{ $employee->c_number }}</td>
                                             <td></td>
-                                            <td class="title">Status</td>
-                                            <td class="text">{{ $employee->status }}</td>
+                                            <td class="title">Job Status</td>
+                                            <td class="text">{{ $job_status }}</td>
                                         </tr>
                                         <tr>
                                             <td class="title">Email</td>
                                             <td class="text">{{ $employee->email }}</td>
                                             <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="title">Status</td>
+                                            <td class="text">{{ $employee->status }}</td>
                                         </tr>
                                         <tr>
                                             <td class="title">Address</td>
                                             <td class="text">{{ $employee->address }}</td>
                                             <td></td>
+                                            <td class="title">Created Date</td>
+                                            <td class="text">{{ $employee->createdDate->format('Y-m-d') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="title"></td>
+                                            <td class="text"></td>
                                             <td></td>
-                                            <td></td>
+                                            <td class="title">Joined Date</td>
+                                            <td class="text">{{ $employee->joinedDate->format('Y-m-d') }}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -273,10 +288,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row ">
                     <div class="col-md-6 d-flex">
                         <div class="content container-fluid">
-                            <div class="card profile-box flex-fill">
+                            <div class="card profile-box flex-fill ">
                                 <div class="card-body">
                                     <div class="m-10 ml-4 basis-1/2">
                                         <form method="POST"
@@ -315,7 +330,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 d-flex">
-                        <div class="card profile-box flex-fill">
+                        <div class="card profile-box flex-fill mr-3">
                             <div class="card-body">
                                 <form method="POST" action="{{ route('form.employee.edit', $employee->employee_id) }}">
                                     @csrf
@@ -335,6 +350,44 @@
                                     <tr>
                                         <td class="title">Salary Type</td>
                                         <td class="text">Monthly</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 d-flex">
+                <div class="content container-fluid">
+                    <div class="card profile-box flex-fill ">
+                        <div class="card-body">
+                            <div class="m-10 ml-4 basis-1/2">
+                                <form method="POST"
+                                    action="{{ route('form.employee.edit', $employee->employee_id) }}">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <h3 class="card-title ml-2">Annual Leaves
+                                        <button type="submit" class="edit-icon">
+                                            <i class="fa fa-pencil"></i>
+                                        </button>
+                                    </h3>
+                                </form>
+
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td class="title">Last Name</td>
+                                        <td class="text">{{ $employee->l_name }}</td>
+                                        <td></td>
+                                        <td class="title">Department</td>
+                                        <td class="text">{{ $employee->d_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="title">Full Name</td>
+                                        <td class="text">{{ $employee->full_name }}</td>
+                                        <td></td>
+                                        <td class="title">Work ID</td>
+                                        <td class="text">{{ $employee->work_id }}</td>
                                     </tr>
                                 </table>
                             </div>
