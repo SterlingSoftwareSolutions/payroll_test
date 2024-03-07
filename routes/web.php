@@ -179,11 +179,15 @@ Route::controller(JobController::class)->group(function () {
 
 // ----------------------------- form employee ------------------------------//
 Route::controller(EmployeeController::class)->group(function () {
+    Route::get('/get-job-titles/{departmentId}', [EmployeeController::class, 'getJobTitles']);
+Route::get('/get-job-statuses/{departmentId}',  [EmployeeController::class, 'getJobStatuses']);
+
 
     // Example route definitions (update as needed)
     Route::get('all/employee/card', 'cardAllEmployee')->middleware('auth')->name('all/employee/card');
     Route::get('all/employee/list', 'listAllEmployee')->middleware('auth')->name('all/employee/list');
     Route::post('all/employee/save', 'saveRecord')->middleware('auth')->name('all/employee/save');
+    Route::get('all/employee/save', 'saveRecord')->middleware('auth')->name('all/employee/save');
     Route::get('all/employee/view/edit/{employee_id}', 'viewRecord');
     // Route::post('all/employee/update', 'updateRecord')->middleware('auth')->name('all/employee/update');
     Route::get('all/employee/delete/{employee_id}', 'deleteRecord')->middleware('auth');
@@ -217,6 +221,9 @@ Route::controller(EmployeeController::class)->group(function () {
     Route::post('form/overtime/update', 'updateRecordOverTime')->middleware('auth')->name('form/overtime/update');
     Route::post('form/overtime/delete', 'deleteRecordOverTime')->middleware('auth')->name('form/overtime/delete');
 });
+Route::get('/get-job-statuses', [EmployeeController::class,'getJobStatuses'])->name('get-job-statuses');
+Route::get('/get-job-titles', [EmployeeController::class,'getJobTitles'])->name('get-job-titles');
+
 
 // ----------------------------- profile employee ------------------------------//
 Route::controller(EmployeeController::class)->group(function () {
@@ -260,7 +267,7 @@ Route::controller(AttendanceController::class)->group(function () {
     // Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
 });
 
-//Attendance Report 
+//Attendance Report
 Route::controller(AttendanceReportController::class)->group(function () {
     Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index'); //for report
 

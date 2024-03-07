@@ -74,29 +74,18 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">Work ID <span class="text-danger">*</span></label>
                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                             id="work_id" name="work_id" required>
+                                id="work_id" name="work_id" required>
                         </div>
                     </div>
-
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">ETF No <span class="text-danger">*</span></label>
                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                             id="etf_no" name="etf_no" required>
+                                id="etf_no" name="etf_no" required>
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
-                            <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                id="d_name" name="d_name">
-                                @foreach ($departments as $department => $name)
-                                    <option value="{{ $department }}">{{ $name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
+
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">First Name <span class="text-danger">*</span></label>
@@ -122,8 +111,8 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">DOB <span class="text-danger">*</span></label>
                             <div class="cal-icon">
-                                <input class="form-control datetimepicker" tabindex="-1" aria-hidden="true" id="dob"
-                                    name="dob" required>
+                                <input class="form-control datetimepicker" tabindex="-1" aria-hidden="true"
+                                    id="dob" name="dob" required>
                             </div>
                         </div>
                     </div>
@@ -268,11 +257,107 @@ border-color: red !important;
                     </script>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
-                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                id="j_title" name="j_title" required>
+                            <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
+                            <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="d_name" name="d_name">
+                                @foreach ($departments as $department => $name)
+                                    <option value="{{ $department }}">{{ $name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Job Status <span class="text-danger">*</span></label>
+                            <select class="form-control" style="width: 100%;" id="j_status" name="j_status" required>
+                                <option value="" selected disabled>Select a Job Status</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        $(document).ready(function() {
+                            $('#d_name').change(function() {
+                                var selectedDepartment = $(this).val();
+                                var jobStatusDropdown = $('#j_status');
+                                jobStatusDropdown.empty();
+                                // console.log(selectedDepartment);
+                                // if (selectedDepartment === 'D000002' || selectedDepartment === 'D000001') {
+                                $.ajax({
+                                    url: '/get-job-statuses',
+                                    method: 'GET',
+                                    data: {
+                                        department_id: selectedDepartment
+                                    },
+                                    success: function(response) {
+                                    var uniqueStatusNames = new Set();
+                                    response.forEach(function(status) {
+                                        uniqueStatusNames.add(status);
+                                    });
+
+                                    // Clear existing options
+                                    jobStatusDropdown.empty();
+
+                                    // Add unique status names as options
+                                    uniqueStatusNames.forEach(function(statusName) {
+                                        jobStatusDropdown.append('<option value="' + statusName.id + '">' + statusName.status_name + '</option>');
+                                    });
+                                },
+
+
+                                    error: function(xhr, status, error) {
+                                        console.log('Error: ' + error); // Log the error for debugging
+                                    }
+                                });
+                                // }
+                            });
+                        });
+                    </script>
+
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
+                            <select class="form-control" style="width: 100%;" id="j_title" name="j_title" required>
+                                <option value="" selected disabled>Select a Job Title</option>
+                            </select>
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            $('#d_name, #j_status').change(function() {
+                                var selectedDepartment = $('#d_name').val();
+                                var selectedJobStatus = $('#j_status').val();
+                                var jobTitleDropdown = $('#j_title');
+                                jobTitleDropdown.empty();
+                                console.log(selectedJobStatus);
+                                $.ajax({
+                                    url: '/get-job-titles',
+                                    method: 'GET',
+                                    data: {
+                                        department_id: selectedDepartment,
+                                        job_status_id: selectedJobStatus
+                                    },
+                                    success: function(response) {
+                                        // console.log(response);
+                                        // Clear existing options
+                                        jobTitleDropdown.empty();
+
+                                        // Add job titles as options
+                                        response.forEach(function(jobTitle) {
+                                            jobTitleDropdown.append('<option value="' + jobTitle.id +
+                                                '">' + jobTitle.title_name + '</option>');
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.log('Error: ' + error); // Log the error for debugging
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Joined Date <span class="text-danger">*</span></label>
@@ -545,7 +630,7 @@ border-color: red !important;
                                                             if (selectedType === "increments") {
                                                                 var options = ["Incentive 1", "Incentive 2", "Others"];
                                                             } else if (selectedType === "deductions") {
-                                                                var options = ["Hostal", "Salary Advanced",  "Electricity", "Loan", "Others"];
+                                                                var options = ["Hostal", "Salary Advanced", "Electricity", "Loan", "Others"];
                                                             }
 
                                                             // Add the options to the "Name" input field
@@ -703,7 +788,7 @@ border-color: red !important;
 
                                             // Populate options based on the selected "Type"
                                             if (selectedType === "increments") {
-                                                var options = [ "Incentive 1", "Incentive 2", "Others"];
+                                                var options = ["Incentive 1", "Incentive 2", "Others"];
                                             } else if (selectedType === "deductions") {
                                                 var options = ["Hostal", "Salary Advance", "Electricity", "Loan", "Others"];
                                             }
