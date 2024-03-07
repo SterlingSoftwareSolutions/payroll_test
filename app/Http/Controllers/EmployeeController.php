@@ -48,7 +48,7 @@ class EmployeeController extends Controller
         return redirect()->back()->with('success', 'Salary details submitted successfully!');
     }
 
-// 
+//
     // all employee list
     public function listAllEmployee(Request $request)
     {
@@ -260,6 +260,9 @@ public function getJobStatuses(Request $request)
 
         $employee = Employee::where('employee_id', $employee_id)->first();
         // dd($employee);
+        $job_title = JobTitle::where('id', $employee->j_title)->value('title_name');
+        $job_status = JobStatus::where('id', $employee->j_status)->value('status_name');
+        // dd($job_status);
         $salary = SalaryDetail::where('employee_id', $employee_id)->get();
 
         $departments = department::all();
@@ -312,7 +315,9 @@ public function getJobStatuses(Request $request)
             'extraDaysCount',
             'employeeHolidayCounts',
             'totDays',
-            'weekendCount'
+            'weekendCount',
+            'job_title',
+            'job_status',
         ));
     }
 
@@ -323,10 +328,15 @@ public function EditEmployee($user)
     $employee_id = $user;
 
     $userList = DB::table('users')->get();
+
     $permission_lists = DB::table('permission_lists')->get();
 
     // Retrieve the employee and salary details
     $employee = Employee::where('employee_id', $employee_id)->first();
+    //  dd($employee);
+        $job_title = JobTitle::where('id', $employee->j_title)->first();
+        $job_status = JobStatus::where('id', $employee->j_status)->first();
+        // dd($job_status);
     $salary = SalaryDetail::where('employee_id', $employee_id)->get();
 
     // Format the date in the salary details
@@ -337,7 +347,7 @@ public function EditEmployee($user)
 
     $departments = Department::all();
 
-    return view('form.edit.employeeedit', compact('employee', 'departments', 'salary'));
+    return view('form.edit.employeeedit', compact('employee', 'departments', 'salary','job_title','job_status'));
 }
 
 
@@ -372,6 +382,7 @@ public function EditEmployee($user)
             'email' => 'required',
             'address' => 'required',
             'j_title' => 'required',
+            'j_status' => 'required',
             'joinedDate' => 'required',
             'status' => 'required',
             'account_name' => 'required',
@@ -411,6 +422,7 @@ public function EditEmployee($user)
             $employee->dob = $request->input('dob');
             $employee->gender = $request->input('gender');
             $employee->j_title = $request->input('j_title');
+            $employee->j_status = $request->input('j_status');
             $employee->joinedDate = $request->input('joinedDate');
             $employee->appointmentDate = $request->input('appointmentDate');
             $employee->status = $request->input('status');
@@ -432,57 +444,59 @@ public function EditEmployee($user)
     }
     public function updateSalaryDetails($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
     {
-        $arraySize = count($dates);
+        if ($dates !== null) {
+            $arraySize = count($dates);
 
-        // Fetch existing salary records for the employee
-        $salaryRecords = SalaryDetail::where('employee_id', $employee_id)->get();
+            // Fetch existing salary records for the employee
+            $salaryRecords = SalaryDetail::where('employee_id', $employee_id)->get();
 
-        // Filter the collection to get records with the specific employee_id
-        $filteredRecords = $salaryRecords->where('employee_id', $employee_id);
+            // Filter the collection to get records with the specific employee_id
+            $filteredRecords = $salaryRecords->where('employee_id', $employee_id);
 
-        // Extract only the "id" column values from the filtered records
-        $filteredIds = $filteredRecords->pluck('id')->toArray();
+            // Extract only the "id" column values from the filtered records
+            $filteredIds = $filteredRecords->pluck('id')->toArray();
 
-        // Iterate over the array of "types" and update or add records
-        for ($i = 0; $i < $arraySize; $i++) {
-            // Check if there is a record to update
-            if (isset($filteredIds[$i])) {
-                if ($incrementAmounts[$i] == 0) {
-                    // Delete the record if $incrementAmounts is 0
-                    SalaryDetail::destroy($filteredIds[$i]);
-                } else {
-                    // Update the columns in the existing record with the corresponding "id"
-                    $recordToUpdate = SalaryDetail::find($filteredIds[$i]);
+            // Iterate over the array of "types" and update or add records
+            for ($i = 0; $i < $arraySize; $i++) {
+                // Check if there is a record to update
+                if (isset($filteredIds[$i])) {
+                    if ($incrementAmounts[$i] == 0) {
+                        // Delete the record if $incrementAmounts is 0
+                        SalaryDetail::destroy($filteredIds[$i]);
+                    } else {
+                        // Update the columns in the existing record with the corresponding "id"
+                        $recordToUpdate = SalaryDetail::find($filteredIds[$i]);
 
-                    if ($recordToUpdate) {
-                        // Sanitize and update the record fields
-                        $recordToUpdate->type = $types[$i];
-                        $recordToUpdate->increment_name = $incrementNames[$i];
-                        $recordToUpdate->increment_amount = $incrementAmounts[$i];
+                        if ($recordToUpdate) {
+                            // Sanitize and update the record fields
+                            $recordToUpdate->type = $types[$i];
+                            $recordToUpdate->increment_name = $incrementNames[$i];
+                            $recordToUpdate->increment_amount = $incrementAmounts[$i];
 
-                        // Validate and format the date
-                        $formattedDate = Carbon::createFromFormat('d-m-Y', $dates[$i]);
-                        if ($formattedDate) {
-                            $recordToUpdate->date = $formattedDate->format('Y-m-d');
-                        } else {
-                            // Handle date format error, e.g., throw an exception
-                            // return response()->json(['error' => 'Invalid date format.'], 400);
+                            // Validate and format the date
+                            $formattedDate = Carbon::createFromFormat('d-m-Y', $dates[$i]);
+                            if ($formattedDate) {
+                                $recordToUpdate->date = $formattedDate->format('Y-m-d');
+                            } else {
+                                // Handle date format error, e.g., throw an exception
+                                // return response()->json(['error' => 'Invalid date format.'], 400);
+                            }
+
+                            // Save the updated record
+                            $recordToUpdate->save();
                         }
-
-                        // Save the updated record
-                        $recordToUpdate->save();
                     }
-                }
-            } else {
-                if ($incrementAmounts[$i] != 0) {
-                    // Create a new record for cases where there is no corresponding record to update
-                    SalaryDetail::create([
-                        'employee_id' => $employee_id,
-                        'type' => $types[$i],
-                        'increment_name' => $incrementNames[$i],
-                        'increment_amount' => $incrementAmounts[$i],
-                        'date' => Carbon::createFromFormat('d-m-Y', $dates[$i])->format('Y-m-d'),
-                    ]);
+                } else {
+                    if ($incrementAmounts[$i] != 0) {
+                        // Create a new record for cases where there is no corresponding record to update
+                        SalaryDetail::create([
+                            'employee_id' => $employee_id,
+                            'type' => $types[$i],
+                            'increment_name' => $incrementNames[$i],
+                            'increment_amount' => $incrementAmounts[$i],
+                            'date' => Carbon::createFromFormat('d-m-Y', $dates[$i])->format('Y-m-d'),
+                        ]);
+                    }
                 }
             }
         }
