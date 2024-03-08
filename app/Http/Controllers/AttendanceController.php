@@ -24,73 +24,6 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class AttendanceController extends Controller
 {
-    public function index()
-    {
-        // dd($request);
-        $query = Employee::query();
-        $current_month = now()->month;
-        $current_year = now()->year;
-
-        $employees = $query->get();
-       
-        $departments = Department::all();
-
-      
-        $holiday = Holiday::all();
-        $attendances = Attendance::with('employee', 'holiday')
-            ->whereMonth('date', $current_month)
-            ->whereYear('date', $current_year)
-            ->get();
-
-
-        $employeeHolidayCounts = [];                //for holidays count
-
-        $attendances->each(function ($attendance) use ($holiday, &$employeeHolidayCounts) {
-            $attendanceDate = date('d-m-Y', strtotime($attendance->date));
-
-            $attendance->is_holiday = $holiday->contains('date_holiday', $attendanceDate);
-
-            $employeeId = $attendance->employee_id;
-            $employeeHolidayCounts[$employeeId] = ($employeeHolidayCounts[$employeeId] ?? 0) + ($attendance->is_holiday ? 1 : 0);
-
-            $punchIn = new DateTime($attendance->punch_in);
-            $punchOut = new DateTime($attendance->punch_out);
-            $workHours = $punchOut->diff($punchIn)->format('%H:%I');
-
-            $regularWorkingHours = new DateTime('10:00');
-            $workHours = new DateTime($punchOut->diff($punchIn)->format('%H:%I'));
-            $overtime = $workHours > $regularWorkingHours ? $workHours->diff($regularWorkingHours)->format('%H:%I') : '00:00';
-
-            $attendance->overtime = $overtime;
-        });
-      
-        $attendanceCounts = DB::table('attendances')                    //attendance count
-            ->select('employee_id', DB::raw('count(*) as attendance_count'))
-            ->groupBy('employee_id')
-            ->get();
-        
-        $totDays = $this->getDaysInMonth($current_month, $current_year);
-        $weekendCount = $this->getWeekendCount($current_month, $current_year);
-
-        $extraDaysCount = $attendances->filter(function ($attendance) {
-            $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
-            return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
-        })->count();
-
-
-
-        $departments = department::select('id', 'department')->distinct()->get();
-
-
-
-        return view('reports.attendance-report', compact([
-            'departments', 'employees', 'attendances',
-            'attendanceCounts', 'holiday', 'current_month', 'current_year', 'totDays',
-            'weekendCount', 'extraDaysCount', 'employeeHolidayCounts'
-        ]));
-    }
-
-
     private function getDaysInMonth($month, $year)
     {
         if ($month == "02") {
@@ -120,6 +53,8 @@ class AttendanceController extends Controller
         }
         return $weekendCount;
     }
+
+
 
     public function attendance()
     {
@@ -442,7 +377,7 @@ class AttendanceController extends Controller
 
                 // Check if the employee has punched out
                 if(!isset($attendance['punch_out'])){
-                    $errors [$date] [$WorkId] = "Punch out time not found.";
+                    $errors [$date] [$WorkId] = "$employee->f_name - Punch out time not found.";
                     continue;
                 }
 
