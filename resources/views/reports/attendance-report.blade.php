@@ -117,7 +117,9 @@
                                     <th>Working days</th>
                                     <th>OT</th>
                                     <th>Extra days</th>
-                                    <th>Action</th>
+                                    <th>Annual Leaves</th>
+                                    
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -163,10 +165,30 @@
                                         </td>
                                         <td>{{ $attendance->overtime ?? 'N/A' }}</td>
                                         <td>{{ $extraDaysCount }}</td>
-                                        <td>
+                                        <td>Annual Leaves</td>
+                                        {{-- <td>
                                             <a href="/form/attendance/download/{{ $attendance->employee->id }}"><button>Download
                                                     PDF</button></a>
+                                        </td> --}}
+
+
+                                        <td class="text-center">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <i class="material-icons">more_vert</i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                  
+
+                                                     <a href="{{ route('reports.edit.attendancereportedit', $attendance->employee->id) }}"
+                                                        class="dropdown-item userUpdate" data-toggle="#"
+                                                        data-target="#"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                     
+                                                </div>
+                                            </div>
                                         </td>
+                                        
+
                                     </tr>
                                 @endforeach
                             </tbody>
