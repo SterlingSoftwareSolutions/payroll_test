@@ -46,7 +46,6 @@
                             </h3>
                     </div>
 
-
                     <div class="form-row m-2">
                         <div class="form-group col-md-12">
                             <table class="table table-borderless">
@@ -181,20 +180,20 @@
         </div>
 
         {{-- <script>
-        $(document).ready(function() {
-            // Handle tab click event
-            $('.nav-link').click(function() {
-                // Remove active class from all tabs
-                $('.nav-link').removeClass('active');
-                // Remove active class from all labels
-                $('.custom-label').removeClass('active');
+            $(document).ready(function() {
+                // Handle tab click event
+                $('.nav-link').click(function() {
+                    // Remove active class from all tabs
+                    $('.nav-link').removeClass('active');
+                    // Remove active class from all labels
+                    $('.custom-label').removeClass('active');
 
-                // Add active class to the clicked tab and its label
-                $(this).addClass('active');
-                $(this).find('.custom-label').addClass('active');
+                    // Add active class to the clicked tab and its label
+                    $(this).addClass('active');
+                    $(this).find('.custom-label').addClass('active');
+                });
             });
-        });
-    </script> --}}
+        </script> --}}
 
         <div class="tab-content">
             <!-- Profile Info Tab -->
@@ -214,7 +213,6 @@
                                     </h3>
                                 </form>
                             </div>
-
 
                             <div class="form-row m-2">
                                 <div class="form-group col-md-12">
@@ -259,7 +257,7 @@
                                             <td class="text">{{ $employee->c_number }}</td>
                                             <td></td>
                                             <td class="title">Job Status</td>
-                                            <td class="text">{{ $job_status }}</td>
+                                            <td class="text">{{ $job_status->status_name }}</td>
                                         </tr>
                                         <tr>
                                             <td class="title">Email</td>
@@ -357,13 +355,13 @@
                     </div>
                 </div>
             </div>
+            @if ($annualLeaves=='true')
             <div class="col-md-12 d-flex">
                 <div class="content container-fluid">
-                    <div class="card profile-box flex-fill ">
+                    <div class="card profile-box flex-fill">
                         <div class="card-body">
                             <div class="m-10 ml-4 basis-1/2">
-                                <form method="POST"
-                                    action="{{ route('form.employee.edit', $employee->employee_id) }}">
+                                <form method="POST" action="{{ route('form.employee.edit', $employee->employee_id) }}">
                                     @csrf
                                     @method('PUT')
 
@@ -373,7 +371,6 @@
                                         </button>
                                     </h3>
                                 </form>
-
                                 <table class="table table-borderless">
                                     <tr>
                                         <td class="title">Last Name</td>
@@ -395,6 +392,8 @@
                     </div>
                 </div>
             </div>
+            @endif
+
             <!-- /Profile Info Tab -->
             <!-- Salary Tab -->
             <div class="tab-pane fade" id="emp_salary">
@@ -465,10 +464,10 @@
                                             </td>
                                             <td>{{ $weekendCount }}</td>
                                             {{-- <td>
-                @if ($attendance->is_holiday)
-                <span class="badge badge-warning badge-pill float-right">{{ $attendance->holiday_name }}</span>
-                @endif
-            </td> --}}
+                                                @if ($attendance->is_holiday)
+                                                <span class="badge badge-warning badge-pill float-right">{{ $attendance->holiday_name }}</span>
+                                                @endif
+                                            </td> --}}
                                             <td>{{ $employeeHolidayCounts[$attendance->employee_id] ?? 0 }}</td>
                                             <td>{{ $attendanceCounts->where('employee_id', optional($attendance->employee)->id)->first()->attendance_count ?? 0 }}
                                             </td>
