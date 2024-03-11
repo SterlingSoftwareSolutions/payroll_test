@@ -28,6 +28,7 @@ return new class extends Migration
      */
     public function down()
     {
-        DB::unprepared('DROP TRIGGER "id_estimate"');
+        DB::unprepared('DROP TRIGGER id_estimate');
     }
+    
 };

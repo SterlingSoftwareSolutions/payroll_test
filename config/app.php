@@ -1,5 +1,6 @@
 <?php
 
+use Barryvdh\DomPDF\ServiceProvider;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -69,7 +70,9 @@ return [
     |
     */
 
-    'timezone' => 'Asia/Phnom_Penh',
+    
+    'timezone' => 'Asia/Colombo',
+
 
     /*
     |--------------------------------------------------------------------------
@@ -194,5 +197,18 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'Toastr'  => Brian2694\Toastr\Facades\Toastr::class,
     ])->toArray(),
+
+
+
+
+
+
+
+
+
+
+    
+
+ 
 
 ];

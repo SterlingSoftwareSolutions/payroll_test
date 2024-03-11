@@ -1,4 +1,3 @@
-
 @extends('layouts.master')
 @section('content')
     <!-- Page Wrapper -->
@@ -16,11 +15,12 @@
                         </ul>
                     </div>
                     <div class="col-auto float-right ml-auto">
-                        <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_holiday"><i class="fa fa-plus"></i> Add Holiday</a>
+                        <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_holiday"><i
+                                class="fa fa-plus"></i> Add Holiday</a>
                     </div>
                 </div>
             </div>
-			<!-- /Page Header -->
+            <!-- /Page Header -->
             {{-- message --}}
             {!! Toastr::message() !!}
 
@@ -35,44 +35,39 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Title </th>
+                                    <th>Holiday ID</th>
+                                    <th>Name </th>
                                     <th>Holiday Date</th>
                                     <th>Day</th>
-                                    <th class="text-right">Action</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($holiday as $key=>$items )
-                                    @if(($today_date > $items->date_holiday))
-                                        <tr class="holiday-completed">
-                                            <td>{{ ++$key }}</td>
-                                            <td>{{ $items->name_holiday }}</td>
-                                            <td>{{date('d F, Y',strtotime($items->date_holiday)) }}</td>
-                                            <td>{{date('l',strtotime($items->date_holiday)) }}</td>
-                                            <td></td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                                @foreach ($holiday as $key=>$items )
-                                    @if(($today_date <= $items->date_holiday))
-                                        <tr class="holiday-upcoming">
-                                            <td hidden class="id">{{ $items->id }}</td>
-                                            <td>{{ ++$key }}</td>
-                                            <td class="holidayName">{{ $items->name_holiday }}</td>
-                                            <td hidden class="holidayDate">{{$items->date_holiday }}</td>
-                                            <td>{{date('d F, Y',strtotime($items->date_holiday)) }}</td>
-                                            <td>{{date('l',strtotime($items->date_holiday)) }}</td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item userUpdate" data-toggle="modal" data-id="'.$items->id.'" data-target="#edit_holiday"><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_holiday"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                                                    </div>
+
+                                @foreach ($holiday as $key => $items)
+                                    <tr>
+                                        <td>{{ ++$key }}</td>
+                                        <td class="text-left id">{{ $items->holiday_id }}</td>
+                                        <td class="holidayName holiday-name">{{ $items->name_holiday }}</td>
+                                        <td class="holiday holidayDate">
+                                            {{ date('d F, Y', strtotime($items->date_holiday)) }}</td>
+                                        <td>{{ date('l', strtotime($items->date_holiday)) }}</td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
+                                                    aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item userUpdate" data-toggle="modal"
+                                                        data-id="'.$items->holiday_id.'" data-target="#edit_holiday"><i
+                                                            class="fa fa-pencil m-r-5"></i> Edit</a>
+                                                    <a class="dropdown-item userDelete" data-toggle="modal"
+                                                        ata-id="'.$items->holiday_id.'" data-target="#delete_holiday"><i
+                                                            class="fa fa-trash-o m-r-5"></i>
+                                                        Delete</a>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    @endif
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -95,13 +90,19 @@
                         <form action="{{ route('form/holidays/save') }}" method="POST">
                             @csrf
                             <div class="form-group">
+                                <label>Holiday ID <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" id="holidayId" name="holidayId"
+                                    value="{{ $nextUserId }}" readonly>
+                            </div>
+                            <div class="form-group">
                                 <label>Holiday Name <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" id="nameHoliday" name="nameHoliday">
+                                <input class="form-control" type="text" id="nameHoliday" name="nameHoliday" required>
                             </div>
                             <div class="form-group">
                                 <label>Holiday Date <span class="text-danger">*</span></label>
                                 <div class="cal-icon">
-                                    <input class="form-control datetimepicker" type="text" id="holidayDate" name="holidayDate">
+                                    <input class="form-control datetimepicker" type="text" id="holidayDate"
+                                        name="holidayDate" required>
                                 </div>
                             </div>
                             <div class="submit-section">
@@ -127,15 +128,21 @@
                     <div class="modal-body">
                         <form action="{{ route('form/holidays/update') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="id" id="e_id" value="">
+                            <div class="form-group">
+                                <label>Holiday ID <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="e_id" name="holidayId"
+                                    value=""readonly>
+                            </div>
                             <div class="form-group">
                                 <label>Holiday Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="holidayName_edit" name="holidayName" value="">
+                                <input type="text" class="form-control" id="holidayName_edit" name="holidayName"
+                                    value="">
                             </div>
                             <div class="form-group">
                                 <label>Holiday Date <span class="text-danger">*</span></label>
                                 <div class="cal-icon">
-                                    <input type="text" class="form-control datetimepicker" id="holidayDate_edit" name="holidayDate" value="">
+                                    <input class="form-control datetimepicker" type="text" id="holidayDate_edit"
+                                        name="holidayDate" required>
                                 </div>
                             </div>
                             <div class="submit-section">
@@ -158,37 +165,68 @@
                             <p>Are you sure want to delete?</p>
                         </div>
                         <div class="modal-btn delete-action">
-                            <div class="row">
-                                <div class="col-6">
-                                    <a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
+                            <form action="{{ route('form/holidays/delete') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="id" class="holiday_id" value=""
+                                    id="holidayd_id">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button type="submit"
+                                            class="btn  continue-btn submit-btn delete-btn">Delete</button>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="javascript:void(0);" data-dismiss="modal"
+                                            class="btn  cancel-btn">Cancel</a>
+                                    </div>
                                 </div>
-                                <div class="col-6">
-                                    <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- /Delete Holiday Modal -->
-       
+
     </div>
     <!-- /Page Wrapper -->
-    @section('script')
+@section('script')
     <script>
         document.getElementById("year").innerHTML = new Date().getFullYear();
     </script>
     {{-- update js --}}
     <script>
-        $(document).on('click','.userUpdate',function()
-        {
+        $(document).on('click', '.userUpdate', function() {
             var _this = $(this).parents('tr');
             $('#e_id').val(_this.find('.id').text());
             $('#holidayName_edit').val(_this.find('.holidayName').text());
-            $('#holidayDate_edit').val(_this.find('.holidayDate').text());  
+            var holidayDateText = _this.find('.holidayDate').text();
+
+            // Convert the text to a JavaScript Date object
+            var holidayDate = new Date(holidayDateText);
+
+            // Check if the conversion was successful and the date is valid
+            if (!isNaN(holidayDate.getTime())) {
+                // Construct the formatted date string (dd/mm/yyyy)
+                var formattedDate =
+                    ('0' + holidayDate.getDate()).slice(-2) + '/' +
+                    ('0' + (holidayDate.getMonth() + 1)).slice(-2) + '/' +
+                    holidayDate.getFullYear();
+
+                // Set the value of #holidayDate_edit with the formatted date
+                $('#holidayDate_edit').val(formattedDate);
+            } else {
+                console.error('Invalid date format:', holidayDateText);
+            }
+
+
         });
     </script>
-    @endsection
-
+    {{-- delete js --}}
+    <script>
+        $(document).on('click', '.userDelete', function() {
+            var _this = $(this).parents('tr');
+            $('#holidayd_id').val(_this.find('.id').text());
+        });
+    </script>
+@endsection
 @endsection
