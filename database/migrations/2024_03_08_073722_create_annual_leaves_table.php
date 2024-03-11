@@ -22,7 +22,6 @@ return new class extends Migration
             $table->integer('available')->default(0);
             $table->timestamps();
 
-            $table->foreign('employee_id')->references('id')->on('employees');
         });
 
     }
