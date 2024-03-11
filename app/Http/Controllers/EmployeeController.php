@@ -14,6 +14,7 @@ use App\Models\JobTitle;
 use App\Models\JobStatus;
 use App\Models\Attendance;
 use App\Models\department;
+use App\Models\AnnualLeaves;
 use App\Models\SalaryDetail;
 use Illuminate\Http\Request;
 use App\Models\module_permission;
@@ -257,6 +258,11 @@ class EmployeeController extends Controller
         $employee_id = $user;
 
         $employee = Employee::where('employee_id', $employee_id)->first();
+        $currentYear = date('Y');
+        $annual = AnnualLeaves::where('employee_id', $employee_id)
+            ->where('year', $currentYear)
+            ->first();
+
         // dd($employee);
         $job_title = JobTitle::where('id', $employee->j_title)->value('title_name');
         $job_status = JobStatus::where('id', $employee->j_status)->value('status_name');
@@ -334,6 +340,7 @@ class EmployeeController extends Controller
             'weekendCount',
             'job_title',
             'job_status',
+            'annual',
             'annualLeaves',
         ));
     }

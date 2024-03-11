@@ -131,7 +131,7 @@
                             var customLabel = el.querySelector('.custom-label');
                             customLabel.style.color = '#ed5a5b'; // Reset to the default color
                             customLabel.style.backgroundColor =
-                            'transparent'; // Reset background color
+                                'transparent'; // Reset background color
                         });
 
                         // Add the class to the clicked element
@@ -354,45 +354,37 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            @if ($annualLeaves=='true')
-            <div class="col-md-12 d-flex">
-                <div class="content container-fluid">
-                    <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <div class="m-10 ml-4 basis-1/2">
-                                <form method="POST" action="{{ route('form.employee.edit', $employee->employee_id) }}">
-                                    @csrf
-                                    @method('PUT')
+                @if ($annualLeaves == 'true')
+                    <div class="">
+                        <div class="content container-fluid">
+                            <div class="card profile-box flex-fill" style="min-height: 25px;">
+                                <div class="card-body">
+                                    <div class=" basis-1/2">
 
-                                    <h3 class="card-title ml-2">Annual Leaves
-                                        <button type="submit" class="edit-icon">
-                                            <i class="fa fa-pencil"></i>
-                                        </button>
-                                    </h3>
-                                </form>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td class="title">Last Name</td>
-                                        <td class="text">{{ $employee->l_name }}</td>
-                                        <td></td>
-                                        <td class="title">Department</td>
-                                        <td class="text">{{ $employee->d_name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="title">Full Name</td>
-                                        <td class="text">{{ $employee->full_name }}</td>
-                                        <td></td>
-                                        <td class="title">Work ID</td>
-                                        <td class="text">{{ $employee->work_id }}</td>
-                                    </tr>
-                                </table>
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td class="title">Year</td>
+                                                <td class="text">{{ $annual->year }}</td>
+                                                <td></td>
+                                                <td class="title">Total Leaves</td>
+                                                <td class="text">{{ $annual->total_leaves }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="title">Used Leaves</td>
+                                                <td class="text">{{ $annual->used_leaves }}</td>
+                                                <td></td>
+                                                <td class="title">Available</td>
+                                                <td class="text">{{ $annual->available }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
-            @endif
+
 
             <!-- /Profile Info Tab -->
             <!-- Salary Tab -->
@@ -453,7 +445,9 @@
                                 <tbody>
                                     @foreach ($attendances as $attendance)
                                         @php
-                                            $holiday = $holiday ? $holiday->where('date_holiday', $attendance->date)->first() : null;
+                                            $holiday = $holiday
+                                                ? $holiday->where('date_holiday', $attendance->date)->first()
+                                                : null;
                                         @endphp
                                         <tr data-employee-id="{{ $attendance->employee->id }}">
                                             <td>{{ optional($attendance->employee)->full_name ?? '' }}</td>
