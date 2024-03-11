@@ -195,17 +195,121 @@ class AttendanceReportController extends Controller
 
 
 
-    public function update(Request $request, $id)
-    {
-        $request->validate([]);
+    // public function update(Request $request, $id)
+    // {
+    //     $request->validate([]);
 
-        $attendanceReport = AttendanceReport::findOrFail($id);
+    //     $attendanceReport = AttendanceReport::findOrFail($id);
 
-        $attendanceReport->update([]);
+    //     $attendanceReport->update([]);
 
-        return redirect()->route('reports.attendance-report')->with('success', 'Attendance report updated successfully');
-    }
+    //     return redirect()->route('reports.attendance-report')->with('success', 'Attendance report updated successfully');
+    // }
 
+//     public function updateRepo(Request $request, $employeeId)
+// {
+//    // dd($request->all());
+//     $request->validate([
+//         'month_days' => 'required|integer',
+//         'month_weekends' => 'required|integer',
+//         "month_holidays" => 'required',
+//         "work_days" => 'required',
+//         "work_hours" => 'required',
+//         "absent_days" => 'required',
+//         "days_worked" => 'required',
+//         "days_worked_holiday" => 'required',
+//         "days_worked_weekend" => 'required',
+//         "days_worked_holiday_weekend" => 'required',
+//         "late_minutes" => 'required',
+//         "ot_minutes" => 'required',
+//         "annual_leaves_taken"=> 'required',
+//     ]);
+
+//     $attendanceReport = AttendanceReport::findOrFail($employeeId);
+//     // dd($request->all());
+
+//     $attendanceReport->update($request->all());
+
+
+//     // $attendanceReport->update ([
+//     //     "month_days" => $request->input('month_days'),
+//     //     "month_weekends" => $request->input('month_weekends'),
+//     //     "month_holidays" => $request->input('month_holidays'),
+//     //     "work_days" => $request->input('work_days'),
+//     //     "work_hours" => $request->input('work_hours'),
+//     //     "absent_days" => $request->input('absent_days'),
+//     //     "days_worked" => $request->input('days_worked'),
+//     //     "days_worked_holiday" => $request->input('days_worked_holiday'),
+//     //     "days_worked_weekend" => $request->input('days_worked_weekend'),
+//     //     "days_worked_holiday_weekend" => $request->input('days_worked_holiday_weekend'),
+//     //     "late_minutes" => $request->input('late_minutes'),
+//     //     "ot_minutes" => $request->input('ot_minutes'),
+//     //     "annual_leaves_taken"=> $request->input('annual_leaves_taken'),
+
+//     //     "month_days" =>  $request->input["month_days_count"],
+//     //     "month_weekends" => $request->input["month_weekends_count"],
+//     //     "month_holidays" =>  $request->input["month_holidays"]->count(),
+//     //     "work_days" => $request->input["work_days"],
+//     //     "work_hours" =>  $request->input["work_hours"],
+//     //     "absent_days" =>  $request->input["no_pay_leaves"],
+//     //     "days_worked" =>  $request->input["days_worked"]->count(),
+//     //     "days_worked_holiday" =>  $request->input["days_worked_holiday"]->count(),
+//     //     "days_worked_weekend" =>  $request->input["days_worked_weekend"]->count(),
+//     //     "days_worked_holiday_weekend" => $request->input["days_worked_holiday_weekend"]->count(),
+//     //     "late_minutes" =>  $request->input["late_minutes"],
+//     //     "ot_minutes" =>  $request->input["ot_minutes"],
+//     //     "annual_leaves_taken" => 0,
+//     // ]);
+
+
+   
+
+
+//     // return redirect()->route('reports.attendance-report')->with('success', 'Attendance report updated successfully');
+ 
+//     return redirect()->route('reports.attendance-report')->with('success', 'Attendance report updated successfully');
+
+// }
+
+public function updateAttendanceReport(Request $request, $employeeId)
+{
+    // Your form processing logic here...
+
+    // Example: Update the attendance report data
+    $attendanceData = AttendanceReport::find($employeeId);
+    $attendanceData->update([
+       
+        'date' => $request->input('date'),
+        // 'month_days' => $request->input('month_days'),
+        'employee_id' => $employeeId,
+
+        "month_holidays" => is_array($attendanceData["month_holidays"]) ? count($attendanceData["month_holidays"]) : 0,
+        "days_worked" => is_array($attendanceData["days_worked"]) ? count($attendanceData["days_worked"]) : 0,
+        "days_worked_holiday" => is_array($attendanceData["days_worked_holiday"]) ? count($attendanceData["days_worked_holiday"]) : 0,
+        "days_worked_weekend" => is_array($attendanceData["days_worked_weekend"]) ? count($attendanceData["days_worked_weekend"]) : 0,
+        "days_worked_holiday_weekend" => is_array($attendanceData["days_worked_holiday_weekend"]) ? count($attendanceData["days_worked_holiday_weekend"]) : 0,
+        
+            
+            "month_days" => $attendanceData["month_days"],
+            "month_weekends" => $attendanceData["month_weekends"],
+            // "month_holidays" => $attendanceData["month_holidays"]->count(),
+            "work_days" => $attendanceData["work_days"],
+            "work_hours" => $attendanceData["work_hours"],
+            "absent_days" => $attendanceData["absent_days"],
+            // "days_worked" => $attendanceData["days_worked"]->count(),
+            // "days_worked_holiday" => $attendanceData["days_worked_holiday"]->count(),
+            // "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
+            // "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"]->count(),
+            "late_minutes" => $attendanceData["late_minutes"],
+            "ot_minutes" => $attendanceData["ot_minutes"],
+     
+    ]);
+
+    // return redirect()->route('reports.attendance-report');
+    // return view('reports.attendance-report');
+    return view('reports.attendance-report', ['attendanceReport' => $attendanceData]);
+
+}
 
     public function generateAttendanceReport(Request $request, $employeeId)
     {
@@ -230,7 +334,7 @@ class AttendanceReportController extends Controller
             "month_holidays" => $attendanceData["month_holidays"]->count(),
             "work_days" => $attendanceData["work_days"],
             "work_hours" => $attendanceData["work_hours"],
-            "absent_days" => $attendanceData["no_pay_leaves"],
+            "absent_days" => $attendanceData["absent_days"],
             "days_worked" => $attendanceData["days_worked"]->count(),
             "days_worked_holiday" => $attendanceData["days_worked_holiday"]->count(),
             "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
@@ -239,7 +343,65 @@ class AttendanceReportController extends Controller
             "ot_minutes" => $attendanceData["ot_minutes"],
             "annual_leaves_taken" => 0,
         ]);
-//dd($attendanceReport);
+        dd($attendanceReport);
         return view('reports.attendance-report', ['attendanceData' => $attendanceData]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function editAttendanceReport($employeeId)
+    {
+       
+        $employee = Employee::find($employeeId);
+    
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found'], 404);
+        }
+    
+        $attendanceReport = AttendanceReport::where('employee_id', $employeeId)
+            ->where('date', today()->firstOfMonth())
+            ->first();
+    
+        return view('reports.attendance-report', ['employee' => $employee, 'attendanceReport' => $attendanceReport]);
+    }
+
+
+//     public function updateAttendanceReport(Request $request, $employeeId)
+
+
+// {
+//     // dd($request);
+
+//     $attendanceReport = AttendanceReport::where('employee_id', $employeeId)
+//         ->where('date', today()->firstOfMonth())
+//         ->first();
+
+//     if ($attendanceReport) {
+//         $attendanceReport->update($request->all());
+//         return redirect()->route('reports.attendance-report')->with('success', 'Attendance report updated successfully');
+//     }
+
+//     // return redirect()->back()->with('error', 'Attendance report not found');
+//     return redirect()->route('reports.attendance-report');
+// }
+
+
+
+
+
+
+    
 }
