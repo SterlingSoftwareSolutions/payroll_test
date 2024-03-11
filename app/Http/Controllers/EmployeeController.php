@@ -48,7 +48,7 @@ class EmployeeController extends Controller
         return redirect()->back()->with('success', 'Salary details submitted successfully!');
     }
 
-//
+    //
     // all employee list
     public function listAllEmployee(Request $request)
     {
@@ -91,46 +91,45 @@ class EmployeeController extends Controller
     }
     // Add employee view
     public function createEmployee()
-{
-    $departments = Department::pluck('department', 'id');
-    $maxId = \App\Models\Employee::max('employee_id');
+    {
+        $departments = Department::pluck('department', 'id');
+        $maxId = \App\Models\Employee::max('employee_id');
 
-    if ($maxId) {
-        $userId = $maxId;
-        $nextUserId = 'E' . str_pad((int)substr($userId, 1) + 1, 6, '0', STR_PAD_LEFT);
-    } else {
-        $nextUserId = 'E000001';
+        if ($maxId) {
+            $userId = $maxId;
+            $nextUserId = 'E' . str_pad((int)substr($userId, 1) + 1, 6, '0', STR_PAD_LEFT);
+        } else {
+            $nextUserId = 'E000001';
+        }
+
+        // Retrieve other data
+        $jobTitles = JobTitle::all();
+        $jobStatuses = JobStatus::all();
+        $departmentTitleStatuses = DepartmentTitleStatus::all();
+
+        return view('form.employeeform', compact('nextUserId', 'departments', 'jobTitles', 'jobStatuses', 'departmentTitleStatuses'));
     }
-
-    // Retrieve other data
-    $jobTitles = JobTitle::all();
-    $jobStatuses = JobStatus::all();
-    $departmentTitleStatuses = DepartmentTitleStatus::all();
-
-    return view('form.employeeform', compact('nextUserId', 'departments', 'jobTitles', 'jobStatuses', 'departmentTitleStatuses'));
-}
-public function getJobStatuses(Request $request)
-{
+    public function getJobStatuses(Request $request)
+    {
         // dd('$request');
-    // $departmentId = $request->input('department_id');
+        // $departmentId = $request->input('department_id');
 
-    // // Fetch job statuses based on the department ID
-    // $jobStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
+        // // Fetch job statuses based on the department ID
+        // $jobStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
 
-    // return response()->json($jobStatuses);
-    $departmentId = $request->input('department_id');
+        // return response()->json($jobStatuses);
+        $departmentId = $request->input('department_id');
 
-    // Fetch job statuses based on the department ID
-    $departmentTitleStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
+        // Fetch job statuses based on the department ID
+        $departmentTitleStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
 
-    // Extract job status IDs from the department title statuses
-    $jobStatusIds = $departmentTitleStatuses->pluck('job_status_id');
+        // Extract job status IDs from the department title statuses
+        $jobStatusIds = $departmentTitleStatuses->pluck('job_status_id');
 
-    // Fetch job statuses using the IDs
-    $jobStatuses = JobStatus::whereIn('id', $jobStatusIds)->get();
+        // Fetch job statuses using the IDs
+        $jobStatuses = JobStatus::whereIn('id', $jobStatusIds)->get();
 
-    return response()->json($jobStatuses);
-
+        return response()->json($jobStatuses);
     }
     public function getJobTitles(Request $request)
     {
@@ -204,7 +203,6 @@ public function getJobStatuses(Request $request)
         );
 
         return redirect()->route('all/employee/list');
-
     }
 
     public function salary_details($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
@@ -255,7 +253,7 @@ public function getJobStatuses(Request $request)
     }
     public function ViewEmployee($user)
     {
-
+        // dd($user);
         $employee_id = $user;
 
         $employee = Employee::where('employee_id', $employee_id)->first();
@@ -264,6 +262,25 @@ public function getJobStatuses(Request $request)
         $job_status = JobStatus::where('id', $employee->j_status)->value('status_name');
         // dd($job_status);
         $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+
+        $job_statusID = $employee->j_status;
+        $job_status = JobStatus::where('id', $job_statusID)->first();
+        // dd($job_status);
+        $status_name = strtoupper(trim($job_status->status_name));
+        // dd($status_name);
+        $joinedDate = $employee->joinedDate;
+        $oneYearAgo = now()->subYear();
+        // dd($oneYearAgo);
+
+        if ($status_name != "INTERN" && $joinedDate <= $oneYearAgo) {
+            // $status_name === "INTERN" ||  $joinedDate <= $oneYearAgo
+            $annualLeaves = "true";
+            // dd($annualLeaves);
+        } else {
+            $annualLeaves = "false";
+            // dd($annualLeaves);
+            // dd("false");
+        }
 
         $departments = department::all();
         $holiday = Holiday::all();
@@ -318,37 +335,38 @@ public function getJobStatuses(Request $request)
             'weekendCount',
             'job_title',
             'job_status',
+            'annualLeaves',
         ));
     }
 
     // use Carbon\Carbon;
 
-public function EditEmployee($user)
-{
-    $employee_id = $user;
+    public function EditEmployee($user)
+    {
+        $employee_id = $user;
 
-    $userList = DB::table('users')->get();
+        $userList = DB::table('users')->get();
 
-    $permission_lists = DB::table('permission_lists')->get();
+        $permission_lists = DB::table('permission_lists')->get();
 
-    // Retrieve the employee and salary details
-    $employee = Employee::where('employee_id', $employee_id)->first();
-    //  dd($employee);
+        // Retrieve the employee and salary details
+        $employee = Employee::where('employee_id', $employee_id)->first();
+        //  dd($employee);
         $job_title = JobTitle::where('id', $employee->j_title)->first();
         $job_status = JobStatus::where('id', $employee->j_status)->first();
         // dd($job_status);
-    $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+        $salary = SalaryDetail::where('employee_id', $employee_id)->get();
 
-    // Format the date in the salary details
-    foreach ($salary as $s) {
-        $formattedDate = Carbon::parse($s->date)->format('d-m-Y');
-        $s->date = $formattedDate;
+        // Format the date in the salary details
+        foreach ($salary as $s) {
+            $formattedDate = Carbon::parse($s->date)->format('d-m-Y');
+            $s->date = $formattedDate;
+        }
+
+        $departments = Department::all();
+
+        return view('form.edit.employeeedit', compact('employee', 'departments', 'salary', 'job_title', 'job_status'));
     }
-
-    $departments = Department::all();
-
-    return view('form.edit.employeeedit', compact('employee', 'departments', 'salary','job_title','job_status'));
-}
 
 
 
@@ -852,5 +870,6 @@ public function EditEmployee($user)
     {
 
         $url = route('save.record'); // Include the correct namespace
-    }
+
+   }
 }
