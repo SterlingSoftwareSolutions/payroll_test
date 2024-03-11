@@ -15,8 +15,16 @@ return new class extends Migration
     {
         Schema::create('annual_leaves', function (Blueprint $table) {
             $table->id();
+            $table->string('employee_id');
+            $table->year('year');
+            $table->integer('total_leaves');
+            $table->integer('used_leaves')->default(0);
+            $table->integer('available')->default(0);
             $table->timestamps();
+
+            $table->foreign('employee_id')->references('id')->on('employees');
         });
+
     }
 
     /**
