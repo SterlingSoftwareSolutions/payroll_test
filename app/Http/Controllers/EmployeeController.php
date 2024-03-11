@@ -271,7 +271,6 @@ class EmployeeController extends Controller
         $joinedDate = $employee->joinedDate;
         $oneYearAgo = now()->subYear();
         // dd($oneYearAgo);
-
         if ($status_name != "INTERN" && $joinedDate <= $oneYearAgo) {
             // $status_name === "INTERN" ||  $joinedDate <= $oneYearAgo
             $annualLeaves = "true";

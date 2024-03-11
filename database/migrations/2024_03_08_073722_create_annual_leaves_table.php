@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('used_leaves')->default(0);
             $table->integer('available')->default(0);
             $table->timestamps();
-
         });
 
     }

@@ -371,7 +371,6 @@
                                         </button>
                                     </h3>
                                 </form>
-
                                 <table class="table table-borderless">
                                     <tr>
                                         <td class="title">Last Name</td>
