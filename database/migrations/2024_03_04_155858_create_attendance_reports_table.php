@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('employee_id');
             // $table->date('date');
             $table->date('date')->nullable();
-
             $table->integer('month_days');
             $table->integer('month_weekends');
             $table->integer('month_holidays');

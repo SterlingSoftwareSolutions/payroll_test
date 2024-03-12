@@ -24,6 +24,10 @@
 <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<!-- Include Bootstrap JS (optional) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"> </script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
 
@@ -51,205 +55,173 @@
             </div>
         </div>
 
-        {{-- <form method="POST" action="{{ route('reports.update.attendancereport', $attendanceReport->id) }}">
-            @csrf
-            @method('PATCH')
-            <!-- Your form fields go here -->
-            <button type="submit">Update</button>
-        </form>
-        --}}
-
 
         <div class="modal-body">
 
-            {{-- <form action="{{ route('reports.update.attendancereport',['employeeId' => $attendanceReport->id]) }}"
-                method="POST" onsubmit="return validateForm()" style="border:1px solid #ccc;">
+
+            <form method="post"
+                action="{{ route('reports.generate.attendance', ['employeeId' => $attendanceReport]) }}">
                 @csrf
-                @method('PATCH') --}}
-                <form method="post" action="{{ route('reports.update.attendancereport', ['employeeId' => $attendanceReport->id]) }}">
-                    @csrf
-                    <h3 style="border: 1px solid #ccc; padding-top:30px; padding-bottom: 30px; padding-left:20px; ">
-                        Attendance Report Update Form</h3>
-                    {{-- @csrf --}}
-                    <div class="submit-section" style="">
+                <h3 style="border: 1px solid #ccc; padding-top:30px; padding-bottom: 30px; padding-left:20px; ">
+                    Attendance Report Update Form</h3>
+                {{-- @csrf --}}
+                <div class="submit-section" style="">
+                </div>
+                <div class="row" style="padding-left:20px; padding-right:20px;">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="employee_id"
+                                name="employee_id" value="{{ $attendanceReport->employee_id }}" readonly>
+
+                        </div>
                     </div>
-                    <div class="row" style="padding-left:20px; padding-right:20px;">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="id" name="id" value="{{ $attendanceReport->employee_id }}" readonly>
-                                </select>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Date <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="date" name="date" value="{{ $attendanceReport->date }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Monthly Days Count <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="month_days" name="month_days" value="{{ $attendanceReport->month_days }}" required>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Weekend Count <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="month_weekends" name="month_weekends" value="{{ $attendanceReport->month_weekends }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Month Holidays <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="month_holiday" name="month_holiday" value="{{ $attendanceReport->month_holidays }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Work Days <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="work_days" name="work_days" value="{{ $attendanceReport->work_days }}" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Work Hours <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="work_hours" name="work_hours" value="{{ $attendanceReport->work_hours }}" required>
+                            {{-- <input type="text" name="work_hours" value="{{ $attendanceReport->work_hours }}"
+                                placeholder="Work Hours"> --}}
+
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Days Worked <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="days_worked" name="days_worked" value="{{ $attendanceReport->days_worked }}" required>
+                            <div class="invalid-feedback">
+                                <!-- This will display the custom validation message -->
+                                Please enter a valid contact number starting with "0" and having 10 digits.
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Date <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="work_id" name="work_id" value="{{ $attendanceReport->date }}" required>
-                            </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Holiday Work Days <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="days_worked_holiday"
+                                name="days_worked_holiday" value="{{ $attendanceReport->days_worked_holiday }}" required>
+                            </select>
                         </div>
+                    </div>
 
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Monthly Days Count <span
-                                        class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="etf_no" name="etf_no" value="{{ $attendanceReport->month_days }}" required>
-                            </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Weekend Work Days <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="days_worked_weekend" name="days_worked_weekend" value="{{ $attendanceReport->days_worked_weekend }}"
+                                required>
                         </div>
+                    </div>
 
 
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Weekend Count <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="f_name" name="f_name" value="{{ $attendanceReport->month_weekends }}" required>
-                            </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Late Minutes <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="late_minutes" name="late_minutes" value="{{ $attendanceReport->late_minutes }}" required>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Month Holidays <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="l_name" name="l_name" value="{{ $attendanceReport->month_weekends }}" required>
-                            </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Absent Days <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="abent_days" name="abent_days" value="{{ $attendanceReport->absent_days }}" required>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Work Days <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="full_name" name="full_name" value="{{ $attendanceReport->work_days }}" required>
-                            </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">OT Minutes <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="ot_minutes" name="ot_minutes" value="{{ $attendanceReport->ot_minutes }}" required>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Work Hours <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="etf_no" name="etf_no" value="{{ $attendanceReport->work_hours }}" required>
-                                {{-- <input type="text" name="work_hours" value="{{ $attendanceReport->work_hours }}"
-                                    placeholder="Work Hours"> --}}
-                                <!-- Include other fields as needed -->
-
-                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Annual Leaves <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="annual_leaves" name="annual_leaves" value="{{ $attendanceReport->annual_leaves }}" readonly>
                         </div>
-
-
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Days Worked <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="c_number" name="c_number" value="{{ $attendanceReport->days_worked }}" required>
-                                <div class="invalid-feedback">
-                                    <!-- This will display the custom validation message -->
-                                    Please enter a valid contact number starting with "0" and having 10 digits.
-                                </div>
-                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Annual Leaves Taken <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="annual_leaves_taken" name="annual_leaves_taken" value="{{ $attendanceReport->annual_leaves_taken }}"
+                                required>
                         </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Holiday Work Days <span
-                                        class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="id" name="id" value="{{ $attendanceReport->days_worked_holiday }}" required>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Weekend Work Days <span
-                                        class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="work_id" name="work_id" value="{{ $attendanceReport->days_worked_weekend }}"
-                                    required>
-                            </div>
-                        </div>
-
-
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Late Minutes <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="f_name" name="f_name" value="{{ $attendanceReport->late_minutes }}" required>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Absent Days <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="etf_no" name="etf_no" value="{{ $attendanceReport->absent_days }}" required>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-form-label">OT Minutes <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="l_name" name="l_name" value="{{ $attendanceReport->ot_minutes }}" required>
-                            </div>
-                        </div>
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Annual Leaves <span class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="full_name" name="full_name" value="{{ $attendanceReport->annual_leaves }}"
-                                    required>
-                            </div>
-                        </div> --}}
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-form-label">Annual Leaved Taken <span
-                                        class="text-danger">*</span></label>
-                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="full_name" name="full_name" value="{{ $attendanceReport->annual_leaves_taken }}"
-                                    required>
-                            </div>
-                        </div>
-                        <div class="submit-section">
-                            <button class="btn btn-primary submit-btn">Submit</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+            </form>
 
 
 
 
+            <!-- Include datepicker.js -->
+            <script src="path/to/datepicker.js"></script>
 
-
-
-
-
-
-
-
-
-
-
-                        <!-- Include Bootstrap JS (optional) -->
-                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js">
-                        </script>
-                        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-                        <!-- Include datepicker.js -->
-                        <script src="path/to/datepicker.js"></script>
-
-                        <script>
-                            // Initialize datepicker for the "Created Date" field
+            <script>
+                // Initialize datepicker for the "Created Date" field
                                         $(document).ready(function() {
                                             // Initialize datepicker for "Created Date" field
                                             $('.datetimepicker').datepicker();
                                         });
-                        </script>
-                    </div>
+            </script>
         </div>
-        <!-- Add other form fields or buttons here as needed -->
     </div>
+    <!-- Add other form fields or buttons here as needed -->
+</div>
 </div>
 </div>
 </div>
