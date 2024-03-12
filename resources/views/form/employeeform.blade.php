@@ -271,6 +271,7 @@ border-color: red !important;
                             <label class="col-form-label">Job Status <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" id="j_status" name="j_status" required>
                                 <option value="" selected disabled>Select a Job Status</option>
+                                <option value="" selected disabled>Select a Job Status</option>
                             </select>
                         </div>
                     </div>
@@ -300,6 +301,7 @@ border-color: red !important;
                                     jobStatusDropdown.empty();
 
                                     // Add unique status names as options
+                                    jobStatusDropdown.append('<option value="" selected disabled>Select Job Status</option>');
                                     uniqueStatusNames.forEach(function(statusName) {
                                         jobStatusDropdown.append('<option value="' + statusName.id + '">' + statusName.status_name + '</option>');
                                     });
@@ -345,9 +347,9 @@ border-color: red !important;
                                         jobTitleDropdown.empty();
 
                                         // Add job titles as options
+                                        jobTitleDropdown.append('<option value="" selected disabled>Select Job Title</option>');
                                         response.forEach(function(jobTitle) {
-                                            jobTitleDropdown.append('<option value="' + jobTitle.id +
-                                                '">' + jobTitle.title_name + '</option>');
+                                            jobTitleDropdown.append('<option value="' + jobTitle.id + '">' + jobTitle.title_name + '</option>');
                                         });
                                     },
                                     error: function(xhr, status, error) {

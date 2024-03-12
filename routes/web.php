@@ -270,9 +270,20 @@ Route::controller(AttendanceController::class)->group(function () {
 //Attendance Report
 Route::controller(AttendanceReportController::class)->group(function () {
 Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index'); //for report  
-Route::get('form/attendance/report/generate/{employeeId}', 'generateAttendanceReport')->middleware('auth')->name('reports.generate.attendance'); //for report  
-Route::get('form/attendance/report/edit/{employeeId}', 'editAttendanceReport')->middleware('auth')->name('reports.edit.attendancereportedit'); //for report  
-Route::post('form/update-attendancereport/{employeeId}', 'updateAttendanceReport')->middleware('auth')->name('reports.update.attendancereport'); //for report  
+Route::get('form/attendance/report/generate/{employeeId}', 'generateAttendanceReport')->middleware('auth')->name('reports.generate.attendance'); //for report view 
+Route::get('form/attendance/report/edit/{employeeId}', 'editAttendanceReport')->middleware('auth')->name('reports.edit.attendancereportedit'); //for report  edit
+// Route::patch('form/update-attendancereport/{employeeId}', 'updateAttendanceReport')->middleware('auth')->name('reports.update.attendancereport'); //for report update 
+Route::post('form/attendance/report/generate/{employeeId}', 'updateAttendanceReport')
+        ->middleware('auth')
+        ->name('reports.store.attendance');
+
+    //     Route::patch('form/attendance/report/generate/{employeeId}', 'AttendanceReportController@updateAttendanceReport')
+    // ->middleware('auth')
+    // ->name('reports.update.attendancereport');
+    // Route::patch('form/attendance/report/generate/{employeeId}', 'AttendanceReportController@updateAttendanceReport')
+    // ->middleware('auth')
+    // ->name('reports.update.attendancereport');
+
 
 });
 
@@ -282,8 +293,11 @@ Route::post('form/update-attendancereport/{employeeId}', 'updateAttendanceReport
 
 
 Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');
-Route::post('attendance/report/search', [AttendanceController::class, 'attendanceReportSearch'])->name('attendance/report/search');
-Route::get('attendance/report/search', [AttendanceController::class, 'attendanceReportSearch'])->name('attendance/report/search');
+// Route::post('attendance/report/search', [AttendanceController::class, 'attendanceReportSearch'])->name('attendance/report/search');
+// Route::get('attendance/report/search', [AttendanceController::class, 'attendanceReportSearch'])->name('attendance/report/search');
+
+Route::post('attendance/report/search', [AttendanceReportController::class, 'attendanceReportSearch'])->name('attendance/report/search');
+Route::get('attendance/report/search', [AttendanceReportController::class, 'attendanceReportSearch'])->name('attendance/report/search');
 
 // ATTENDACNE ROUTES
 

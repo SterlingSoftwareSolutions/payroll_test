@@ -170,8 +170,12 @@ class AttendanceReportController extends Controller
     public function updateAttendanceReport(Request $request, $employeeId)
     {
 
-
+       
         $attendanceData = AttendanceReport::find($employeeId);
+
+        $year = $request->input('year', null);
+        $month = $request->input('month', null);
+
         $attendanceData->update([
 
             'date' => $request->input('date'),
@@ -199,6 +203,8 @@ class AttendanceReportController extends Controller
             "ot_minutes" => $attendanceData["ot_minutes"],
 
         ]);
+        // dd($attendanceData);
+       
 
         return view('reports.attendance-report', ['attendanceReport' => $attendanceData]);
     }
@@ -215,6 +221,13 @@ class AttendanceReportController extends Controller
 
         $year = $request->input('year', null);
         $month = $request->input('month', null);
+
+
+        // $joinedDate = $employee->joinedDate; 
+        // // dd($joinedDate);
+        // $annualLeave = $this->calculateAnnualLeave($joinedDate);
+        // // dd($joinedDate);
+
 
         $attendanceData = $employee->attendance_data($year, $month);
         // dd($attendanceData);
@@ -236,6 +249,8 @@ class AttendanceReportController extends Controller
             "late_minutes" => $attendanceData["late_minutes"],
             "ot_minutes" => $attendanceData["ot_minutes"],
             "annual_leaves_taken" => 0,
+            // "annual_leaves" => $annualLeave,
+           
         ]);
         // dd($attendanceReport);
         // dd($attendanceData);
@@ -345,5 +360,56 @@ class AttendanceReportController extends Controller
         $employees = Employee::all();
 
         return view('reports.attendance-report', compact('holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount'));
+    }
+
+
+
+
+
+    public function calculateAnnualLeave($employeeId)
+    {
+
+        $employee = Employee::find($employeeId);
+
+        if (!$employee) {
+            
+            return 0; 
+        }
+
+        $joinedDate = Carbon::parse($employeeId);
+
+        $januaryFirst = Carbon::parse('January 1');
+        $aprilFirst = Carbon::parse('April 1');
+        $julyFirst = Carbon::parse('July 1');
+        $octoberFirst = Carbon::parse('October 1');
+
+        if ($joinedDate->gte($januaryFirst) && $joinedDate->lt($aprilFirst)) {
+            $annualLeave = 14;
+        } elseif ($joinedDate->gte($aprilFirst) && $joinedDate->lt($julyFirst)) {
+            $annualLeave = 10;
+        } elseif ($joinedDate->gte($julyFirst) && $joinedDate->lt($octoberFirst)) {
+            $annualLeave = 7;
+        } elseif ($joinedDate->gte($octoberFirst) && $joinedDate->lte(Carbon::parse('December 31'))) {
+            $annualLeave = 4;
+        } else {
+            $annualLeave = 0;
+        }
+
+        $maxLeave = 21;
+        $annualLeave = min($annualLeave, $maxLeave);
+
+        $joinedDate = '2023-03-15'; // Replace actual joint date
+        $annualLeave = $this->calculateAnnualLeave($joinedDate);
+
+
+      
+        // $joinedDate = $employee->joinedDate; 
+        // $annualLeave = $this->calculateAnnualLeave($joinedDate);
+
+        // return view('reports.edit.attendancereportedit', [
+        //      'employee' => $employee,
+            
+        //     'annualLeave' => $annualLeave,
+        //     ]);
     }
 }
