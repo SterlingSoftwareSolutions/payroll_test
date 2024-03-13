@@ -271,6 +271,7 @@ border-color: red !important;
                             <label class="col-form-label">Job Status <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" id="j_status" name="j_status" required>
                                 <option value="" selected disabled>Select a Job Status</option>
+                                <option value="" selected disabled>Select a Job Status</option>
                             </select>
                         </div>
                     </div>

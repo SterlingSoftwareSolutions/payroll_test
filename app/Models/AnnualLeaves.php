@@ -12,8 +12,7 @@ class AnnualLeaves extends Model
         'employee_id',
         'year',
         'total_leaves',
-        'used_leaves',
-        'available',
+        'used_leaves'
     ];
 
     public function employee()

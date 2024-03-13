@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('attendance_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id');
-            $table->date('date');
+            // $table->date('date');
+            $table->date('date')->nullable();
             $table->integer('month_days');
             $table->integer('month_weekends');
             $table->integer('month_holidays');
@@ -29,7 +30,9 @@ return new class extends Migration
             $table->integer('days_worked_holiday_weekend');
             $table->integer('late_minutes');
             $table->integer('ot_minutes');
-            $table->integer('annual_leaves_taken');
+            $table->integer('annual_leaves_taken')->default(0);
+           
+
             $table->timestamps();
         });
     }

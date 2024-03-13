@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\AnnualLeaves;
 use Illuminate\Http\Request;
 
@@ -12,74 +13,34 @@ class AnnualLeavesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function calculateAnnualLeave($joinedDate)
     {
-        //
-    }
+        $joinedDate = Carbon::parse($joinedDate);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+        $januaryFirst = Carbon::parse('January 1');
+        $aprilFirst = Carbon::parse('April 1');
+        $julyFirst = Carbon::parse('July 1');
+        $octoberFirst = Carbon::parse('October 1');
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($joinedDate->gte($januaryFirst) && $joinedDate->lt($aprilFirst)) {
+            $annualLeave = 14;
+        } elseif ($joinedDate->gte($aprilFirst) && $joinedDate->lt($julyFirst)) {
+            $annualLeave = 10;
+        } elseif ($joinedDate->gte($julyFirst) && $joinedDate->lt($octoberFirst)) {
+            $annualLeave = 7;
+        } elseif ($joinedDate->gte($octoberFirst) && $joinedDate->lte(Carbon::parse('December 31'))) {
+            $annualLeave = 4;
+        } else {
+            $annualLeave = 0;
+        }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\AnnualLeaves  $annualLeaves
-     * @return \Illuminate\Http\Response
-     */
-    public function show(AnnualLeaves $annualLeaves)
-    {
-        //
-    }
+        $maxLeave = 21;
+        $annualLeave = min($annualLeave, $maxLeave);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\AnnualLeaves  $annualLeaves
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(AnnualLeaves $annualLeaves)
-    {
-        //
-    }
+        $joinedDate = '2023-03-15'; // Replace this with the actual hire date
+        $annualLeave = $this->calculateAnnualLeave($joinedDate);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\AnnualLeaves  $annualLeaves
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, AnnualLeaves $annualLeaves)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\AnnualLeaves  $annualLeaves
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(AnnualLeaves $annualLeaves)
-    {
-        //
+        return $annualLeave;
     }
 }
