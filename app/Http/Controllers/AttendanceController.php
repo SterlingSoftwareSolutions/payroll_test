@@ -71,23 +71,24 @@ class AttendanceController extends Controller
         // Validate the form data
         $request->validate([
             'employee_id' => 'required',
-            'work_id' => 'required',
+            // 'work_id' => 'required',
             'selected_employee_id' => 'required|numeric|exists:employees,id',
             'date' => 'required|date|date_format:Y-m-d',
             'punch_in' => 'required|date_format:H:i',
             'punch_out' => 'required|date_format:H:i',
         ]);
+        $work_id = Employee::where('id', $request->selected_employee_id)->value('work_id');
+        // dd($work_id);
+
         DB::beginTransaction();
         try {
-
             $attendance = Attendance::create([
                 'employee_id' => $request->selected_employee_id,
-                'work_id' => $request->work_id,
+                'WorkId' => $work_id,
                 'date' => $request->date,
                 'punch_in' => $request->punch_in,
                 'punch_out' => $request->punch_out,
             ]);
-
             DB::commit();
 
             Toastr::success('Added attendence successfully :)', 'Success');
@@ -399,16 +400,16 @@ class AttendanceController extends Controller
     private function processCsv($filePath)
     {
         $csv = Reader::createFromPath($filePath);
-        $csv->setHeaderOffset(0); 
+        $csv->setHeaderOffset(0);
 
-        $stmt = (new Statement())->offset(0); 
+        $stmt = (new Statement())->offset(0);
 
-    
+
         $data = $stmt->process($csv);
 
-    
+
         Log::debug('Processed CSV data: ' . json_encode(iterator_to_array($data)));
 
-        return iterator_to_array($data); 
+        return iterator_to_array($data);
     }
 }
