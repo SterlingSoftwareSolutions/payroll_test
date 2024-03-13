@@ -253,6 +253,7 @@ Route::controller(AttendanceController::class)->group(function () {
 
     Route::get('form/attendance/new', 'attendance')->middleware('auth')->name('form.attendance.new');
     Route::post('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
+    Route::get('form/attendance/store', 'store')->middleware('auth')->name('form.attendance.store');
     Route::get('attendance/employee/page', 'attendance')->middleware('auth')->name('attendance/employee/page');
     Route::post('form/attendance/update', 'updateAttendance')->middleware('auth')->name('form/attendance/update');
 
@@ -272,7 +273,7 @@ Route::controller(AttendanceReportController::class)->group(function () {
     Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index'); //for report
     // Route::get('form/attendance/report/edit', 'edit')->middleware('auth')->name('form.attendance.edit'); //for attendance report edit
 
-     
+
 });
 Route::get('form/attendance/report/generate/{employeeId}', [AttendanceReportController::class, 'generateAttendanceReport'])
     ->name('reports.generate.attendance');
