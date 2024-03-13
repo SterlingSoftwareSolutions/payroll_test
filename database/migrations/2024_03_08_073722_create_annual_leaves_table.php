@@ -20,8 +20,6 @@ return new class extends Migration
             $table->integer('total_leaves');
             $table->integer('used_leaves')->default(0);
             $table->timestamps();
-
-            $table->foreign('employee_id')->references('id')->on('employees');
         });
 
     }

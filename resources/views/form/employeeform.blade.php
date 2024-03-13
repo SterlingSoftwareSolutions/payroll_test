@@ -305,6 +305,7 @@ border-color: red !important;
                                     uniqueStatusNames.forEach(function(statusName) {
                                         jobStatusDropdown.append('<option value="' + statusName.id + '">' + statusName.status_name + '</option>');
                                     });
+
                                 },
 
 
@@ -351,6 +352,7 @@ border-color: red !important;
                                         response.forEach(function(jobTitle) {
                                             jobTitleDropdown.append('<option value="' + jobTitle.id + '">' + jobTitle.title_name + '</option>');
                                         });
+
                                     },
                                     error: function(xhr, status, error) {
                                         console.log('Error: ' + error); // Log the error for debugging
