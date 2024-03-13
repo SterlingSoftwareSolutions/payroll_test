@@ -142,4 +142,50 @@ class Employee extends Model
         );
 
     }
+
+    public function annual_leaves($year = null)
+    {
+        if(!$year){
+            $year = now()->year;
+        }
+
+        $annual_leaves = AnnualLeaves::where('employee_id', $this->id)->where('year', $year)->first();
+        if(!$annual_leaves){
+            AnnualLeaves::create([
+                'employee_id' => $this->id,
+                'year' => $year,
+                'total_leaves' => $this->calculate_annual_leaves($year)
+            ]);
+        }
+    }
+
+    private function calculate_annual_leaves($year){
+        $joinedDate = $this->joinedDate;
+        $years = now()->diffInYears($joinedDate);
+
+        if($years >= 2){
+            return 14;
+        } elseif($years < 1){
+            return 0;
+        }
+
+        $januaryFirst = Carbon::parse('January 1' . $joinedDate->year);
+        $aprilFirst = Carbon::parse('April 1' . $joinedDate->year);
+        $julyFirst = Carbon::parse('July 1' . $joinedDate->year);
+        $octoberFirst = Carbon::parse('October 1' . $joinedDate->year);
+
+        if ($joinedDate->gte($januaryFirst) && $joinedDate->lt($aprilFirst)) {
+            $annualLeaves = 14;
+        } elseif ($joinedDate->gte($aprilFirst) && $joinedDate->lt($julyFirst)) {
+            $annualLeaves = 10;
+        } elseif ($joinedDate->gte($julyFirst) && $joinedDate->lt($octoberFirst)) {
+            $annualLeaves = 7;
+        } elseif ($joinedDate->gte($octoberFirst) && $joinedDate->lte(Carbon::parse('December 31'))) {
+            $annualLeaves = 4;
+        } else {
+            $annualLeaves = 0;
+        }
+
+        return $annualLeaves;
+    }
 }

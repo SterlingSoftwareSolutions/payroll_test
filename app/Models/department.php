@@ -16,4 +16,11 @@ class department extends Model
     protected $casts = [
         'id' => 'string'
     ];
+
+
+    public function attendanceReportSearch()
+{
+    $departments = Department::all(); 
+    return view('reports.attendance-report', ['departments' => $departments]);
+}
 }

@@ -169,7 +169,7 @@
                                 </td>
                                 <td>{{ $attendance->overtime ?? 'N/A' }}</td>
                                 <td>{{ $extraDaysCount }}</td>
-                                <td>Annual Leaves</td>
+                                <td>$annualLeave</td>
                                 {{-- <td>
                                     <a href="/form/attendance/download/{{ $attendance->employee->id }}"><button>Download
                                             PDF</button></a>

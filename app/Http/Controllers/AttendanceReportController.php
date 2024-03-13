@@ -170,47 +170,148 @@ class AttendanceReportController extends Controller
     public function updateAttendanceReport(Request $request, $employeeId)
     {
 
-       
         $attendanceData = AttendanceReport::find($employeeId);
 
         $year = $request->input('year', null);
         $month = $request->input('month', null);
 
-        $attendanceData->update([
+        $attendanceReport = AttendanceReport::where('employee_id', $employeeId)
+        ->where('date', today()->firstOfMonth())
+        ->first();
 
-            'date' => $request->input('date'),
-            // 'month_days' => $request->input('month_days'),
-            'employee_id' => $employeeId,
-
-            "month_holidays" => is_array($attendanceData["month_holidays"]) ? count($attendanceData["month_holidays"]) : 0,
-            "days_worked" => is_array($attendanceData["days_worked"]) ? count($attendanceData["days_worked"]) : 0,
-            "days_worked_holiday" => is_array($attendanceData["days_worked_holiday"]) ? count($attendanceData["days_worked_holiday"]) : 0,
-            "days_worked_weekend" => is_array($attendanceData["days_worked_weekend"]) ? count($attendanceData["days_worked_weekend"]) : 0,
-            "days_worked_holiday_weekend" => is_array($attendanceData["days_worked_holiday_weekend"]) ? count($attendanceData["days_worked_holiday_weekend"]) : 0,
+    if (!$attendanceReport) {
+        return response()->json(['error' => 'Attendance report not found'], 404);
+    }
+    if (isset($attendanceData["month_days_count"])) {
 
 
-            "month_days" => $attendanceData["month_days"],
-            "month_weekends" => $attendanceData["month_weekends"],
-            // "month_holidays" => $attendanceData["month_holidays"]->count(),
-            "work_days" => $attendanceData["work_days"],
-            "work_hours" => $attendanceData["work_hours"],
-            "absent_days" => $attendanceData["absent_days"],
-            // "days_worked" => $attendanceData["days_worked"]->count(),
-            // "days_worked_holiday" => $attendanceData["days_worked_holiday"]->count(),
-            // "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
-            // "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"]->count(),
-            "late_minutes" => $attendanceData["late_minutes"],
-            "ot_minutes" => $attendanceData["ot_minutes"],
+    // Update the existing attendance report data
+    $attendanceReport->update([
+        "month_days" => $attendanceData["month_days_count"],
+        "month_weekends" => $attendanceData["month_weekends_count"],
+        "month_holidays" => $attendanceData["month_holidays"],
+        "work_days" => $attendanceData["work_days"],
+        "work_hours" => $attendanceData["work_hours"],
+        "absent_days" => $attendanceData["absent_days"] ?? 0,
+        "days_worked" => $attendanceData["days_worked"],
+        "days_worked_holiday" => $attendanceData["days_worked_holiday"],
+        "days_worked_weekend" => $attendanceData["days_worked_weekend"],
+        "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"],
+        "late_minutes" => $attendanceData["late_minutes"],
+        "ot_minutes" => $attendanceData["ot_minutes"],
+        "annual_leaves_taken" => 0,
+    ]);
 
-        ]);
+    }
+        
         // dd($attendanceData);
-       
+        // ['attendanceReport' => $attendanceData]
+        $departments = department::all();
+        $employees = Employee::all();
 
-        return view('reports.attendance-report', ['attendanceReport' => $attendanceData]);
+
+        $current_month = now()->month;
+        $current_year = now()->year;
+        $holiday = Holiday::all();
+        $attendances = Attendance::with('employee', 'holiday')
+            ->whereMonth('date', $current_month)
+            ->whereYear('date', $current_year)
+            ->get();
+
+        $totDays = $this->getDaysInMonth($current_month, $current_year);
+        $departments = department::all();
+        $attendanceCounts = DB::table('attendances')
+            ->select('employee_id', DB::raw('count(*) as attendance_count'))
+            ->groupBy('employee_id')
+            ->get();
+        $weekendCount = $this->getWeekendCount($current_month, $current_year);
+        $extraDaysCount = $attendances->filter(function ($attendance) {
+            $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
+            return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
+        })->count();
+        $employeeHolidayCounts = [];
+
+        $attendances->each(function ($attendance) use ($holiday, &$employeeHolidayCounts) {
+            $attendanceDate = date('d-m-Y', strtotime($attendance->date));
+            $attendance->is_holiday = $holiday->contains('date_holiday', $attendanceDate);
+            $employeeId = $attendance->employee_id;
+            $employeeHolidayCounts[$employeeId] = ($employeeHolidayCounts[$employeeId] ?? 0) + ($attendance->is_holiday ? 1 : 0);
+        });
+
+        $current_year = now()->year; // assuming $current_year is defined elsewhere
+
+        if ($request->has('month')) {
+            $month = $request->month;
+            $attendances = Attendance::whereMonth('date', '=', $month)->get();
+        }
+
+        if ($request->has('year')) {
+            $year = $request->year;
+            if ($year == null) {
+                $year = $current_year;
+            } elseif ($year != null && strlen($year) === 4 && is_numeric($year)) {
+                $attendances = Attendance::whereYear('date', '=', $year)->get();
+            } else {
+                return response()->json(['error' => 'Invalid year format'], 400);
+            }
+        }
+
+        if ($request->has('department')) {
+            $departmentName = $request->input('department');
+            $employeeIds = Employee::where('d_name', $departmentName)->pluck('id');
+            $attendances = Attendance::whereIn('employee_id', $employeeIds)->get();
+        }
+
+        if ($request->has('month') && $request->has('year')) {
+            $month = $request->month;
+            $year = $request->year;
+            if ($year == null) {
+                $year = $current_year;
+            } elseif ($year != null && strlen($year) === 4 && is_numeric($year)) {
+                $attendances = Attendance::whereMonth('date', '=', $month)
+                    ->whereYear('date', '=', $year)
+                    ->get();
+            } else {
+                return response()->json(['error' => 'Invalid year format'], 400);
+            }
+        }
+
+        if ($request->has('department') && $request->has('month')) {
+            $departmentName = $request->input('department');
+            $employeeIds = Employee::where('d_name', $departmentName)->pluck('id');
+            $month = $request->month;
+            $attendances = Attendance::whereIn('employee_id', $employeeIds)
+                ->whereMonth('date', '=', $month)
+                ->get();
+        }
+
+        if ($request->has('department') && $request->has('month') && $request->has('year')) {
+            $departmentName = $request->input('department');
+            $employeeIds = Employee::where('d_name', $departmentName)->pluck('id');
+            $month = $request->month;
+            $year = $request->year;
+            if ($year == null) {
+                $year = $current_year;
+            } elseif ($year != null && strlen($year) === 4 && is_numeric($year)) {
+                $attendances = Attendance::whereIn('employee_id', $employeeIds)
+                    ->whereMonth('date', '=', $month)
+                    ->whereYear('date', '=', $year)
+                    ->get();
+            } else {
+                return response()->json(['error' => 'Invalid year format'], 400);
+            }
+        }
+
+
+        return view('reports.attendance-report',compact('attendanceData','attendances','holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount'));
     }
 
     public function generateAttendanceReport(Request $request, $employeeId)
     {
+        // dd($employeeId);
+        $departments = department::all();
+        
+
     //    dd($request);
         $employee = Employee::find($employeeId);
 
@@ -252,10 +353,12 @@ class AttendanceReportController extends Controller
             // "annual_leaves" => $annualLeave,
            
         ]);
+
         // dd($attendanceReport);
         // dd($attendanceData);
 
-        return view('reports.edit.attendancereportedit', ['attendanceReport' => $attendanceReport, 'attendanceData' => $attendanceData]);
+        return view('reports.edit.attendancereportedit', ['attendanceReport' => $attendanceReport, 'attendanceData' => $attendanceData, 'departments' => $departments]);
+
     }
 
 
@@ -265,6 +368,7 @@ class AttendanceReportController extends Controller
 
     public function attendanceReportSearch(Request $request)
     {
+        dd($request);
         $current_month = now()->month;
         $current_year = now()->year;
         $holiday = Holiday::all();

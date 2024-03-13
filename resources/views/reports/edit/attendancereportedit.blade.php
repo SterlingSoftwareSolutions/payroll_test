@@ -186,7 +186,7 @@
                             <div class="form-group">
                                 <label class="col-form-label">Annual Leaves <span class="text-danger">*</span></label>
                                 <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="annual_leaves" name="annual_leaves" value="" readonly>
+                                    id="annual_leaves" name="annual_leaves" value="{{ $attendanceReport -> annualLeaves }}" readonly>
                             </div>
                         </div>
                         <div class="col-md-6">
