@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
+use App\Models\department;
 use DB;
 use PDF;
 use DatePeriod;
@@ -34,10 +36,21 @@ class HomeController extends Controller
         $employeeCount = Employee::count();
         $employees = Employee::all();
 
-       // $absentCounts = $this->getAbsentCounts($employees);
-   
+        $presentEmployees = Attendance::whereDate('date', today())
+            ->pluck('employee_id')
+            ->all();
 
-        return view('dashboard.dashboard', compact('employeeCount','employees'));
+            $absentEmployees = $employees->reject(function ($employee) use ($presentEmployees) {
+                return in_array($employee->id, $presentEmployees);
+            })->groupBy('department.d_name');
+
+
+        // dd($absentEmployees);
+
+       // $absentCounts = $this->getAbsentCounts($employees);
+
+
+        return view('dashboard.dashboard', compact('employeeCount','absentEmployees','employees'));
     }
 
 
@@ -78,13 +91,13 @@ class HomeController extends Controller
         $startDate = Carbon::createFromDate($year, $month, 1);
         $endDate = $startDate->copy()->endOfMonth();
 
-        $interval = new DateInterval('P1D'); 
+        $interval = new DateInterval('P1D');
         $period = new DatePeriod($startDate, $interval, $endDate);
 
         $weekendCount = 0;
 
         foreach ($period as $date) {
-            if ($date->format('N') >= 6) { 
+            if ($date->format('N') >= 6) {
                 $weekendCount++;
             }
         }

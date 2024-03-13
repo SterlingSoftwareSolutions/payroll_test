@@ -1,7 +1,5 @@
 @extends('layouts.master')
 @section('content')
-
-
     <div class="page-wrapper">
         <!-- Page Content -->
         <div class="content container-fluid">
@@ -152,140 +150,211 @@
                             <div class="col-md-6">
                                 <!-- Content for the third row, first column -->
                                 <div class="col">
-                                    @if ($employees->count() > 0)
-                                        @foreach ($employees as $employee)
-                                            <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
-                                                <div class="card flex-fill">
-                                                    <div class="card-body">
-                                                        <h4 class="card-title">Today Absent Software Department<span
-                                                                class="badge bg-inverse-danger ml-2"></span></h4>
+                                    {{-- @if ($employee->d_name == 'D000002') --}}
+                                    <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
+                                        <div class="card flex-fill">
+                                            <div class="card-body" id="dep2">
 
+                                                @php
+                                                    $department = [];
+                                                @endphp
 
-                                                        <div class="custom-info-box">
+                                                @foreach ($employees as $employee)
+                                                    @if ($employee->d_name == 'D000002')
+                                                        @php
+                                                            $department[] = \App\Models\Department::where(
+                                                                'id',
+                                                                $employee->d_name,
+                                                            )->first();
+                                                        @endphp
+                                                    @endif
+                                                @endforeach
+
+                                                @if ($department)
+                                                    <h4 class="card-title">Today Absent
+                                                        {{ $department[0]->department }}<span
+                                                            class="badge bg-inverse-danger ml-2"></span>
+                                                    </h4>
+                                                @endif
+                                                <!-- Default show -->
+                                                <div class="load">
+                                                    @foreach ($absentEmployees as $departmentName => $departmentEmployees)
+                                                        @foreach ($departmentEmployees as $employee)
+                                                            @if ($employee->d_name == 'D000002')
+                                                                <div class="custom-info-box mt-2 ">
+                                                                    <div class="media align-items-center">
+                                                                        <a href="profile.html" class="avatar">
+                                                                            <img alt="" src="assets/img/user.jpg">
+                                                                        </a>
+                                                                        <div class="media-body">
+                                                                            <div class="text-sm my-0">
+                                                                                {{ $employee->full_name }}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+
+                                                <div class="load-more  text-center">
+                                                    <a class="text-dark" href="javascript:void(0);"
+                                                        onclick="showMore()">Load More</a>
+                                                </div>
+                                            </div>
+                                            <!-- Additional employees hidden by default -->
+                                            @foreach ($absentEmployees as $departmentName => $departmentEmployees)
+                                                @foreach ($departmentEmployees as $employee)
+                                                    @if ($employee->d_name == 'D000002')
+                                                        <div class="custom-info-box box mt-2" style="display:none;">
                                                             <div class="media align-items-center">
                                                                 <a href="profile.html" class="avatar">
                                                                     <img alt="" src="assets/img/user.jpg">
                                                                 </a>
                                                                 <div class="media-body">
-                                                                    <div class="text-sm my-0">{{ $employee->full_name }}
+                                                                    <div class="text-sm my-0">
+                                                                        {{ $employee->full_name }}
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="row align-items-center mt-3">
-                                                                <div class="col-6">
-                                                                    <h6 class="mb-0">{{ $employee->leaveDate }}</h6>
-                                                                    <span class="text-sm text-muted">Leave Date</span>
-                                                                </div>
-                                                                {{-- <div class="col-6 text-right">
-                                                                <span class="badge bg-inverse-danger">
-                                                                    Absent: {{ $absentCounts[$employee->id] }}
-                                                                </span>
-                                                            </div> --}}
-                                                            </div>
                                                         </div>
+                                                    @endif
+                                                @endforeach
+                                            @endforeach
 
-
-                                                        {{--
-                                            <div class="leave-info-box">
-                                                <div class="media align-items-center">
-                                                    <a href="profile.html" class="avatar"><img alt=""
-                                                            src="assets/img/user.jpg"></a>
-                                                    <div class="media-body">
-                                                        <div class="text-sm my-0">Dhanushka Sandaruwan</div>
-                                                    </div>
-                                                </div>
-                                                <div class="row align-items-center mt-3">
-                                                    <div class="col-6">
-                                                        <h6 class="mb-0">28 Nov 2023</h6> <span
-                                                            class="text-sm text-muted">Leave Date</span>
-                                                    </div>
-                                                    <div class="col-6 text-right"> <span
-                                                            class="badge bg-inverse-success">Approved</span> </div>
-                                                </div>
-                                            </div> --}}
-                                                        <div class="load-more text-center"> <a class="text-dark"
-                                                                href="javascript:void(0);">Load More</a> </div>
-                                                    </div>
-                                                </div>
+                                            <div class="load-more less text-center" style="display:none;">
+                                                <a class="text-dark" href="javascript:void(0);"
+                                                    onclick="showLess()">Less More</a>
                                             </div>
-                                        @endforeach
-                                    @else
-                                        <p></p>
-                                    @endif
+
+                                            <script>
+                                                function showMore() {
+                                                    document.querySelectorAll('.box').forEach(function(element) {
+                                                        element.style.display = 'block';
+                                                    });
+                                                    document.querySelector('.load').style.display = 'none';
+                                                    document.querySelector('.less').style.display = 'block';
+                                                }
+
+                                                function showLess() {
+                                                    document.querySelectorAll('.box').forEach(function(element, index) {
+                                                        if (index > -1) {
+                                                            element.style.display = 'none';
+                                                        }
+                                                    });
+                                                    document.querySelector('.load').style.display = 'block';
+                                                    document.querySelector('.less').style.display = 'none';
+                                                }
+                                            </script>
+
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <!-- Content for the third row, second column -->
-                                <div class="col">
-                                    @if ($employees->count() > 0)
-                                        @foreach ($employees as $employee)
-                                            <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
-                                                <div class="card flex-fill">
-                                                    <div class="card-body">
-                                                        <h4 class="card-title">Today Absent Call Center<span
-                                                                class="badge bg-inverse-danger ml-2"></span></h4>
-                                                        <div class="custom-info-box">
-                                                            <div class="media align-items-center">
-                                                                <a href="profile.html" class="avatar">
-                                                                    <img alt="" src="assets/img/user.jpg">
-                                                                </a>
-                                                                <div class="media-body">
-                                                                    <div class="text-sm my-0">{{ $employee->full_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Content for the third row, second column -->
+                            <div class="col">
+
+                                <div class="col-md-12 col-lg-6 col-xl-12 d-flex">
+                                    <div class="card flex-fill">
+                                        <div class="card-body">
+                                            @php
+                                                $departments = [];
+                                            @endphp
+
+                                            @foreach ($employees as $employee)
+                                                @if ($employee->d_name == 'D000001')
+                                                    @php
+                                                        $departments[] = \App\Models\Department::where(
+                                                            'id',
+                                                            $employee->d_name,
+                                                        )->first();
+                                                    @endphp
+                                                @endif
+                                            @endforeach
+
+                                            @if (!empty($departments))
+                                                <h4 class="card-title">Today Absent
+                                                    {{ $departments[0]->department }}<span
+                                                        class="badge bg-inverse-danger ml-2"></span>
+                                                </h4>
+                                            @endif
+                                            <div class="ld-more">
+                                                @foreach ($absentEmployees as $departmentName => $departmentEmployees)
+                                                    @foreach ($departmentEmployees as $employee)
+                                                        @if ($employee->d_name == 'D000001')
+                                                            <div class="custom-info-box mt-2">
+                                                                <div class="media align-items-center">
+                                                                    <a href="profile.html" class="avatar">
+                                                                        <img alt="" src="assets/img/user.jpg">
+                                                                    </a>
+                                                                    <div class="media-body">
+                                                                        <div class="text-sm my-0">{{ $employee->full_name }}</div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="row align-items-center mt-3">
-                                                                <div class="col-6">
-                                                                    <h6 class="mb-0">{{ $employee->leaveDate }}</h6>
-                                                                    <span class="text-sm text-muted">Leave Date</span>
-                                                                </div>
-                                                                {{-- <div class="col-6 text-right">
-                                                                <span class="badge bg-inverse-danger">
-                                                                    Absent: {{ $absentCounts[$employee->id] }}
-                                                                </span>
-                                                            </div> --}}
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- <div class="leave-info-box">
-                                                <div class="media align-items-center">
-                                                    <a href="profile.html" class="avatar"><img alt=""
-                                                            src="assets/img/user.jpg"></a>
-                                                    <div class="media-body">
-                                                        <div class="text-sm my-0">Sithumini Sandaruwan</div>
-                                                    </div>
-                                                </div>
-                                                <div class="row align-items-center mt-3">
-                                                    <div class="col-6">
-                                                        <h6 class="mb-0">28 Nov 2023</h6> <span
-                                                            class="text-sm text-muted">Leave Date</span>
-                                                    </div>
-                                                    <div class="col-6 text-right"> <span
-                                                            class="badge bg-inverse-success">Approved</span> </div>
-                                                </div>
-                                            </div> --}}
-                                                        <div class="load-more text-center"> <a class="text-dark"
-                                                                href="javascript:void(0);">Load More</a> </div>
-                                                    </div>
+                                                        @break
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                                <div class="load-more text-center">
+                                                    <a class="text-dark" href="javascript:void(0);" onclick="toggleSections()">Load More</a>
                                                 </div>
                                             </div>
-                                        @endforeach
-                                    @else
-                                        <p></p>
-                                    @endif
+
+                                            <div class="ls-more" style="display:none;">
+                                                @foreach ($absentEmployees as $departmentName => $departmentEmployees)
+                                                    @foreach ($departmentEmployees as $employee)
+                                                        @if ($employee->d_name == 'D000001')
+                                                            <div class="custom-info-box mt-2">
+                                                                <div class="media align-items-center">
+                                                                    <a href="profile.html" class="avatar">
+                                                                        <img alt="" src="assets/img/user.jpg">
+                                                                    </a>
+                                                                    <div class="media-body">
+                                                                        <div class="text-sm my-0">{{ $employee->full_name }}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                                <div class="load-more text-center">
+                                                    <a class="text-dark" href="javascript:void(0);" onclick="toggleSection()">Less More</a>
+                                                </div>
+                                            </div>
+
+                                            <script>
+                                                function toggleSections() {
+                                                    document.querySelector('.ld-more').style.display = 'none';
+                                                    document.querySelector('.ls-more').style.display = 'block';
+                                                }
+                                                function toggleSection() {
+                                                    document.querySelector('.ld-more').style.display = 'block';
+                                                    document.querySelector('.ls-more').style.display = 'none';
+                                                }
+                                            </script>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!----------------------------------->
                 </div>
             </div>
         </div>
-        <!----------------end main border-------------------------->
+        <!----------------------------------->
     </div>
-    </div>
-    </div>
+</div>
+</div>
+<!----------------end main border-------------------------->
+</div>
+</div>
+</div>
 
-    <!-- /Page Content -->
-    </div>
+<!-- /Page Content -->
+</div>
 @endsection
