@@ -170,10 +170,6 @@
                                 <td>{{ $attendance->overtime ?? 'N/A' }}</td>
                                 <td>{{ $extraDaysCount }}</td>
                                 <td>$annualLeave</td>
-                                {{-- <td>
-                                    <a href="/form/attendance/download/{{ $attendance->employee->id }}"><button>Download
-                                            PDF</button></a>
-                                </td> --}}
 
 
                                 <td class="text-center">
@@ -184,14 +180,17 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
 
-
-
                                             <a href="{{ route('reports.generate.attendance', ['employeeId' => $attendance->employee->id]) }}"
                                                 class="dropdown-item userUpdate">
                                                 <i class="fa fa-pencil m-r-5"></i> Edit
                                             </a>
 
+                                            <a href="/form/attendance/download/{{ $attendance->employee->id }}"
+                                                class="download-link">
+                                                <i class="fa fa-download"></i> Download PDF
+                                            </a>
                                         </div>
+
                                     </div>
                                 </td>
 
@@ -199,7 +198,7 @@
                             </tr>
                             @endforeach
                         </tbody>
-                        <!-- Add a button to download all rows -->
+
 
                 </div>
 
