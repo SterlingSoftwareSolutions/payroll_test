@@ -278,6 +278,10 @@ Route::post('form/attendance/report/generate/{employeeId}', 'updateAttendanceRep
         ->middleware('auth')
         ->name('reports.store.attendance');
 
+
+Route::get('form/attendance/report/annual/{employeeId}', 'calculateAnnualLeaves')->middleware('auth')->name('reports.annual.attendance'); //for report view 
+Route::get('/calculate-annual-leave/{employeeId}', 'calculateAnnualLeaves')->middleware('auth')->name('calculate-annual-leave'); //for report view 
+
     //     Route::patch('form/attendance/report/generate/{employeeId}', 'AttendanceReportController@updateAttendanceReport')
     // ->middleware('auth')
     // ->name('reports.update.attendancereport');
