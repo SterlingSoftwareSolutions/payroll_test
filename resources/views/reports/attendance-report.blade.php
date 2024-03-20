@@ -1,4 +1,4 @@
-@extends('layouts.master')
+   @extends('layouts.master')
 @section('content')
 <!-- Add this to the head section of your HTML file -->
 <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
@@ -169,7 +169,7 @@
                                 </td>
                                 <td>{{ $attendance->overtime ?? 'N/A' }}</td>
                                 <td>{{ $extraDaysCount }}</td>
-                                <td>$annualLeave</td>
+                                <td>{{ isset($annualLeaves[$attendance->employee_id]) ? $annualLeaves[$attendance->employee_id] : 0 }}</td> 
 
 
                                 <td class="text-center">

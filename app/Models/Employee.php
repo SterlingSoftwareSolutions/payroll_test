@@ -162,7 +162,7 @@ class Employee extends Model
     private function calculate_annual_leaves($year){
         $joinedDate = $this->joinedDate;
         $years = now()->diffInYears($joinedDate);
-
+  
         if($years >= 2){
             return 14;
         } elseif($years < 1){

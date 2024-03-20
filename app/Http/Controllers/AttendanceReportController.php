@@ -10,13 +10,17 @@ use DateInterval;
 use Carbon\Carbon;
 use App\Models\Holiday;
 use App\Models\Employee;
+use App\Models\JobTitle;
+use App\Models\JobStatus;
 use App\Models\Attendance;
 use App\Models\department;
+use App\Models\AnnualLeaves;
 use Brian2694\Toastr\Toastr;
 use Illuminate\Http\Request;
 use App\Models\AttendanceReport;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
 
 class AttendanceReportController extends Controller
@@ -84,6 +88,12 @@ class AttendanceReportController extends Controller
 
         $departments = department::select('id', 'department')->distinct()->get();
 
+   
+    //     $employees->each(function ($employee) {
+    //     $joinedDate = $employee->joining_date; 
+    //     $annualLeaves = $this->calculateAnnualLeaves($joinedDate);
+    //     $employee->annualLeaves = $annualLeaves;
+    // });
 
 
 
@@ -166,10 +176,10 @@ class AttendanceReportController extends Controller
 
 
 
-
     public function updateAttendanceReport(Request $request, $employeeId)
     {
-
+       
+       
         $attendanceData = AttendanceReport::find($employeeId);
 
         $year = $request->input('year', null);
@@ -301,14 +311,16 @@ class AttendanceReportController extends Controller
                 return response()->json(['error' => 'Invalid year format'], 400);
             }
         }
+     
 
 
-        return view('reports.attendance-report',compact('attendanceData','attendances','holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount'));
+        return view('reports.attendance-report',compact('attendanceData','attendances','holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount',
+       ));
     }
 
     public function generateAttendanceReport(Request $request, $employeeId)
     {
-        // dd($employeeId);
+        //dd($employeeId);
         $departments = department::all();
         
 
@@ -354,6 +366,9 @@ class AttendanceReportController extends Controller
            
         ]);
 
+
+      
+
         // dd($attendanceReport);
         // dd($attendanceData);
 
@@ -368,7 +383,7 @@ class AttendanceReportController extends Controller
 
     public function attendanceReportSearch(Request $request)
     {
-        dd($request);
+        //dd($request);
         $current_month = now()->month;
         $current_year = now()->year;
         $holiday = Holiday::all();
@@ -463,57 +478,101 @@ class AttendanceReportController extends Controller
 
         $employees = Employee::all();
 
-        return view('reports.attendance-report', compact('holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount'));
-    }
+       
 
-
-
-
-
-    public function calculateAnnualLeave($employeeId)
-    {
-
-        $employee = Employee::find($employeeId);
-
-        if (!$employee) {
-            
-            return 0; 
+        // Calculate annual leave for each employee
+        $annualLeaves = [];
+        foreach ($employees as $employee) {
+            $dateOfEmployment = Carbon::parse($employee->date_of_employment);
+            $serviceDurationInYears = now()->diffInYears($dateOfEmployment);
+    
+            // Calculate annual leave entitlement based on length of service
+            if ($serviceDurationInYears >= 1) {
+                // After one full year of service
+                $entitlement = 14;
+            } else {
+                // Entitlement based on date of employment
+                $monthOfEmployment = $dateOfEmployment->month;
+                if ($monthOfEmployment >= 1 && $monthOfEmployment < 4) {
+                    $entitlement = 14;
+                } elseif ($monthOfEmployment >= 4 && $monthOfEmployment < 7) {
+                    $entitlement = 10;
+                } elseif ($monthOfEmployment >= 7 && $monthOfEmployment < 10) {
+                    $entitlement = 7;
+                } else {
+                    $entitlement = 4;
+                }
+            }
+    
+            // Adjust entitlement based on Sri Lanka leave laws if necessary
+            // For example, if certain professions are entitled to 21 days of leave
+    
+            // Calculate the total annual leave including holidays
+            $totalAnnualLeave = $entitlement + $employeeHolidayCounts[$employee->id] ?? 0;
+    
+            $annualLeaves[$employee->id] = $totalAnnualLeave;
         }
-
-        $joinedDate = Carbon::parse($employeeId);
-
-        $januaryFirst = Carbon::parse('January 1');
-        $aprilFirst = Carbon::parse('April 1');
-        $julyFirst = Carbon::parse('July 1');
-        $octoberFirst = Carbon::parse('October 1');
-
-        if ($joinedDate->gte($januaryFirst) && $joinedDate->lt($aprilFirst)) {
-            $annualLeave = 14;
-        } elseif ($joinedDate->gte($aprilFirst) && $joinedDate->lt($julyFirst)) {
-            $annualLeave = 10;
-        } elseif ($joinedDate->gte($julyFirst) && $joinedDate->lt($octoberFirst)) {
-            $annualLeave = 7;
-        } elseif ($joinedDate->gte($octoberFirst) && $joinedDate->lte(Carbon::parse('December 31'))) {
-            $annualLeave = 4;
-        } else {
-            $annualLeave = 0;
-        }
-
-        $maxLeave = 21;
-        $annualLeave = min($annualLeave, $maxLeave);
-
-        $joinedDate = '2023-03-15'; // Replace actual joint date
-        $annualLeave = $this->calculateAnnualLeave($joinedDate);
 
 
       
-        // $joinedDate = $employee->joinedDate; 
-        // $annualLeave = $this->calculateAnnualLeave($joinedDate);
+    
 
-        // return view('reports.edit.attendancereportedit', [
-        //      'employee' => $employee,
-            
-        //     'annualLeave' => $annualLeave,
-        //     ]);
+        return view('reports.attendance-report', compact('holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount', 'annualLeaves'
+    ));
     }
+
+
+
+
+
+    // public function calculateAnnualLeave($employeeId)
+    // {
+
+    //     $employee = Employee::find($employeeId);
+
+    //     if (!$employee) {
+            
+    //         return 0; 
+    //     }
+
+    //     $joinedDate = Carbon::parse($employeeId);
+
+    //     $januaryFirst = Carbon::parse('January 1');
+    //     $aprilFirst = Carbon::parse('April 1');
+    //     $julyFirst = Carbon::parse('July 1');
+    //     $octoberFirst = Carbon::parse('October 1');
+
+    //     if ($joinedDate->gte($januaryFirst) && $joinedDate->lt($aprilFirst)) {
+    //         $annualLeave = 14;
+    //     } elseif ($joinedDate->gte($aprilFirst) && $joinedDate->lt($julyFirst)) {
+    //         $annualLeave = 10;
+    //     } elseif ($joinedDate->gte($julyFirst) && $joinedDate->lt($octoberFirst)) {
+    //         $annualLeave = 7;
+    //     } elseif ($joinedDate->gte($octoberFirst) && $joinedDate->lte(Carbon::parse('December 31'))) {
+    //         $annualLeave = 4;
+    //     } else {
+    //         $annualLeave = 0;
+    //     }
+
+    //     $maxLeave = 21;
+    //     $annualLeave = min($annualLeave, $maxLeave);
+
+    //     $joinedDate = '2023-03-15'; // Replace actual joint date
+    //     $annualLeave = $this->calculateAnnualLeave($joinedDate);
+
+
+      
+    //     // $joinedDate = $employee->joinedDate; 
+    //     // $annualLeave = $this->calculateAnnualLeave($joinedDate);
+
+    //     // return view('reports.edit.attendancereportedit', [
+    //     //      'employee' => $employee,
+            
+    //     //     'annualLeave' => $annualLeave,
+    //     //     ]);
+    // }
+
+
+
+
 }
