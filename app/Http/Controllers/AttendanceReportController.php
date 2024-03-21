@@ -30,7 +30,7 @@ class AttendanceReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index()    //attendance report page view
     {
 
         $query = Employee::query();
@@ -40,7 +40,7 @@ class AttendanceReportController extends Controller
         $employees = $query->get();
 
         $departments = department::all();
-       //dd($departments);
+      // dd($departments);
 
 
         $holiday = Holiday::all();
@@ -89,12 +89,16 @@ class AttendanceReportController extends Controller
         $departments = department::select('id', 'department')->distinct()->get();
 
    
-    //     $employees->each(function ($employee) {
-    //     $joinedDate = $employee->joining_date; 
-    //     $annualLeaves = $this->calculateAnnualLeaves($joinedDate);
-    //     $employee->annualLeaves = $annualLeaves;
-    // });
+        $employees->each(function ($employee) use ($attendanceCounts) {
+            $employeeId = $employee->id;
+            $annualLeaves = isset($attendanceCounts[$employeeId]) ? $attendanceCounts[$employeeId]->attendance_count : 0;
+            $employee->annualLeaves = $annualLeaves;
+        });
+        
 
+        // dd($employees->annualLeaves); 
+
+           
 
 
         return view('reports.attendance-report', compact([
@@ -209,6 +213,7 @@ class AttendanceReportController extends Controller
         "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"],
         "late_minutes" => $attendanceData["late_minutes"],
         "ot_minutes" => $attendanceData["ot_minutes"],
+        "annual_leaves" => $attendanceData["annual_leaves"] ?? 0,
         "annual_leaves_taken" => 0,
     ]);
 
@@ -362,7 +367,7 @@ class AttendanceReportController extends Controller
             "late_minutes" => $attendanceData["late_minutes"],
             "ot_minutes" => $attendanceData["ot_minutes"],
             "annual_leaves_taken" => 0,
-            // "annual_leaves" => $annualLeave,
+            "annual_leaves" => $attendanceData["annual_leaves"] ?? 0,
            
         ]);
 
@@ -478,20 +483,14 @@ class AttendanceReportController extends Controller
 
         $employees = Employee::all();
 
-       
-
-        // Calculate annual leave for each employee
-        $annualLeaves = [];
+               $annualLeaves = [];
         foreach ($employees as $employee) {
             $dateOfEmployment = Carbon::parse($employee->date_of_employment);
             $serviceDurationInYears = now()->diffInYears($dateOfEmployment);
     
-            // Calculate annual leave entitlement based on length of service
             if ($serviceDurationInYears >= 1) {
-                // After one full year of service
                 $entitlement = 14;
             } else {
-                // Entitlement based on date of employment
                 $monthOfEmployment = $dateOfEmployment->month;
                 if ($monthOfEmployment >= 1 && $monthOfEmployment < 4) {
                     $entitlement = 14;
@@ -504,18 +503,12 @@ class AttendanceReportController extends Controller
                 }
             }
     
-            // Adjust entitlement based on Sri Lanka leave laws if necessary
-            // For example, if certain professions are entitled to 21 days of leave
-    
-            // Calculate the total annual leave including holidays
-            $totalAnnualLeave = $entitlement + $employeeHolidayCounts[$employee->id] ?? 0;
+          
+            // Calculate total annual leave including holidays
+            $totalAnnualLeave = $entitlement + ($employeeHolidayCounts[$employee->id] ?? 0);
     
             $annualLeaves[$employee->id] = $totalAnnualLeave;
         }
-
-
-      
-    
 
         return view('reports.attendance-report', compact('holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount', 'annualLeaves'
     ));
@@ -571,6 +564,28 @@ class AttendanceReportController extends Controller
     //     //     'annualLeave' => $annualLeave,
     //     //     ]);
     // }
+
+
+
+
+    // public function annual_leaves($year = null)
+    // {
+    //     if(!$year){
+    //         $year = now()->year;
+    //     }
+
+    //     $annual_leaves = AnnualLeaves::where('employee_id', $this->id)->where('year', $year)->first();
+    //     if(!$annual_leaves){
+    //         AnnualLeaves::create([
+    //             'employee_id' => $this->id,
+    //             'year' => $year,
+    //             'total_leaves' => $this->calculate_annual_leaves($year)
+    //         ]);
+
+           
+    //     }
+
+    }
 
 
 

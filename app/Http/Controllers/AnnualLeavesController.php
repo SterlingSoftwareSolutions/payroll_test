@@ -15,6 +15,7 @@ class AnnualLeavesController extends Controller
      */
     public function calculateAnnualLeave($joinedDate)
     {
+        dd($joinedDate);
         $joinedDate = Carbon::parse($joinedDate);
 
         $januaryFirst = Carbon::parse('January 1');
@@ -34,10 +35,10 @@ class AnnualLeavesController extends Controller
             $annualLeave = 0;
         }
 
-        $maxLeave = 21;
+        $maxLeave = 14;
         $annualLeave = min($annualLeave, $maxLeave);
 
-        $joinedDate = '2023-03-15'; // Replace this with the actual hire date
+        $joinedDate = '2023-03-15'; // Replace  with the actual date
         $annualLeave = $this->calculateAnnualLeave($joinedDate);
 
 

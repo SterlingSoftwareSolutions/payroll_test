@@ -156,6 +156,8 @@ class Employee extends Model
                 'year' => $year,
                 'total_leaves' => $this->calculate_annual_leaves($year)
             ]);
+
+           
         }
     }
 

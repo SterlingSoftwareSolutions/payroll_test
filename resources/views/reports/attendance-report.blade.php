@@ -170,7 +170,7 @@
                                 <td>{{ $attendance->overtime ?? 'N/A' }}</td>
                                 <td>{{ $extraDaysCount }}</td>
                                 <td>{{ isset($annualLeaves[$attendance->employee_id]) ? $annualLeaves[$attendance->employee_id] : 0 }}</td> 
-
+ 
 
                                 <td class="text-center">
                                     <div class="dropdown dropdown-action">

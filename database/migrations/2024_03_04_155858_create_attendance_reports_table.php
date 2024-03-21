@@ -30,6 +30,8 @@ return new class extends Migration
             $table->integer('days_worked_holiday_weekend');
             $table->integer('late_minutes');
             $table->integer('ot_minutes');
+            $table->integer('half_day')->nullable();
+            $table->integer('annual_leaves')->nullable();
             $table->integer('annual_leaves_taken')->default(0);
            
 
