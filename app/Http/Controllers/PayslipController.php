@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\department;
+use App\Models\JobStatus;
+use App\Models\JobTitle;
 use App\Models\Payslip;
 use App\Models\SalaryDetail;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -16,6 +18,7 @@ class PayslipController extends Controller
     {
         $date = now()->startOfMonth()->subMonth();
         $payslips = Payslip::whereDate('date', $date)->get();
+        // dd($payslips);
         return view('reports/payslip-approve', compact(['payslips']));
     }
 
@@ -24,6 +27,7 @@ class PayslipController extends Controller
         $payslipdata = $payslip->attributesToArray();
         $payslipdata['employee_employee_id'] = $payslip->employee->employee_id;
         $payslipdata['net_salary'] = $payslip->net_salary();
+
         return response()->json($payslipdata);
     }
 
@@ -31,24 +35,24 @@ class PayslipController extends Controller
     {
         $payslip = Payslip::findOrFail($request->payslip_id);
         $validated = $request->validate([
-              "basic_salary" => 'required',
-              "br_allowance" => 'required',
-              "fixed_allowance" => 'required',
-              "attendance_allowance" => 'required',
-              "holiday_payment" => 'required',
-              "incentives" => 'required',
-              "ot" => 'required',
-              "other_increments" => 'required',
-              "no_pay_leave_deduction" => 'required',
-              "late_deduction" => 'required',
-              "employee_epf" => 'required',
-              "paye" => 'required',
-              "stamp_duty" => 'required',
-              "advance" => 'required',
-              "loan" => 'required',
-              "other_deductions" => 'required',
-              "company_epf" => 'required',
-              "etf" => 'required',
+            "basic_salary" => 'required',
+            "br_allowance" => 'required',
+            "fixed_allowance" => 'required',
+            "attendance_allowance" => 'required',
+            "holiday_payment" => 'required',
+            "incentives" => 'required',
+            "ot" => 'required',
+            "other_increments" => 'required',
+            "no_pay_leave_deduction" => 'required',
+            "late_deduction" => 'required',
+            "employee_epf" => 'required',
+            "paye" => 'required',
+            "stamp_duty" => 'required',
+            "advance" => 'required',
+            "loan" => 'required',
+            "other_deductions" => 'required',
+            "company_epf" => 'required',
+            "etf" => 'required',
         ]);
         $validated['approved_at'] = now();
         $payslip->update($validated);
@@ -61,26 +65,35 @@ class PayslipController extends Controller
         return $pdf->download(strtoupper(preg_split('#\s+#', $payslip->employee->full_name)[0]));
     }
 
+
     public function create_payslip(Employee $employee)
     {
         // Attendance data
         $attandance_data = $employee->attendance_data();
+        // dd($employee);
+        $job_status = strtoupper(JobStatus::where('id', $employee->j_status)->value('status_name'));
+        // dd($job_status);
+        if ($job_status == "INTERN ") {
+            $basic_salary = $employee->basic_Salary;
+            $br_allowance = 0;
+        } else {
+            $basic_salary = $employee->basic_Salary - 3500;
 
-        $basic_salary = $employee->basic_Salary;
-
-        // Increments
-        $br_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
-            ->where('active', true)
-            ->where('increment_name', 'BR Allowance')
-            ->where('type', 'increments')
-            ->sum('increment_amount');
+            // Increments
+            $br_allowance = 3500;
+            // $br_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
+            //     ->where('active', true)
+            //     ->where('increment_name', 'BR Allowance')
+            //     ->where('type', 'increments')
+            //     ->sum('increment_amount');
+        }
 
         $fixed_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Fixed Allowance')
             ->where('type', 'increments')
             ->sum('increment_amount');
-
+        // dd($fixed_allowance);
         $attendance_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Attendance Allowance')
@@ -119,9 +132,13 @@ class PayslipController extends Controller
             ->sum('increment_amount');
 
         // Salary amounts
-        $gross_salary = $basic_salary + $br_allowance + $fixed_allowance;
+        $gross_salary = $basic_salary + $br_allowance + $incentives;
+        // dd($gross_salary);
         $gross_salary_day = $gross_salary / $attandance_data['work_days'];
+
+        // dd($gross_salary_day);
         $gross_salary_hour = $gross_salary_day / $attandance_data['work_hours'];
+
 
         // Holiday payment
         $holiday_payment = $attandance_data['days_worked_holiday']->count() * $gross_salary_day * 2;
@@ -136,63 +153,73 @@ class PayslipController extends Controller
 
         // No pay leave deduction
         $no_pay_leave_deduction =  $gross_salary_day * $attandance_data['no_pay_leaves'];
-
+        // dd($attandance_data['no_pay_leaves']);
         // Late hours deduction
         $late_hours = $attandance_data['late_minutes'] / 60;
         $late_deduction = $gross_salary_hour * $late_hours;
 
         // Total basic pay
         $total_basic_pay = $gross_salary  - $no_pay_leave_deduction - $late_deduction;
-
+        // dd($total_basic_pay);
         // Employee EPF
-        $employee_epf = ($total_basic_pay / 100) * 8;
+        if ($job_status == "INTERN ") {
+            $employee_epf = 0.00;
+            $company_epf = 0.00;
+            $etf = 0.00;
+        } else {
+            $employee_epf = ($total_basic_pay / 100) * 8;
+            // dd($employee_epf);
+            // Company EPF/ETF
+            $company_epf = ($total_basic_pay / 100) * 12;
+            $etf = ($total_basic_pay / 100) * 3;
+        }
+        $increments = $holiday_payment + $extra_days_payment + $incentives + $ot + $other_incrmeents + $loan;
+        $deductions = $no_pay_leave_deduction + $late_deduction + $employee_epf + $advance + $other_deductions;
+        $netSalary = ($gross_salary + $increments) - $deductions;
+        $payslip = new Payslip();
+        $taxAmount = $payslip->calculateTax($netSalary);
+        $netSalary = $netSalary - $taxAmount;
+        // dd($taxAmount);
 
-        // Company EPF/ETF
-        $company_epf = ($total_basic_pay / 100) * 12;
-        $etf = ($total_basic_pay / 100) * 3;
-
-        $payslip = Payslip::firstOrCreate([
-            'employee_id' => $employee->id,
-            'date' => now()->startOfMonth()->subMonth(),
-        ],[
-            'approved_at' => null,
-
-            'basic_salary' => $basic_salary,
-            'br_allowance' => $br_allowance,
-            'fixed_allowance' => $fixed_allowance,
-            'attendance_allowance' => $attendance_allowance,
-
-            'no_pay_leave_deduction' => $no_pay_leave_deduction,
-            'late_deduction' => $late_deduction,
-
-            'employee_epf' => $employee_epf,
-            'paye' => 0,
-            'stamp_duty' => 0,
-
-            'advance' => $advance,
-            'loan' => $loan,
-            'other_deductions' => $other_deductions,
-
-            'holiday_payment' => $holiday_payment,
-            'extra_days_payment' => $extra_days_payment,
-            'incentives' => $incentives,
-            'ot' => $ot,
-            'other_increments' => $other_incrmeents,
-
-            'company_epf' => $company_epf,
-            'etf' => $etf,
-
-            'account_name' => $employee->account_name,
-            'account_number' => $employee->account_number,
-            'bank_name' => $employee->bank_name,
-            'branch' => $employee->branch,
-        ]);
+        $payslip = Payslip::firstOrCreate(
+            [
+                'employee_id' => $employee->id,
+                'date' => now()->startOfMonth()->subMonth(),
+            ],
+            [
+                'approved_at' => null,
+                'basic_salary' => $basic_salary,
+                'br_allowance' => $br_allowance,
+                'fixed_allowance' => $fixed_allowance,
+                'attendance_allowance' => $attendance_allowance,
+                'no_pay_leave_deduction' => $no_pay_leave_deduction,
+                'late_deduction' => $late_deduction,
+                'employee_epf' => $employee_epf,
+                'paye' => $taxAmount,
+                'stamp_duty' => 0,
+                'advance' => $advance,
+                'loan' => $loan,
+                'other_deductions' => $other_deductions,
+                'holiday_payment' => $holiday_payment,
+                'extra_days_payment' => $extra_days_payment,
+                'incentives' => $incentives,
+                'ot' => $ot,
+                'other_increments' => $other_incrmeents,
+                'company_epf' => $company_epf,
+                'etf' => $etf,
+                'net_salary' => $netSalary,
+                'account_name' => $employee->account_name,
+                'account_number' => $employee->account_number,
+                'bank_name' => $employee->bank_name,
+                'branch' => $employee->branch,
+            ]
+        );
 
         // Deactivate one-time adjustments
         SalaryDetail::where('employee_id', $employee->employee_id)
-                    ->where('active', true)
-                    ->where('recurring', false)
-                    ->update(['active' => false]);
+            ->where('active', true)
+            ->where('recurring', false)
+            ->update(['active' => false]);
 
         return $payslip;
     }
@@ -201,7 +228,7 @@ class PayslipController extends Controller
     public function generate_payslips()
     {
         $employees = Employee::where('status', 'active');
-        $employees->each(function ($employee){
+        $employees->each(function ($employee) {
             $this->create_payslip($employee);
         });
         return redirect('/form/payslip/approve');
@@ -225,7 +252,7 @@ class PayslipController extends Controller
         $payslips = Payslip::all();
         $departments = department::all();
 
-        return view('reports/salary-report', compact('departments', 'employees','payslips'));
+        return view('reports/salary-report', compact('departments', 'employees', 'payslips'));
     }
 
     public function getDetails($employeeId)
@@ -237,34 +264,34 @@ class PayslipController extends Controller
             ->where('increment_name', 'BR allowance')
             ->where('type', 'increments')
             ->sum('increment_amount');
-        
+
         $incentive1 = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Incentive 1')
             ->where('type', 'increments')
             ->sum('increment_amount');
-        
+
         $incentive2 = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Incentive 2')
             ->where('type', 'increments')
             ->sum('increment_amount');
-        
+
         $increment_others = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Others')
             ->where('type', 'increments')
             ->sum('increment_amount');
-        
+
         $bodim = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Bodim')
             ->where('type', 'deductions')
             ->sum('increment_amount');
-        
+
         $Others = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Others')
             ->where('type', 'deductions')
             ->sum('increment_amount');
-        
+
         $deduction_others = $bodim + $Others;
-        
+
         $Advanced = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Advanced')
             ->where('type', 'deductions')

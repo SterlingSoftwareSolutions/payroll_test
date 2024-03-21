@@ -180,42 +180,42 @@
 
                                         <div class="form-group col-md-12">
                                             <label for="basic_salary">Basic Salary</label>
-                                            <input type="number" step="0.01" class="form-control" id="basic_salary" name="basic_salary">
+                                            <input type="number" step="0.01" class="form-control" id="basic_salary" name="basic_salary"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="br_allowance">BR Allowance</label>
-                                            <input type="number" step="0.01" class="form-control" id="br_allowance" name="br_allowance">
+                                            <input type="number" step="0.01" class="form-control" id="br_allowance" name="br_allowance"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="fixed_allowance">Fixed Allowance</label>
-                                            <input type="number" step="0.01" class="form-control" id="fixed_allowance" name="fixed_allowance">
+                                            <input type="number" step="0.01" class="form-control" id="fixed_allowance" name="fixed_allowance"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="attendance_allowance">Attendance Allowance</label>
-                                            <input type="number" step="0.01" class="form-control" id="attendance_allowance" name="attendance_allowance">
+                                            <input type="number" step="0.01" class="form-control" id="attendance_allowance" name="attendance_allowance"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="holiday_payment">Holiday Payment</label>
-                                            <input type="number" step="0.01" class="form-control" id="holiday_payment" name="holiday_payment">
+                                            <input type="number" step="0.01" class="form-control" id="holiday_payment" name="holiday_payment"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="incentives">Incentives</label>
-                                            <input type="number" step="0.01" class="form-control" id="incentives" name="incentives">
+                                            <input type="number" step="0.01" class="form-control" id="incentives" name="incentives"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="ot">OT</label>
-                                            <input type="number" step="0.01" class="form-control" id="ot" name="ot">
+                                            <input type="number" step="0.01" class="form-control" id="ot" name="ot"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="other_increments">Other Increments</label>
-                                            <input type="number" step="0.01" class="form-control" id="other_increments" name="other_increments">
+                                            <input type="number" step="0.01" class="form-control" id="other_increments" name="other_increments" readonly>
                                         </div>
                                     </div>
 
@@ -227,42 +227,42 @@
 
                                         <div class="form-group col-md-12">
                                             <label for="no_pay_leave_deduction">No Pay Leave Deduction</label>
-                                            <input type="number" step="0.01" class="form-control" id="no_pay_leave_deduction" name="no_pay_leave_deduction">
+                                            <input type="number" step="0.01" class="form-control" id="no_pay_leave_deduction" name="no_pay_leave_deduction"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="late_deduction">Late Deduction</label>
-                                            <input type="number" step="0.01" class="form-control" id="late_deduction" name="late_deduction">
+                                            <input type="number" step="0.01" class="form-control" id="late_deduction" name="late_deduction"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="employee_epf">EPF (Employee)</label>
-                                            <input type="number" step="0.01" class="form-control" id="employee_epf" name="employee_epf">
+                                            <input type="number" step="0.01" class="form-control" id="employee_epf" name="employee_epf"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="paye">P.A.Y.E.</label>
-                                            <input type="number" step="0.01" class="form-control" id="paye" name="paye">
+                                            <input type="number" step="0.01" class="form-control" id="paye" name="paye"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="stamp_duty">Stamp Duty</label>
-                                            <input type="number" step="0.01" class="form-control" id="stamp_duty" name="stamp_duty">
+                                            <input type="number" step="0.01" class="form-control" id="stamp_duty" name="stamp_duty"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="advance">Advance</label>
-                                            <input type="number" step="0.01" class="form-control" id="advance" name="advance">
+                                            <input type="number" step="0.01" class="form-control" id="advance" name="advance"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="loan">Loan</label>
-                                            <input type="number" step="0.01" class="form-control" id="loan" name="loan">
+                                            <input type="number" step="0.01" class="form-control" id="loan" name="loan"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="other_deductions">Other Deductions</label>
-                                            <input type="number" step="0.01" class="form-control" id="other_deductions" name="other_deductions">
+                                            <input type="number" step="0.01" class="form-control" id="other_deductions" name="other_deductions"readonly>
                                         </div>
                                     </div>
 
@@ -274,12 +274,12 @@
 
                                         <div class="form-group col-md-12">
                                             <label for="company_epf">EPF (Company)</label>
-                                            <input type="number" step="0.01" class="form-control" id="company_epf" name="company_epf">
+                                            <input type="number" step="0.01" class="form-control" id="company_epf" name="company_epf"readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="etf">ETF</label>
-                                            <input type="number" step="0.01" class="form-control" id="etf" name="etf">
+                                            <input type="number" step="0.01" class="form-control" id="etf" name="etf"readonly>
                                         </div>
                                     </div>
 
@@ -354,9 +354,10 @@
                         $('#br_allowance').val(response.br_allowance);
                         $('#fixed_allowance').val(response.fixed_allowance);
                         $('#attendance_allowance').val(response.attendance_allowance);
-                        $('#no_pay_leave_deduction').val(response.no_pay_leave_deduction.toFixed(2));
+                        $('#no_pay_leave_deduction').val(response.no_pay_leave_deduction);
                         $('#late_deduction').val(response.late_deduction);
                         $('#employee_epf').val(response.employee_epf);
+                        console.log($('#employee_epf').val());
                         $('#paye').val(response.paye);
                         $('#stamp_duty').val(response.stamp_duty);
                         $('#advance').val(response.advance);
