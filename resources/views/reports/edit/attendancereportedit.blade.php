@@ -181,12 +181,21 @@
                                     id="ot_minutes" name="ot_minutes" value="{{ $attendanceReport->ot_minutes }}" required>
                             </div>
                         </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Half Days <span class="text-danger">*</span></label>
+                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                    id="half_days" name="half_days" value="{{ $attendanceReport->half_day }}" required>
+                            </div>
+                        </div>
+                       
 
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="col-form-label">Annual Leaves <span class="text-danger">*</span></label>
                                 <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="annual_leaves" name="annual_leaves" value="{{ $attendanceReport -> annualLeaves }}" readonly>
+                                    id="annual_leaves" name="annual_leaves" value="{{ $attendanceReport -> annual_leaves }}" readonly>
                             </div>
                         </div>
                         <div class="col-md-6">
