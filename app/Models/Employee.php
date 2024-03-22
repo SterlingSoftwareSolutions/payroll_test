@@ -67,7 +67,8 @@ class Employee extends Model
         return $this->belongsTo(department::class, 'd_name');
     }
 
-    public function attendance_data($year  = null, $month = null){
+    //Below functions use to calculate attendance report edit page
+    public function attendance_data($year  = null, $month = null){    
         $department = $this->department->department;
 
         // Month details
@@ -125,6 +126,8 @@ class Employee extends Model
             }
             return $diff > 0 ? $diff : 0;
         });
+        $annualLeaves = $this->calculate_annual_leaves($current->year);
+
 
         return compact(
             'month_days_count',
@@ -139,6 +142,7 @@ class Employee extends Model
             'no_pay_leaves',
             'late_minutes',
             'ot_minutes',
+            'annualLeaves',
         );
 
     }
@@ -164,18 +168,18 @@ class Employee extends Model
     private function calculate_annual_leaves($year){
         $joinedDate = $this->joinedDate;
         $years = now()->diffInYears($joinedDate);
-  
+    
         if($years >= 2){
             return 14;
         } elseif($years < 1){
             return 0;
         }
-
-        $januaryFirst = Carbon::parse('January 1' . $joinedDate->year);
-        $aprilFirst = Carbon::parse('April 1' . $joinedDate->year);
-        $julyFirst = Carbon::parse('July 1' . $joinedDate->year);
-        $octoberFirst = Carbon::parse('October 1' . $joinedDate->year);
-
+    
+        $januaryFirst = Carbon::parse('January 1, ' . $joinedDate->year);
+        $aprilFirst = Carbon::parse('April 1, ' . $joinedDate->year);
+        $julyFirst = Carbon::parse('July 1, ' . $joinedDate->year);
+        $octoberFirst = Carbon::parse('October 1, ' . $joinedDate->year);
+    
         if ($joinedDate->gte($januaryFirst) && $joinedDate->lt($aprilFirst)) {
             $annualLeaves = 14;
         } elseif ($joinedDate->gte($aprilFirst) && $joinedDate->lt($julyFirst)) {
@@ -187,7 +191,8 @@ class Employee extends Model
         } else {
             $annualLeaves = 0;
         }
-
+    
         return $annualLeaves;
     }
+    
 }
