@@ -37,6 +37,7 @@ class Employee extends Model
         'bank_name',
         'branch',
         'basic_Salary',
+        'workingHours',
     ];
 
     protected $casts = [
@@ -69,7 +70,6 @@ class Employee extends Model
 
     public function attendance_data($year  = null, $month = null){
         $department = $this->department->department;
-
         // Month details
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
         $month_days_count = $current->daysInMonth;
@@ -81,13 +81,13 @@ class Employee extends Model
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
         });
         $work_days = $month_days_count - $month_weekends_count;
-        $work_hours = $department == 'Local' ? 9 : 10;
-
+        $work_hours = $this->workingHours == "6day" ? 9 : 10;
+        // dd($work_hours);
         // Employee details
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
 
         $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
-            if($department == 'Local'){
+            if($this->workingHours == "6day"){
                 return !$attendance->date->isSunday();
             }
             return !$attendance->date->isSaturday() && !$attendance->date->isSunday();
@@ -100,7 +100,7 @@ class Employee extends Model
         });
 
         $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department){
-            if($department == 'Local'){
+            if($this->workingHours == "6day"){
                 return $attendance->date->isSunday();
             }
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
@@ -109,7 +109,7 @@ class Employee extends Model
         $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
 
         $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-            if($department == 'Local' && $attendance->date->isSaturday()){
+            if($this->workingHours == "6day" && $attendance->date->isSaturday()){
                 $diff = 5 * 60 - $attendance->duration();
             } else{
                 $diff = $work_hours * 60 - $attendance->duration();
@@ -118,7 +118,7 @@ class Employee extends Model
         });
 
         $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-            if($department == 'Local' && $attendance->date->isSaturday()){
+            if($this->workingHours == "6day" && $attendance->date->isSaturday()){
                 $diff = $attendance->duration() - 5 * 60;
             } else{
                 $diff = $attendance->duration() - $work_hours * 60;
@@ -162,7 +162,7 @@ class Employee extends Model
     private function calculate_annual_leaves($year){
         $joinedDate = $this->joinedDate;
         $years = now()->diffInYears($joinedDate);
-  
+
         if($years >= 2){
             return 14;
         } elseif($years < 1){

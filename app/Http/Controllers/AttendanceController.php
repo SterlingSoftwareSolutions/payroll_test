@@ -382,6 +382,61 @@ class AttendanceController extends Controller
                     continue;
                 }
 
+                // Assuming $attendance['punch_out'] is a string in a format like 'Y-m-d H:i:s'
+                $punchOut = new DateTime($attendance['punch_out']);
+                $punchIn = new DateTime($attendance['punch_in']);
+                $workHours = $punchOut->diff($punchIn)->format('%H:%I');
+                // dd($workHours);
+                $dateTime = new DateTime($date);
+                $dayOfWeek = $dateTime->format('l');
+
+                $OT = '00:00';
+                $late = '00:00';
+
+                if ($employee->workingHours == '5day' && ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday')) {
+                    // Your code here
+                }
+                elseif($employee->workingHours == '6day' && $dayOfWeek == 'Sunday'){
+                    // Your code here
+                }
+                elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+                    $otStartTime = new DateTime('05:00');
+                    $workHoursTime = new DateTime($workHours);
+
+                    if ($workHoursTime > $otStartTime) {
+                        $otInterval = $workHoursTime->diff($otStartTime);
+                        $OT = $otInterval->format('%H:%I');
+                    } else {
+                        $lateInterval = $otStartTime->diff($workHoursTime);
+                        $late = $lateInterval->format('%H:%I');
+                    }
+                }
+                elseif ($employee->workingHours == '5day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
+                    $otStartTime = new DateTime('10:00');
+                    $workHoursTime = new DateTime($workHours);
+
+                    if ($workHoursTime > $otStartTime) {
+                        $otInterval = $workHoursTime->diff($otStartTime);
+                        $OT = $otInterval->format('%H:%I');
+                    } else {
+                        $lateInterval = $otStartTime->diff($workHoursTime);
+                        $late = $lateInterval->format('%H:%I');
+                    }
+                }
+                elseif ($employee->workingHours == '6day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
+                    $otStartTime = new DateTime('09:00');
+                    $workHoursTime = new DateTime($workHours);
+
+                    if ($workHoursTime > $otStartTime) {
+                        $otInterval = $workHoursTime->diff($otStartTime);
+                        $OT = $otInterval->format('%H:%I');
+                    } else {
+                        $lateInterval = $otStartTime->diff($workHoursTime);
+                        $late = $lateInterval->format('%H:%I');
+                    }
+                }
+
+                // dd($dayOfWeek);
                 // Create attendance entry
                 $attendance = Attendance::updateOrCreate([
                     'employee_id' => $employee->id,
@@ -390,6 +445,9 @@ class AttendanceController extends Controller
                     'WorkId' => $WorkId,
                     'punch_in' => $attendance['punch_in'],
                     'punch_out' => $attendance['punch_out'],
+                    'workHours' => $workHours,
+                    'OT' => $OT,
+                    'late' => $late,
                 ]);
             }
         }

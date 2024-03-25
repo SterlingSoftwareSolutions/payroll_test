@@ -103,7 +103,7 @@
 		<br>
 		<tr>
 			<td style="width: 33.33%;">Net Salary</td>
-			<td style="text-align: right;">{{$payslip->net_salary() ? number_format($payslip->net_salary(), 2) : '-'}}</td>
+			<td style="text-align: right;">{{$payslip->net_salary ? number_format($payslip->net_salary, 2) : '-'}}</td>
 		</tr>
 		<tr>
 			<td style="width: 33.33%;">E.P.F 12%</td>

@@ -17,7 +17,7 @@
               </div>
               <div class="modal-body">
                 <div style="height: 350px; overflow-y: scroll;">
-                    @foreach(session('import_errors') as $date=>$import_errors)          
+                    @foreach(session('import_errors') as $date=>$import_errors)
                     <div class="mb-4">
                         <h4 class="mb-2">Date: {{$date}}</h4>
                         @foreach($import_errors as $work_id=>$message)
@@ -165,6 +165,7 @@
                                 <th>Punch Out</th>
                                 <th>Production</th>
                                 <th>Over Time</th>
+                                <th>Late Time</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -182,22 +183,23 @@
                                     <td class="text-left" id="punchin">{{ $items->punch_in->format('H:i') }}</td>
                                     <td class="text-left" id="punchout">{{ $items->punch_out->format('H:i') }}</td>
                                     {{-- Calculate Work Hours --}}
-                                    @php
+                                    {{-- @php
                                         $punchIn = new DateTime($items->punch_in);
                                         $punchOut = new DateTime($items->punch_out);
                                         $workHours = $punchOut->diff($punchIn)->format('%H:%I');
-                                    @endphp
+                                    @endphp --}}
 
-                                    <td class="text-left">{{ $workHours }}</td>
+                                    <td class="text-left">{{  $items->workHours }}</td>
 
                                     {{-- Calculate Overtime --}}
-                                    @php
+                                    {{-- @php
                                         $regularWorkingHours = new DateTime('10:00');
                                         $workHours = new DateTime($punchOut->diff($punchIn)->format('%H:%I'));
                                         $overtime = $workHours > $regularWorkingHours ?
                                         $workHours->diff($regularWorkingHours)->format('%H:%I') : '00:00';
-                                    @endphp
-                                    <td class="text-left">{{ $overtime }}</td>
+                                    @endphp --}}
+                                    <td class="text-left">{{ $items->OT }}</td>
+                                    <td class="text-left">{{ $items->late }}</td>
                                     <td class="text-center">
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
