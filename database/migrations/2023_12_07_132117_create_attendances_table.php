@@ -21,6 +21,9 @@ return new class extends Migration
             $table->date('date');
             $table->time('punch_in');
             $table->time('punch_out');
+            $table->time('workHours');
+            $table->time('OT');
+            $table->time('late');
             $table->timestamps();
         });
     }
@@ -34,5 +37,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('attendances');
     }
-    
+
 };

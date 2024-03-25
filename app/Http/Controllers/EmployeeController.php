@@ -186,6 +186,7 @@ class EmployeeController extends Controller
             'bank_name' => 'required',
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
+            'workingHours' =>'required',
         ]);
         // dd($validated);
         $validated['employee_id'] = $validated['id'];
