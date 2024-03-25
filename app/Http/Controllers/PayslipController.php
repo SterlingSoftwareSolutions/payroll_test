@@ -196,7 +196,7 @@ class PayslipController extends Controller
         $late_hours = $attandance_data['late_minutes'] / 60;
         $late_deduction = $gross_salary_hour * $late_hours;
 
-        // dd($late_deduction);
+        // dd($late_hours);
         // Total basic pay
         $total_basic_pay = $gross_salary  - $no_pay_leave_deduction - $late_deduction;
 
@@ -222,7 +222,7 @@ class PayslipController extends Controller
 
         $netSalary =  $increments - $deductions;
         // $netSalary = $netSalary - $taxAmount;
-        dd($taxAmount);
+        // dd($taxAmount);
         $payslip = Payslip::firstOrCreate([
             'employee_id' => $employee->id,
             'date' => now()->startOfMonth()->subMonth(),

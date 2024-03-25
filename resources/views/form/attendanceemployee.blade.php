@@ -158,7 +158,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Attendance Id</th>
-                                <th>Work Id</th>
+                                {{-- <th>Work Id</th> --}}
                                 <th>Employee Name</th>
                                 <th>Date</th>
                                 <th>Punch In</th>
@@ -176,7 +176,7 @@
                                 <tr class="attendance-completed">
                                     <td>{{ ++$key }}</td>
                                     <td class="text-left" id="ids">{{ $items->id }}</td>
-                                    <td class="text-left" id="ids">{{ $items->WorkId }}</td>
+                                    {{-- <td class="text-left" id="ids">{{ $items->WorkId }}</td> --}}
                                     <td class="text-left" id="empname">{{ $items->employee->full_name }}</td>
                                     <td class="text-left" id="empid" hidden>{{ $items->employee->id }}</td>
                                     <td class="text-left" id="selctdate">{{ $items->date->format('Y-m-d') }}</td>
@@ -208,10 +208,12 @@
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">
                                                 <a class="dropdown-item userUpdate" data-toggle="modal"
-                                                    data-id="{{ $items->id }}" data-target="#edit_attendance">
+                                                   data-id="{{ $items->id }}" data-target="#edit_attendance">
                                                     <i class="fa fa-pencil m-r-5"></i> Edit
                                                 </a>
                                             </div>
+
+
                                         </div>
                                     </td>
                                 </tr>
