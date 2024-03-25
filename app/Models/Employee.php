@@ -72,8 +72,12 @@ class Employee extends Model
         $department = $this->department->department;
 
         // Month details
-        $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
-        $month_days_count = $current->daysInMonth;
+        // $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
+        $current = Carbon::create($year ?? now()->year, $month ?? now()->month);
+
+        //$month_days_count = $current->daysInMonth;
+        $month_days_count = $this->getDaysInMonth($current->format('m'), $current->year);
+
         $month_weekends_count = $current->diffInDaysFiltered(function (Carbon $date){
             return $date->isSaturday() || $date->isSunday();
         }, $current->copy()->lastOfMonth());
@@ -127,7 +131,7 @@ class Employee extends Model
             return $diff > 0 ? $diff : 0;
         });
         $annualLeaves = $this->calculate_annual_leaves($current->year);
-
+        $absent_days =  $month_days_count - $days_worked->count() - $month_holidays->count()- $month_weekends_count;
 
         return compact(
             'month_days_count',
@@ -143,8 +147,19 @@ class Employee extends Model
             'late_minutes',
             'ot_minutes',
             'annualLeaves',
+            'absent_days',
         );
 
+    }
+    private function getDaysInMonth($month, $year)
+    {
+        if ($month == "02") {
+            return ($year % 4 == 0) ? 29 : 28;
+        } elseif (in_array($month, ["01", "03", "05", "07", "08", "10", "12"])) {
+            return 31;
+        } else {
+            return 30;
+        }
     }
 
     public function annual_leaves($year = null)

@@ -126,7 +126,6 @@
                         <tbody>
                             @foreach ($attendances as $attendance)
                             @php
-                            // Extract year from the date
                             // dd($attendance);
                             $date = \Carbon\Carbon::parse($attendance->date);
                             $year = $date->format('Y');
@@ -150,13 +149,12 @@
                                 <td>{{ $year }}</td>
                                 <td>{{ $month }}</td>
                                 <td>{{ $totDays }}</td>
-                                <td>{{ $totDays -
-                                    ($attendanceCounts->where('employee_id',
-                                    optional($attendance->employee)->id)->first()->attendance_count ?? 0) -
-                                    optional($attendance->employee->holiday)->count() }}
+                                <td>
+                                    {{ $totDays - ($attendanceCounts->where('employee_id', optional($attendance->employee)->id)->first()->attendance_count ?? 0) - optional($attendance->employee->holiday)->count() - $weekendCount }}
                                 </td>
+                                
                                 <td>{{ $weekendCount }}</td>
-                                {{-- Uncomment if needed --}}
+
                                 {{-- <td>
                                     @if ($attendance->is_holiday)
                                     <span class="badge badge-warning badge-pill float-right">{{
