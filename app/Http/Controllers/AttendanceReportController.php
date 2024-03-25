@@ -69,13 +69,14 @@ class AttendanceReportController extends Controller
             $overtime = $workHours > $regularWorkingHours ? $workHours->diff($regularWorkingHours)->format('%H:%I') : '00:00';
 
             $attendance->overtime = $overtime;
+            
         });
 
         $attendanceCounts = DB::table('attendances')                    //attendance count
             ->select('employee_id', DB::raw('count(*) as attendance_count'))
             ->groupBy('employee_id')
             ->get();
-
+        
         $totDays = $this->getDaysInMonth($current_month, $current_year);
         $weekendCount = $this->getWeekendCount($current_month, $current_year);
 
@@ -83,6 +84,7 @@ class AttendanceReportController extends Controller
             $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
             return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
         })->count();
+        // $absentDays = $totDays - ($attendanceCounts->where('employee_id', optional($attendances->employee)->id)->first()->attendance_count ?? 0) - optional($attendances->employee->holiday)->count() - $weekendCount;
 
 
 
@@ -95,7 +97,7 @@ class AttendanceReportController extends Controller
             $employee->annualLeaves = $annualLeaves;
         });
         
-
+        
         // dd($employees->annualLeaves); 
 
            
@@ -198,16 +200,23 @@ class AttendanceReportController extends Controller
     }
     if (isset($attendanceData["month_days_count"])) {
 
+         // Calculate absent days
+    $month_days_count = $attendanceData["month_days_count"];
+    $days_worked = $attendanceData["days_worked"]->count();
+    $month_holidays = $attendanceData["month_holidays"]->count();
+    $month_weekends_count = $attendanceData["month_weekends_count"];
+    $absent_days =  $month_days_count - $days_worked->count() - $month_holidays->count()- $month_weekends_count;
 
-    // Update the existing attendance report data
+
+    // Update the existing attendance report data 
     $attendanceReport->update([
         "month_days" => $attendanceData["month_days_count"],
         "month_weekends" => $attendanceData["month_weekends_count"],
         "month_holidays" => $attendanceData["month_holidays"],
         "work_days" => $attendanceData["work_days"],
         "work_hours" => $attendanceData["work_hours"],
-        "absent_days" => $attendanceData["absent_days"] ?? 0,
         "days_worked" => $attendanceData["days_worked"],
+       "absent_days" => $absent_days,
         "days_worked_holiday" => $attendanceData["days_worked_holiday"],
         "days_worked_weekend" => $attendanceData["days_worked_weekend"],
         "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"],
@@ -319,7 +328,7 @@ class AttendanceReportController extends Controller
      
 
 
-        return view('reports.attendance-report',compact('attendanceData','attendances','holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount',
+        return view('reports.attendance-report',compact('attendanceData','attendances','holiday', 'employeeHolidayCounts', 'employees', 'attendances', 'departments','absent_days', 'totDays', 'attendanceCounts', 'weekendCount', 'extraDaysCount',
        ));
     }
 
@@ -339,6 +348,7 @@ class AttendanceReportController extends Controller
 
         $year = $request->input('year', null);
         $month = $request->input('month', null);
+        $daysInMonth = $this->getDaysInMonth($month, $year);
 
 
         // $joinedDate = $employee->joinedDate; 
@@ -348,6 +358,13 @@ class AttendanceReportController extends Controller
 
 
         $attendanceData = $employee->attendance_data($year, $month);
+
+          // Calculate absent days
+    $work_days = $attendanceData["work_days"];
+    $days_worked = $attendanceData["days_worked"]->count();
+    $days_worked_holiday = $attendanceData["days_worked_holiday"]->count();
+    $absent_days = $work_days - $days_worked - $days_worked_holiday;
+
        // dd($attendanceData);
         $attendanceReport = AttendanceReport::updateOrCreate([
             'employee_id' => $employeeId,
@@ -358,8 +375,7 @@ class AttendanceReportController extends Controller
             "month_holidays" => $attendanceData["month_holidays"]->count(),
             "work_days" => $attendanceData["work_days"],
             "work_hours" => $attendanceData["work_hours"],
-            // "absent_days" => $attendanceData["absent_days"],
-            "absent_days" => $attendanceData["absent_days"] ?? 0,
+       
             "days_worked" => $attendanceData["days_worked"]->count(),
             "days_worked_holiday" => $attendanceData["days_worked_holiday"]->count(),
             "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
@@ -368,6 +384,7 @@ class AttendanceReportController extends Controller
             "ot_minutes" => $attendanceData["ot_minutes"],
             "annual_leaves_taken" => 0,
             "annual_leaves" => $attendanceData["annualLeaves"] ?? 0,
+            "absent_days" => $absent_days,
            
         ]);
 
@@ -375,14 +392,14 @@ class AttendanceReportController extends Controller
       
 
         // dd($attendanceReport);
-        // dd($attendanceData);
+       //dd($attendanceData);
 
-        return view('reports.edit.attendancereportedit', ['attendanceReport' => $attendanceReport, 'attendanceData' => $attendanceData, 'departments' => $departments]);
+        return view('reports.edit.attendancereportedit', ['attendanceReport' => $attendanceReport, 'attendanceData' => $attendanceData, 'departments' => $departments, 'daysInMonth' => $daysInMonth,]);
 
     }
 
 
-
+   
 
 
 
