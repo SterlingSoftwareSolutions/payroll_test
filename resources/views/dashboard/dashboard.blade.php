@@ -277,10 +277,10 @@
                                             @endforeach
 
                                             @if (!empty($departments))
-                                                <h4 class="card-title">Today Absent
+                                                {{-- <h4 class="card-title">Today Absent
                                                     {{ $departments[0]->department }}<span
                                                         class="badge bg-inverse-danger ml-2"></span>
-                                                </h4>
+                                                </h4> --}}
                                             @endif
                                             <div class="ld-more">
                                                 @foreach ($absentEmployees as $departmentName => $departmentEmployees)

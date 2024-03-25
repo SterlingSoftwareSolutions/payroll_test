@@ -181,12 +181,21 @@
                                     id="ot_minutes" name="ot_minutes" value="{{ $attendanceReport->ot_minutes }}" required>
                             </div>
                         </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Half Days <span class="text-danger">*</span></label>
+                                <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                    id="half_days" name="half_days" value="">
+                            </div>
+                        </div>
+                       
 
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="col-form-label">Annual Leaves <span class="text-danger">*</span></label>
                                 <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="annual_leaves" name="annual_leaves" value="{{ $attendanceReport -> annualLeaves }}" readonly>
+                                    id="annual_leaves" name="annual_leaves" value="{{ $attendanceReport -> annual_leaves }}" readonly>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -194,9 +203,21 @@
                                 <label class="col-form-label">Annual Leaves Taken <span class="text-danger">*</span></label>
                                 <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                     id="annual_leaves_taken" name="annual_leaves_taken"
-                                    value="{{ $attendanceReport->annual_leaves_taken }}" required>
+                                    value="{{ $attendanceReport->annual_leaves_taken }}"  required onchange="updateRemainingLeaves()">
                             </div>
                         </div>
+                        {{-- onchange option --}}
+                        <script>  
+                            function updateRemainingLeaves() {
+                                var annualLeaves = parseInt(document.getElementById('annual_leaves').value);
+                                var annualLeavesTaken = parseInt(document.getElementById('annual_leaves_taken').value);
+                                
+                                var remainingLeaves = annualLeaves - annualLeavesTaken;
+                                remainingLeaves = remainingLeaves < 0 ? 0 : remainingLeaves;
+                                document.getElementById('annual_leaves').value = remainingLeaves;
+                            }
+                        </script>
+                        
                     
                         <div class="submit-section">
                             <button class="btn btn-primary submit-btn">Submit</button>
