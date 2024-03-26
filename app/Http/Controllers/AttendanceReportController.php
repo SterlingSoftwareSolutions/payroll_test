@@ -51,37 +51,6 @@ class AttendanceReportController extends Controller
 
 
 
-
-    private function getDaysInMonth($month, $year)
-    {
-        if ($month == "02") {
-            return ($year % 4 == 0) ? 29 : 28;
-        } elseif (in_array($month, ["01", "03", "05", "07", "08", "10", "12"])) {
-            return 31;
-        } else {
-            return 30;
-        }
-    }
-
-
-    private function getWeekendCount($month, $year)
-    {
-        $startDate = Carbon::createFromDate($year, $month, 1);
-        $endDate = $startDate->copy()->endOfMonth();
-
-        $interval = new DateInterval('P1D');
-        $period = new DatePeriod($startDate, $interval, $endDate);
-
-        $weekendCount = 0;
-
-        foreach ($period as $date) {
-            if ($date->format('N') >= 6) {
-                $weekendCount++;
-            }
-        }
-        return $weekendCount;
-    }
-
     public function generate_reports(Request $request){
         if($request->department_id){
             $employees = Employee::where('status', 'active')->where('d_name', $request->department_id);
@@ -115,43 +84,32 @@ class AttendanceReportController extends Controller
         return redirect()->route('form.attendance.index');
     }
 
-    // public function generateAttendanceReport(Request $request, $employeeId)
-    // {
-    //     $departments = department::all();
+    public function edit(AttendanceReport $attendanceReport){
+        return view("reports/attendance-report-edit", compact('attendanceReport'));
+    }
 
-    //     $employee = Employee::find($employeeId);
-
-    //     if (!$employee) {
-    //         return response()->json(['error' => 'Employee not found'], 404);
-    //     }
-
-    //     $year = $request->input('year', null);
-    //     $month = $request->input('month', null);
-    //     $attendanceData = $employee->attendance_data($year, $month);
-
-    //     $attendanceReport = AttendanceReport::updateOrCreate([
-    //         'employee_id' => $employeeId,
-    //         'date' => today()->firstOfMonth()
-    //     ], [
-    //         "month_days" => $attendanceData["month_days_count"],
-    //         "month_weekends" => $attendanceData["month_weekends_count"],
-    //         "month_holidays" => $attendanceData["month_holidays"]->count(),
-    //         "work_days" => $attendanceData["work_days"],
-    //         "work_hours" => $attendanceData["work_hours"],
-    //         "days_worked" => $attendanceData["days_worked"]->count(),
-    //         "days_worked_holiday" => $attendanceData["days_worked_holiday"]->count(),
-    //         "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
-    //         "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"]->count(),
-    //         "late_minutes" => $attendanceData["late_minutes"],
-    //         "ot_minutes" => $attendanceData["ot_minutes"],
-    //         "annual_leaves_taken" => 0,
-    //         "annual_leaves" => $attendanceData["annualLeaves"] ?? 0,
-    //         "absent_days" => $attendanceData["no_pay_leaves"],
-    //     ]);
-
-    //     return view('reports.edit.attendancereportedit', ['attendanceReport' => $attendanceReport, 'attendanceData' => $attendanceData, 'departments' => $departments]);
-    // }
-
+    public function update(AttendanceReport $attendanceReport, Request $request){
+        $validatedData = $request->validate([
+            'employee_id' => 'required|integer',
+            'date' => 'required|date',
+            'month_days' => 'required',
+            'month_weekends' => 'required',
+            'month_holidays' => 'required',
+            'work_days' => 'required',
+            'work_hours' => 'required',
+            'absent_days' => 'required',
+            'days_worked' => 'required',
+            'days_worked_holiday' => 'required',
+            'days_worked_weekend' => 'required',
+            // 'days_worked_holiday_weekend' => 'required',
+            'late_minutes' => 'required',
+            'ot_minutes' => 'required',
+            'annual_leaves' => 'required',
+            'annual_leaves_taken' => 'required',
+        ]);
+        $attendanceReport->update($validatedData);
+        return redirect()->route('form.attendance.edit', ['attendanceReport' => $attendanceReport]);
+    }
 
     public function calculateAnnualLeave($employeeId)
     {
@@ -199,24 +157,6 @@ class AttendanceReportController extends Controller
     }
 
 
-
-
-    // public function annual_leaves($year = null)
-    // {
-    //     if(!$year){
-    //         $year = now()->year;
-    //     }
-
-    //     $annual_leaves = AnnualLeaves::where('employee_id', $this->id)->where('year', $year)->first();
-    //     if(!$annual_leaves){
-    //         AnnualLeaves::create([
-    //             'employee_id' => $this->id,
-    //             'year' => $year,
-    //             'total_leaves' => $this->calculate_annual_leaves($year)
-    //         ]);
-
-
-    //     }
 
 
 
