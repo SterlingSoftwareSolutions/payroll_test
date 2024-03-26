@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AttendanceReport;
 use Carbon\Carbon;
 use App\Models\Payslip;
 use App\Models\Employee;
@@ -68,9 +69,11 @@ class PayslipController extends Controller
         return $pdf->download($fileName);
     }
 
-    public function create_payslip(Employee $employee)
+    public function create_payslip(AttendanceReport $attendanceReport)
     {
-        $attandance_data = $employee->attendance_data();
+        $attandance_data = $attendanceReport->attributesToArray();
+        $employee = $attendanceReport->employee;
+
 
         $job_status = strtoupper(JobStatus::where('id', $employee->j_status)->value('status_name'));
         if ($job_status == "INTERN ") {
@@ -133,37 +136,16 @@ class PayslipController extends Controller
             ->whereBetween('date', [$startDate, $endDate])
             ->get();
 
-        $sumOTSeconds = 0;
-
-        foreach ($attendances as $attendance) {
-            // Split the OT time into hours, minutes, and seconds
-            list($hours, $minutes, $seconds) = explode(':', $attendance->OT);
-
-            // Convert OT time to total seconds and add to sum
-            $sumOTSeconds += ($hours * 3600) + ($minutes * 60) + $seconds;
-        }
-        $sumOTHours = gmdate("H:i:s", $sumOTSeconds);
-        $sumLateSeconds = 0;
-        foreach ($attendances as $attendance) {
-            // Split the OT time into hours, minutes, and seconds
-            list($hours, $minutes, $seconds) = explode(':', $attendance->late);
-
-            // Convert OT time to total seconds and add to sum
-            $sumLateSeconds += ($hours * 3600) + ($minutes * 60) + $seconds;
-        }
-        $sumLateHours = gmdate("H:i:s", $sumLateSeconds);
-        // dd($sumLateHours . "  " . $sumOTSeconds);
-        // Salary amounts
         $gross_salary = $basic_salary + $br_allowance;
         // dd($gross_salary);
         $gross_salary_day = $gross_salary / 30;
         $gross_salary_hour = $gross_salary_day / 9;
 
         // Holiday payment
-        $holiday_payment = $attandance_data['days_worked_holiday']->count() * $gross_salary_day;
+        $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day;
 
         // Extra days payment
-        $extra_days = ($attandance_data['days_worked_weekend']->count() - $attandance_data['days_worked_holiday_weekend']->count());
+        $extra_days = ($attandance_data['days_worked_weekend'] - $attandance_data['days_worked_holiday_weekend']);
         $extra_days_payment = $extra_days * $gross_salary_day;
 
         // Overtime
@@ -172,31 +154,12 @@ class PayslipController extends Controller
         $ot_rate = $gross_salary / 240 * 1.5;
         $ot = $ot_rate * $ot_hours;
 
-        list($otHours, $otMinutes, $otSeconds) = explode(':', $sumOTHours);
-        $decimalOTHours = $otHours + ($otMinutes / 60) + ($otSeconds / 3600);
-
-        // Calculate overtime pay
-        $overtimePay = ($gross_salary / 240) * 1.5 * $decimalOTHours;
-
-        // dd($ot);
-
-        // list($otHours, $otMinutes, $otSeconds) = explode(':', $sumLateHours);
-        // $decimalLateHours = $otHours + ($otMinutes / 60) + ($otSeconds / 3600);
-
-        // // Calculate overtime pay
-        // $Latetime = ($gross_salary / 240) * 1.5 * $decimalLateHours;
-
-        // // dd($Latetime);
 
         // No pay leave deduction
-        $no_pay_leave_deduction =  $gross_salary_day * $attandance_data['no_pay_leaves'];
-        // // dd( $attandance_data['days_worked_holiday_weekend']->count());
-        // // Late hours deduction
-        // // dd($attandance_data['no_pay_leaves']);
+        $no_pay_leave_deduction =  $gross_salary_day * $attandance_data['absent_days'];
         $late_hours = $attandance_data['late_minutes'] / 60;
         $late_deduction = $gross_salary_hour * $late_hours;
 
-        // dd($late_hours);
         // Total basic pay
         $total_basic_pay = $gross_salary  - $no_pay_leave_deduction - $late_deduction;
 
@@ -207,7 +170,7 @@ class PayslipController extends Controller
         $company_epf = ($total_basic_pay / 100) * 12;
         $etf = ($total_basic_pay / 100) * 3;
 
-        $incentivesF = ($incentives / 30) * (30 - $attandance_data['no_pay_leaves']);
+        $incentivesF = ($incentives / 30) * (30 - $attandance_data['absent_days']);
         // dd($incentivesF);
         $payslip = new Payslip();
 
@@ -215,14 +178,10 @@ class PayslipController extends Controller
         $taxAmount = $payslip->calculateTax($taxSend);
 
         // $increments = $holiday_payment + $extra_days_payment + $incentivesF + $ot + $other_incrmeents ;
-        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF + $other_incrmeents;
-        // dd($holiday_payment);
-        // $deductions = $no_pay_leave_deduction + $late_deduction + $employee_epf + $advance + $other_deductions+$taxAmount;
+        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF + $other_incrmeents+ $extra_days_payment;
         $deductions = $employee_epf + $taxAmount + $advance;
 
         $netSalary =  $increments - $deductions;
-        // $netSalary = $netSalary - $taxAmount;
-        // dd($taxAmount);
         $payslip = Payslip::firstOrCreate([
             'employee_id' => $employee->id,
             'date' => now()->startOfMonth()->subMonth(),
@@ -273,9 +232,9 @@ class PayslipController extends Controller
     // Generate payslips for current month
     public function generate_payslips()
     {
-        $employees = Employee::where('status', 'active');
-        $employees->each(function ($employee) {
-            $this->create_payslip($employee);
+        $attendanceReports = AttendanceReport::whereDate('date', now()->subMonth()->startOfMonth());
+        $attendanceReports->each(function ($attendanceReport) {
+            $this->create_payslip($attendanceReport);
         });
         return redirect('/form/payslip/approve');
     }
