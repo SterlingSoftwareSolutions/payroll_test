@@ -68,12 +68,16 @@ class Employee extends Model
     }
 
     //Below functions use to calculate attendance report edit page
-    public function attendance_data($year  = null, $month = null){    
+    public function attendance_data($year  = null, $month = null ,$employeeId = null){    
+
+      
+
+    
         $department = $this->department->department;
 
         // Month details
-        // $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
-        $current = Carbon::create($year ?? now()->year, $month ?? now()->month);
+        $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
+        $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
 
         //$month_days_count = $current->daysInMonth;
         $month_days_count = $this->getDaysInMonth($current->format('m'), $current->year);
@@ -89,8 +93,10 @@ class Employee extends Model
         $work_hours = $department == 'Local' ? 9 : 10;
 
         // Employee details
-        $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
-
+        $attendances = Attendance::where('employee_id', $this->id)
+        ->whereMonth('date', $current->month)
+        ->whereYear('date', $current->year);
+//dd($attendances);
         $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
             if($department == 'Local'){
                 return !$attendance->date->isSunday();
@@ -133,6 +139,7 @@ class Employee extends Model
         $annualLeaves = $this->calculate_annual_leaves($current->year);
         $absent_days =  $month_days_count - $days_worked->count() - $month_holidays->count()- $month_weekends_count;
 
+        
         return compact(
             'month_days_count',
             'month_weekends_count',
@@ -148,6 +155,7 @@ class Employee extends Model
             'ot_minutes',
             'annualLeaves',
             'absent_days',
+            'current'
         );
 
     }

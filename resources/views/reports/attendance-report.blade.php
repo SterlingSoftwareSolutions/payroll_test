@@ -46,18 +46,23 @@
                                 <li class="breadcrumb-item active">Attendance Report</li>
                             </ul>
                         </div>
+
+                        <form method="post" action="/form/attendance/report/generate?department={{ request()?->department }}&year={{ request()?->year }}&month={{ request()?->month }}">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary p-3">Generate</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <form method="get" action="{{ route('attendance/report/search') }}">
-            @csrf
+
+        <form method="get" action="{{ route('form.attendance.index') }}">
             <div class="row filter-row">
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group ">
                         <select class="select form-control floating" name="department">
-                            <option value="" disabled selected> -- Select Department-- </option>
+                            <option value="" selected> -- Select Department-- </option>
                             @foreach ($departments as $department)
                             <option value="{{ $department->id }}" @if (request('department')==$department->id) selected
                                 @endif>
@@ -92,14 +97,6 @@
             </div>
         </form>
 
-
-        @if (request()->has('department'))
-        <div style="margin-top: 20px;">
-            <h4>Selected Department ID:</h4>
-            <p>{{ request('department') }}</p>
-        </div>
-        @endif
-
         <!------------------------------------>
         <div class="row">
             <div class="col-md-12">
@@ -124,51 +121,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($attendances as $attendance)
-                            @php
-                            // dd($attendance);
-                            $date = \Carbon\Carbon::parse($attendance->date);
-                            $year = $date->format('Y');
-                            $month = $date->format('M');
-                            @endphp
-                            <tr data-employee-id="{{ $attendance->employee->id }}">
-                                <td>{{ optional($attendance->employee)->full_name ?? '' }}</td>
-                                <td>
-                                    @php
-                                    $departmentId = optional($attendance->employee)->d_name;
-                                    $departmentName = '';
-                                    if ($departmentId) {
-                                    $department = \App\Models\Department::find($departmentId);
-                                    if ($department) {
-                                    $departmentName = $department->department;
-                                    }
-                                    }
-                                    @endphp
-                                    {{ $departmentName }}
-                                </td>
-                                <td>{{ $year }}</td>
-                                <td>{{ $month }}</td>
-                                <td>{{ $totDays }}</td>
-                                <td>
-                                    {{ $totDays - ($attendanceCounts->where('employee_id', optional($attendance->employee)->id)->first()->attendance_count ?? 0) - optional($attendance->employee->holiday)->count() - $weekendCount }}
-                                </td>
-                                
-                                <td>{{ $weekendCount }}</td>
-
-                                {{-- <td>
-                                    @if ($attendance->is_holiday)
-                                    <span class="badge badge-warning badge-pill float-right">{{
-                                        $attendance->holiday_name }}</span>
-                                    @endif
-                                </td> --}}
-                                <td>{{ $employeeHolidayCounts[$attendance->employee_id] ?? 0 }}</td>
-                                <td>{{ $attendanceCounts->where('employee_id',
-                                    optional($attendance->employee)->id)->first()->attendance_count ?? 0 }}
-                                </td>
-                                <td>{{ $attendance->overtime ?? 'N/A' }}</td>
-                                <td>{{ $extraDaysCount }}</td>
-                                <td>{{ isset($annualLeaves[$attendance->employee_id]) ? $annualLeaves[$attendance->employee_id] : 0 }}</td> 
- 
+                            @foreach ($attendanceReports as $report)
+                            <tr data-employee-id="{{ $report->employee->id }}">
+                                <td>{{ $report->employee->full_name }}</td>
+                                <td>{{ $report->employee->department->department }}</td>
+                                <td>{{ $report->date->year }}</td>
+                                <td>{{ $report->date->format('F') }}</td>
+                                <td>{{ $report->month_days }}</td>
+                                <td>{{ $report->absent_days }}</td>
+                                <td>{{ $report->month_weekends}}</td>
+                                <td>{{ $report->month_holidays }}</td>
+                                <td>{{ $report->work_days }}</td>
+                                <td>{{ $report->ot_minutes }}</td>
+                                <td>{{ $report->days_worked_weekend }}</td>
+                                <td>{{ $report->annual_leaves }}</td> 
 
                                 <td class="text-center">
                                     <div class="dropdown dropdown-action">
@@ -178,12 +144,12 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
 
-                                            <a href="{{ route('reports.generate.attendance', ['employeeId' => $attendance->employee->id]) }}"
+                                            <a href="/form/attendance/report/generate/{{ $report->employee->id }}?month={{ request()->month }}&year={{ request()->year }}"
                                                 class="dropdown-item userUpdate">
                                                 <i class="fa fa-pencil m-r-5"></i> Edit
                                             </a>
 
-                                            <a href="/form/attendance/download/{{ $attendance->employee->id }}"
+                                            <a href="/form/attendance/download/{{ $report->employee->id }}"
                                                 class="download-link">
                                                 <i class="fa fa-download"></i> Download PDF
                                             </a>
@@ -191,18 +157,11 @@
 
                                     </div>
                                 </td>
-
-
                             </tr>
                             @endforeach
                         </tbody>
-
-
+                    </table>
                 </div>
-
-
-
-
             </div>
         </div>
     </div>

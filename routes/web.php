@@ -270,11 +270,11 @@ Route::controller(AttendanceController::class)->group(function () {
 
 //Attendance Report
 Route::controller(AttendanceReportController::class)->group(function () {
-Route::get('form/attendance/report/page', 'index')->middleware('auth')->name('form.attendance.index'); //for report  
+Route::get('form/attendance/report', 'index')->middleware('auth')->name('form.attendance.index'); //for report  
 Route::get('form/attendance/report/generate/{employeeId}', 'generateAttendanceReport')->middleware('auth')->name('reports.generate.attendance'); //for report view 
 Route::get('form/attendance/report/edit/{employeeId}', 'editAttendanceReport')->middleware('auth')->name('reports.edit.attendancereportedit'); //for report  edit
 // Route::patch('form/update-attendancereport/{employeeId}', 'updateAttendanceReport')->middleware('auth')->name('reports.update.attendancereport'); //for report update 
-Route::post('form/attendance/report/generate/{employeeId}', 'updateAttendanceReport')
+Route::post('form/attendance/report/generate/', 'generate_reports')
         ->middleware('auth')
         ->name('reports.store.attendance');
 
