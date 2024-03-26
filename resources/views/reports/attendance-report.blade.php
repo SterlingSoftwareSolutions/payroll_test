@@ -144,7 +144,7 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
 
-                                            <a href="/form/attendance/report/generate/{{ $report->employee->id }}?month={{ request()->month }}&year={{ request()->year }}"
+                                            <a href="/form/attendance/report/edit/{{ $report->id }}?month={{ request()->month }}&year={{ request()->year }}"
                                                 class="dropdown-item userUpdate">
                                                 <i class="fa fa-pencil m-r-5"></i> Edit
                                             </a>

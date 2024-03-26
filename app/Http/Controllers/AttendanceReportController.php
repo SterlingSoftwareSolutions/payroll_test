@@ -113,7 +113,7 @@ class AttendanceReportController extends Controller
 
     public function calculateAnnualLeave($employeeId)
     {
-        dd($employeeId);
+       // dd($employeeId);
 
         $employee = Employee::find($employeeId);
 
