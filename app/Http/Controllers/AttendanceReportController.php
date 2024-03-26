@@ -34,7 +34,6 @@ class AttendanceReportController extends Controller
     {
         $date = Carbon::create($request->year ?? now()->subMonth()->year, $request->month ?? now()->subMonth()->month);
         $attendanceReports = AttendanceReport::whereDate('date', $date )->get();
-
         if($request->department){
             $dep = $request->department;
             $attendanceReports = $attendanceReports->filter(function ($attendanceReport) use ($dep){
@@ -189,7 +188,6 @@ class AttendanceReportController extends Controller
 
         $joinedDate = '2023-03-15'; // Replace actual joint date
         $annualLeave = $this->calculateAnnualLeave($joinedDate);
-
 
 
         // $joinedDate = $employee->joinedDate; 

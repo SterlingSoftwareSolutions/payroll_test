@@ -445,14 +445,23 @@ border-color: red !important;
                 </div>
                 <!-- ... existing form fields ... -->
                 <div class="row" style="padding-left:20px; padding-right:20px;">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Address</label>
                             <textarea class="form-control" style="width: 100%; height: 100%" tabindex="-1" aria-hidden="true" id="address"
                                 name="address">{{ $employee->address }}</textarea>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <label class="col-form-label">Working Hours <span class="text-danger">*</span></label>
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="workingHours" name="workingHours">
+                            <option value="" @if (!$employee->workingHours) selected @endif hidden></option>
+                            <option value="5day" @if ($employee->workingHours == '5day') selected @endif>10</option>
+                            <option value="6day" @if ($employee->workingHours == '6day') selected @endif>9 + 1</option>
+                        </select>
+                    </div>
                 </div>
+
 
                 <br><br><br>
                 <!-- new accordian  -->

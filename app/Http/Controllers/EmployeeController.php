@@ -186,6 +186,7 @@ class EmployeeController extends Controller
             'bank_name' => 'required',
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
+            'workingHours' =>'required',
         ]);
         // dd($validated);
         $validated['employee_id'] = $validated['id'];
@@ -414,6 +415,7 @@ class EmployeeController extends Controller
             'bank_name' => 'required',
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
+            'workingHours'=> 'required',
         ]);
 
         try {
@@ -455,6 +457,7 @@ class EmployeeController extends Controller
             $employee->bank_name = $request->input('bank_name');
             $employee->branch = $request->input('branch');
             $employee->basic_Salary = $request->input('basic_Salary');
+            $employee->workingHours = $request->input('workingHours');
 
             // Save the updated employee record
             $employee->save();
@@ -462,6 +465,7 @@ class EmployeeController extends Controller
             Toastr::success('Employee record updated successfully :)', 'Success');
             return redirect()->route('all/employee/list');
         } catch (\Exception $e) {
+
             Toastr::error('An error occurred while updating the employee record. Please try again.', 'Error');
             return redirect()->back();
         }

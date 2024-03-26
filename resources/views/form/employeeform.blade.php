@@ -260,6 +260,7 @@ border-color: red !important;
                             <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                 id="d_name" name="d_name">
+                                <option value="" selected disabled>Select Department</option>
                                 @foreach ($departments as $department => $name)
                                     <option value="{{ $department }}">{{ $name }}</option>
                                 @endforeach
@@ -270,7 +271,6 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">Job Status <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" id="j_status" name="j_status" required>
-                                <option value="" selected disabled>Select a Job Status</option>
                                 <option value="" selected disabled>Select a Job Status</option>
                             </select>
                         </div>
@@ -422,8 +422,28 @@ border-color: red !important;
                             overflow: hidden;
                         }
                     </style>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Address</label>
+                            <textarea class="form-control" style="width: 100%; height:100%" tabindex="-1" aria-hidden="true" id="address"
+                                name="address"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="col-form-label">Working Hours <span class="text-danger">*</span></label>
+                            <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="workingHours" name="workingHours">
+                                <option value=""selected disabled>Select Working Hours</option>
+                                <option value="5day">10</option>
+                                <option value="6day">9 + 1</option>
+                            </select>
+                    </div>
                 </div>
                 <!-- ... existing form fields ... -->
+
+{{--
+
                 <div class="row" style="padding-left:20px; padding-right:20px;">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -432,7 +452,7 @@ border-color: red !important;
                                 name="address"></textarea>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <br><br><br>
                 <!-- new accordian  -->

@@ -109,7 +109,7 @@
                                             <td>{{ $payslip->employee->employee_id }}</td>
                                             <td>{{ $payslip->employee->full_name }}</td>
                                             <td>{{ $payslip->date->format('F Y') }}</td>
-                                            <td>{{ number_format($payslip->net_salary(), 2)}}</td>
+                                            <td>{{ $payslip->net_salary }}</td>
                                             <!--need to calaculation-->
                                             <td class="text-center">
                                                 <div class="dropdown dropdown-action">
@@ -346,28 +346,31 @@
                     type: 'GET',
                     url: '/form/payslip/show/' + employeeId, // Adjust the URL to your actual route
                     success: function(response) {
+                        console.log(response.employee_employee_id)
+                        var payslip = response[0];
+                        console.log(payslip);
                         // Update the value of the basic salary input field in the modal
-                        $('#payslip_id').val(response.id);
+                        $('#payslip_id').val(payslip.id);
                         $('#employee_id').val(response.employee_employee_id);
-                        $('#net_salary').text(response.net_salary.toFixed(2));
-                        $('#basic_salary').val(response.basic_salary);
-                        $('#br_allowance').val(response.br_allowance);
-                        $('#fixed_allowance').val(response.fixed_allowance);
-                        $('#attendance_allowance').val(response.attendance_allowance);
-                        $('#no_pay_leave_deduction').val(response.no_pay_leave_deduction.toFixed(2));
-                        $('#late_deduction').val(response.late_deduction);
-                        $('#employee_epf').val(response.employee_epf);
-                        $('#paye').val(response.paye);
-                        $('#stamp_duty').val(response.stamp_duty);
-                        $('#advance').val(response.advance);
-                        $('#loan').val(response.loan);
-                        $('#other_deductions').val(response.other_deductions);
-                        $('#other_increments').val(response.other_increments);
-                        $('#holiday_payment').val(response.holiday_payment);
-                        $('#incentives').val(response.incentives);
-                        $('#ot').val(response.ot);
-                        $('#company_epf').val(response.company_epf);
-                        $('#etf').val(response.etf);
+                        $('#net_salary').text(payslip.net_salary);
+                        $('#basic_salary').val(payslip.basic_salary);
+                        $('#br_allowance').val(payslip.br_allowance);
+                        $('#fixed_allowance').val(payslip.fixed_allowance);
+                        $('#attendance_allowance').val(payslip.attendance_allowance);
+                        $('#no_pay_leave_deduction').val(payslip.no_pay_leave_deduction);
+                        $('#late_deduction').val(payslip.late_deduction);
+                        $('#employee_epf').val(payslip.employee_epf);
+                        $('#paye').val(payslip.paye);
+                        $('#stamp_duty').val(payslip.stamp_duty);
+                        $('#advance').val(payslip.advance);
+                        $('#loan').val(payslip.loan);
+                        $('#other_deductions').val(payslip.other_deductions);
+                        $('#other_increments').val(payslip.other_increments);
+                        $('#holiday_payment').val(payslip.holiday_payment);
+                        $('#incentives').val(payslip.incentives);
+                        $('#ot').val(payslip.ot);
+                        $('#company_epf').val(payslip.company_epf);
+                        $('#etf').val(payslip.etf);
                     },
                     error: function(xhr, status, error) {
                         console.error(error);

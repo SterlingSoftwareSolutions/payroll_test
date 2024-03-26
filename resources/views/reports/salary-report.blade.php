@@ -151,11 +151,11 @@
                         <td>{{ $employee->bank_name }}</td>
                         <td>{{ $employee->branch }}</td>
                         <td>{{ $employee->account_number }}</td>
-                    
+
                         <td>
                             @foreach ($payslips as $payslip)
                             @if($payslip->employee->id === $employee->id)
-                            {{ number_format($payslip->net_salary()) }}
+                            {{ $payslip->net_salary}}
                             @break
                             @endif
                             @endforeach

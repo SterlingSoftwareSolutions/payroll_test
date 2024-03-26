@@ -37,6 +37,7 @@ class Employee extends Model
         'bank_name',
         'branch',
         'basic_Salary',
+        'workingHours',
     ];
 
     protected $casts = [
@@ -68,20 +69,14 @@ class Employee extends Model
     }
 
     //Below functions use to calculate attendance report edit page
-    public function attendance_data($year  = null, $month = null ,$employeeId = null){    
-
-      
-
-    
+    public function attendance_data($year  = null, $month = null){
         $department = $this->department->department;
-
         // Month details
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
 
         //$month_days_count = $current->daysInMonth;
         $month_days_count = $this->getDaysInMonth($current->format('m'), $current->year);
-
         $month_weekends_count = $current->diffInDaysFiltered(function (Carbon $date){
             return $date->isSaturday() || $date->isSunday();
         }, $current->copy()->lastOfMonth());
@@ -90,15 +85,15 @@ class Employee extends Model
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
         });
         $work_days = $month_days_count - $month_weekends_count;
-        $work_hours = $department == 'Local' ? 9 : 10;
-
+        $work_hours = $this->workingHours == "6day" ? 9 : 10;
+        // dd($work_hours);
         // Employee details
         $attendances = Attendance::where('employee_id', $this->id)
         ->whereMonth('date', $current->month)
         ->whereYear('date', $current->year);
 //dd($attendances);
         $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
-            if($department == 'Local'){
+            if($this->workingHours == "6day"){
                 return !$attendance->date->isSunday();
             }
             return !$attendance->date->isSaturday() && !$attendance->date->isSunday();
@@ -111,7 +106,7 @@ class Employee extends Model
         });
 
         $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department){
-            if($department == 'Local'){
+            if($this->workingHours == "6day"){
                 return $attendance->date->isSunday();
             }
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
@@ -120,7 +115,7 @@ class Employee extends Model
         $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
 
         $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-            if($department == 'Local' && $attendance->date->isSaturday()){
+            if($this->workingHours == "6day" && $attendance->date->isSaturday()){
                 $diff = 5 * 60 - $attendance->duration();
             } else{
                 $diff = $work_hours * 60 - $attendance->duration();
@@ -129,7 +124,7 @@ class Employee extends Model
         });
 
         $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-            if($department == 'Local' && $attendance->date->isSaturday()){
+            if($this->workingHours == "6day" && $attendance->date->isSaturday()){
                 $diff = $attendance->duration() - 5 * 60;
             } else{
                 $diff = $attendance->duration() - $work_hours * 60;
@@ -137,7 +132,7 @@ class Employee extends Model
             return $diff > 0 ? $diff : 0;
         });
         $annualLeaves = $this->calculate_annual_leaves($current->year);
-        $absent_days =  $month_days_count - $days_worked->count() - $month_holidays->count()- $month_weekends_count;
+
 
         
         return compact(
@@ -159,16 +154,6 @@ class Employee extends Model
         );
 
     }
-    private function getDaysInMonth($month, $year)
-    {
-        if ($month == "02") {
-            return ($year % 4 == 0) ? 29 : 28;
-        } elseif (in_array($month, ["01", "03", "05", "07", "08", "10", "12"])) {
-            return 31;
-        } else {
-            return 30;
-        }
-    }
 
     public function annual_leaves($year = null)
     {
@@ -184,25 +169,24 @@ class Employee extends Model
                 'total_leaves' => $this->calculate_annual_leaves($year)
             ]);
 
-           
+
         }
     }
 
     private function calculate_annual_leaves($year){
         $joinedDate = $this->joinedDate;
         $years = now()->diffInYears($joinedDate);
-    
         if($years >= 2){
             return 14;
         } elseif($years < 1){
             return 0;
         }
-    
+
         $januaryFirst = Carbon::parse('January 1, ' . $joinedDate->year);
         $aprilFirst = Carbon::parse('April 1, ' . $joinedDate->year);
         $julyFirst = Carbon::parse('July 1, ' . $joinedDate->year);
         $octoberFirst = Carbon::parse('October 1, ' . $joinedDate->year);
-    
+
         if ($joinedDate->gte($januaryFirst) && $joinedDate->lt($aprilFirst)) {
             $annualLeaves = 14;
         } elseif ($joinedDate->gte($aprilFirst) && $joinedDate->lt($julyFirst)) {
@@ -214,8 +198,7 @@ class Employee extends Model
         } else {
             $annualLeaves = 0;
         }
-    
+
         return $annualLeaves;
     }
-    
 }

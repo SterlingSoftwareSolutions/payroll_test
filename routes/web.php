@@ -267,7 +267,7 @@ Route::controller(AttendanceController::class)->group(function () {
     // Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
     // Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
 });
-
+// Route::post('attendance-report/update/{id}',  [AttendanceReportController::class,'update'])->name('attendance-report.update');
 //Attendance Report
 Route::controller(AttendanceReportController::class)->group(function () {
 Route::get('form/attendance/report', 'index')->middleware('auth')->name('form.attendance.index'); //for report  
@@ -277,24 +277,18 @@ Route::get('form/attendance/report/edit/{employeeId}', 'editAttendanceReport')->
 Route::post('form/attendance/report/generate/', 'generate_reports')
         ->middleware('auth')
         ->name('reports.store.attendance');
+Route::get('form/attendance/report/generate/{employeeId}/{date}', [AttendanceReportController::class, 'generateAttendanceReport'])->middleware('auth')->name('reports.generate.attendance');
+Route::post('attendance-report/update/{id}', [AttendanceReportController::class,'update'])->name('attendance-report.update');
+Route::get('attendance-report/update/{id}', [AttendanceReportController::class,'update'])->name('attendance-report.update');
 
 
-Route::get('form/attendance/report/annual/{employeeId}', 'calculateAnnualLeaves')->middleware('auth')->name('reports.annual.attendance'); //for report view 
-Route::get('/calculate-annual-leave/{employeeId}', 'calculateAnnualLeaves')->middleware('auth')->name('calculate-annual-leave'); //for report view 
+Route::get('form/attendance/report/annual/{employeeId}', 'calculateAnnualLeaves')->middleware('auth')->name('reports.annual.attendance'); //for report view
+Route::get('/calculate-annual-leave/{employeeId}', 'calculateAnnualLeaves')->middleware('auth')->name('calculate-annual-leave'); //for report view
 
-    //     Route::patch('form/attendance/report/generate/{employeeId}', 'AttendanceReportController@updateAttendanceReport')
-    // ->middleware('auth')
-    // ->name('reports.update.attendancereport');
-    // Route::patch('form/attendance/report/generate/{employeeId}', 'AttendanceReportController@updateAttendanceReport')
-    // ->middleware('auth')
-    // ->name('reports.update.attendancereport');
+
 
 
 });
-
-// Route::get('form/attendance/report/generate/{employeeId}', [AttendanceReportController::class, 'generateAttendanceReport'])->name('reports.generate.attendance');
-// Route::get('form/attendance/report/edit/{employeeId}', [AttendanceReportController::class, 'editAttendanceReport'])->name('reports.edit.attendancereportedit');
-// Route::post('/reports/update-attendancereport/{employeeId}', [AttendanceReportController::class, 'updateAttendanceReport'])->name('reports.update.attendancereport');
 
 
 Route::post('all/attendance/search', [AttendanceController::class, 'attendanceSearch'])->name('all/attendance/search');

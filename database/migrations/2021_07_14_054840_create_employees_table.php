@@ -39,6 +39,7 @@ class CreateEmployeesTable extends Migration
             $table->string('bank_name')->nullable();
             $table->string('branch')->nullable();
             $table->string('basic_Salary')->nullable();
+            $table->string('workingHours')->nullable();
             $table->timestamps();
         });
     }
