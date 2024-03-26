@@ -73,7 +73,10 @@ class Employee extends Model
         $department = $this->department->department;
         // Month details
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
-        $month_days_count = $current->daysInMonth;
+        $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
+
+        //$month_days_count = $current->daysInMonth;
+        $month_days_count = $this->getDaysInMonth($current->format('m'), $current->year);
         $month_weekends_count = $current->diffInDaysFiltered(function (Carbon $date){
             return $date->isSaturday() || $date->isSunday();
         }, $current->copy()->lastOfMonth());
@@ -85,8 +88,10 @@ class Employee extends Model
         $work_hours = $this->workingHours == "6day" ? 9 : 10;
         // dd($work_hours);
         // Employee details
-        $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
-
+        $attendances = Attendance::where('employee_id', $this->id)
+        ->whereMonth('date', $current->month)
+        ->whereYear('date', $current->year);
+//dd($attendances);
         $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
             if($this->workingHours == "6day"){
                 return !$attendance->date->isSunday();
@@ -129,6 +134,7 @@ class Employee extends Model
         $annualLeaves = $this->calculate_annual_leaves($current->year);
 
 
+        
         return compact(
             'month_days_count',
             'month_weekends_count',
@@ -143,6 +149,8 @@ class Employee extends Model
             'late_minutes',
             'ot_minutes',
             'annualLeaves',
+            'absent_days',
+            'current'
         );
 
     }
