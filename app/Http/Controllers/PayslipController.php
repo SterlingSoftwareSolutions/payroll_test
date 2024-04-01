@@ -74,17 +74,6 @@ class PayslipController extends Controller
         $attandance_data = $attendanceReport->attributesToArray();
         $employee = $attendanceReport->employee;
 
-
-        $job_status = strtoupper(JobStatus::where('id', $employee->j_status)->value('status_name'));
-        if ($job_status == "INTERN ") {
-            $basic_salary = $employee->basic_Salary;
-            $br_allowance = 0;
-        } else {
-            $basic_salary = $employee->basic_Salary - 3500;
-            // Increments
-            $br_allowance = 3500;
-        }
-
         $fixed_allowance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Fixed Allowance')
@@ -136,6 +125,17 @@ class PayslipController extends Controller
             ->whereBetween('date', [$startDate, $endDate])
             ->get();
 
+        $job_status = strtoupper(JobStatus::where('id', $employee->j_status)->value('status_name'));
+        // dd($job_status);
+        if ($job_status == "INTERN") {
+            $basic_salary = $employee->basic_Salary;
+            $br_allowance = 0;
+        } else {
+            $basic_salary = $employee->basic_Salary - 3500;
+            // Increments
+            $br_allowance = 3500;
+        }
+
         $gross_salary = $basic_salary + $br_allowance;
         // dd($gross_salary);
         $gross_salary_day = $gross_salary / 30;
@@ -150,26 +150,49 @@ class PayslipController extends Controller
 
         // Overtime
         $ot_hours = $attandance_data['ot_minutes'] / 60;
-        // dd($ot_hours);
+        // dd( $attandance_data['annual_leaves_taken']);
         $ot_rate = $gross_salary / 240 * 1.5;
         $ot = $ot_rate * $ot_hours;
 
+        if ($attandance_data['half_day'] != null) {
+            $half_day = $attandance_data['half_day'] / 2;
+        } else {
+            $half_day = 0;
+        }
 
+        if ($attandance_data['annual_leaves_taken'] != null) {
+            $annual_leaves_taken = $attandance_data['annual_leaves_taken'];
+        } else {
+            $annual_leaves_taken = 0;
+        }
+
+
+        $leave = $annual_leaves_taken + $half_day;
         // No pay leave deduction
-        $no_pay_leave_deduction =  $gross_salary_day * $attandance_data['absent_days'];
+        $no_pay_leave_deduction =  $gross_salary_day * ($attandance_data['absent_days'] - $leave);
         $late_hours = $attandance_data['late_minutes'] / 60;
+        if ($late_hours <= 3) {
+            $late_hours = 0;
+        } else {
+            $late_hours = $late_hours - 3;
+        }
         $late_deduction = $gross_salary_hour * $late_hours;
 
         // Total basic pay
         $total_basic_pay = $gross_salary  - $no_pay_leave_deduction - $late_deduction;
 
-        // Employee EPF
-        $employee_epf = ($total_basic_pay / 100) * 8;
+        if ($job_status == "INTERN") {
+            $employee_epf = 0;
+            $company_epf = 0;
+            $etf = 0;
+        } else {
+            // Employee EPF
+            $employee_epf = ($total_basic_pay / 100) * 8;
 
-        // Company EPF/ETF
-        $company_epf = ($total_basic_pay / 100) * 12;
-        $etf = ($total_basic_pay / 100) * 3;
-
+            // Company EPF/ETF
+            $company_epf = ($total_basic_pay / 100) * 12;
+            $etf = ($total_basic_pay / 100) * 3;
+        }
         $incentivesF = ($incentives / 30) * (30 - $attandance_data['absent_days']);
         // dd($incentivesF);
         $payslip = new Payslip();
@@ -178,9 +201,9 @@ class PayslipController extends Controller
         $taxAmount = $payslip->calculateTax($taxSend);
 
         // $increments = $holiday_payment + $extra_days_payment + $incentivesF + $ot + $other_incrmeents ;
-        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF + $other_incrmeents+ $extra_days_payment;
+        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF + $other_incrmeents + $extra_days_payment;
         $deductions = $employee_epf + $taxAmount + $advance;
-
+        // dd($extra_days_payment);
         $netSalary =  $increments - $deductions;
         $payslip = Payslip::firstOrCreate([
             'employee_id' => $employee->id,
