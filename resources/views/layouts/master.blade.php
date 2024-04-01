@@ -305,7 +305,7 @@
 					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
 						<span class="user-img">
 							{{-- <img src="/assets/img/user.jpg" alt="User Image"> --}}
-							<img class="img" src="{{ Auth::user()->avatar ? URL::to('/assets/images/'. Auth::user()->avatar) : '/assets/img/user.jpg' }}" alt="{{ Auth::user()->name }}">
+							<img class="img" src="{{ URL::to('/assets/img/user.jpg') }}" alt="{{ Auth::user()->name }}">
 						{{-- <span class="status online"></span></span> --}}
 						<span>{{ Session::get('name') }}</span>
 					</a>
