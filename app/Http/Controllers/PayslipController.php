@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AttendanceReport;
 use Carbon\Carbon;
+use App\Models\HalfDay;
 use App\Models\Payslip;
 use App\Models\Employee;
 use App\Models\JobStatus;
@@ -12,6 +12,7 @@ use App\Models\department;
 use App\Models\SalaryDetail;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\AttendanceReport;
 use Brian2694\Toastr\Facades\Toastr;
 
 class PayslipController extends Controller
@@ -159,6 +160,7 @@ class PayslipController extends Controller
         } else {
             $half_day = 0;
         }
+        $this->updateHalfDay($employee->id, $attandance_data['half_day']);
 
         if ($attandance_data['annual_leaves_taken'] != null) {
             $annual_leaves_taken = $attandance_data['annual_leaves_taken'];
@@ -203,7 +205,7 @@ class PayslipController extends Controller
         // $increments = $holiday_payment + $extra_days_payment + $incentivesF + $ot + $other_incrmeents ;
         $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF + $other_incrmeents + $extra_days_payment;
         $deductions = $employee_epf + $taxAmount + $advance;
-        // dd($extra_days_payment);
+        // dd($total_basic_pay);
         $netSalary =  $increments - $deductions;
         $payslip = Payslip::firstOrCreate([
             'employee_id' => $employee->id,
@@ -250,6 +252,22 @@ class PayslipController extends Controller
             ->update(['active' => false]);
 
         return $payslip;
+    }
+    public function updateHalfDay($employee_id, $half_day)
+    {
+        $halfDay = HalfDay::where('employee_id', $employee_id)->first();
+
+        if ($halfDay) {
+            $currentDate = Carbon::now()->format('Y-m');
+            $updatedDate = Carbon::parse($halfDay->updated_at)->format('Y-m');
+            // dd($currentDate);
+            if ($updatedDate != $currentDate) {
+                $currentHalfDayCount = $halfDay->half_day_count;
+                $halfDay->half_day_count = ($currentHalfDayCount - $half_day) + 1;
+                $halfDay->save();
+
+            }
+        }
     }
 
     // Generate payslips for current month

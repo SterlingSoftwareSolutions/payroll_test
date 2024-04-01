@@ -8,6 +8,7 @@ use DatePeriod;
 use DateInterval;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\HalfDay;
 use App\Models\Holiday;
 use App\Models\Employee;
 use App\Models\JobTitle;
@@ -188,7 +189,7 @@ class EmployeeController extends Controller
             'basic_Salary' => 'required|numeric',
             'workingHours' =>'required',
         ]);
-        // dd($validated);
+
         $validated['employee_id'] = $validated['id'];
         unset($validated['id']);
 
@@ -196,6 +197,10 @@ class EmployeeController extends Controller
             'createdDate' => now()
         ]));
 
+        $this->addHalfDay(
+            $employee->id
+        );
+        // dd($validated);
         $this->salary_details(
             $employee->employee_id,
             $request->type,
@@ -206,6 +211,15 @@ class EmployeeController extends Controller
 
         return redirect()->route('all/employee/list');
     }
+    public function addHalfDay($employee_id)
+    {
+        // dd($employee_id);
+        $halfDay = new HalfDay();
+        $halfDay->employee_id = $employee_id;
+        $halfDay->half_day_count = 1;
+        $halfDay->save();
+    }
+
 
     public function salary_details($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
     {
