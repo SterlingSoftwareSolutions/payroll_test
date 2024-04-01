@@ -188,9 +188,9 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="col-form-label">Half Days <span class="text-danger">*</span></label>
+                                <label class="col-form-label">Half Days  <span class="text-danger">{{$halfDayCount}}</span></label>
                                 <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                                    id="half_days" name="half_days" value="">
+                                    id="half_day" name="half_day" value="{{ $attendanceReport->half_day }}">
                             </div>
                         </div>
 

@@ -8,6 +8,7 @@ use DateTime;
 use DatePeriod;
 use DateInterval;
 use Carbon\Carbon;
+use App\Models\HalfDay;
 use App\Models\Holiday;
 use App\Models\Employee;
 use App\Models\JobTitle;
@@ -85,10 +86,14 @@ class AttendanceReportController extends Controller
     }
 
     public function edit(AttendanceReport $attendanceReport){
-        return view("reports/attendance-report-edit", compact('attendanceReport'));
+        $employee_id = $attendanceReport->employee_id;
+        $halfDayCount = HalfDay::where('employee_id', $employee_id)->value('half_day_count');
+        // dd($halfDayCount);
+        return view("reports/attendance-report-edit", compact('attendanceReport','halfDayCount'));
     }
 
     public function update(AttendanceReport $attendanceReport, Request $request){
+
         $validatedData = $request->validate([
             'employee_id' => 'required|integer',
             'date' => 'required|date',
@@ -106,7 +111,9 @@ class AttendanceReportController extends Controller
             'ot_minutes' => 'required',
             'annual_leaves' => 'required',
             'annual_leaves_taken' => 'required',
+            'half_day'=> 'required'
         ]);
+        // dd($validatedData);
         $attendanceReport->update($validatedData);
         return redirect()->route('form.attendance.edit', ['attendanceReport' => $attendanceReport]);
     }
@@ -148,7 +155,7 @@ class AttendanceReportController extends Controller
         $annualLeave = $this->calculateAnnualLeave($joinedDate);
 
 
-        // $joinedDate = $employee->joinedDate; 
+        // $joinedDate = $employee->joinedDate;
         // $annualLeave = $this->calculateAnnualLeave($joinedDate);
 
         return view('reports.edit.attendancereportedit', [
