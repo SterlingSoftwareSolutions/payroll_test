@@ -112,6 +112,12 @@ class PayslipController extends Controller
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
+        $Hostal = SalaryDetail::where('employee_id', $employee->employee_id)
+            ->where('active', true)
+            ->where('increment_name', 'Hostal')
+            ->where('type', 'deductions')
+            ->sum('increment_amount');
+
         $other_deductions = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Other')
@@ -136,11 +142,17 @@ class PayslipController extends Controller
             // Increments
             $br_allowance = 3500;
         }
-
+         $Edepartment = $employee->department->department;
         $gross_salary = $basic_salary + $br_allowance;
         // dd($gross_salary);
         $gross_salary_day = $gross_salary / 30;
-        $gross_salary_hour = $gross_salary_day / 9;
+        // dd($gross_salary_day);
+        if($Edepartment=="IT"){
+            $gross_salary_hour = $gross_salary_day / 10;
+        }
+        else{
+            $gross_salary_hour = $gross_salary_day / 9;
+        }
 
         // Holiday payment
         $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day;
@@ -172,6 +184,7 @@ class PayslipController extends Controller
         $leave = $annual_leaves_taken + $half_day;
         // No pay leave deduction
         $no_pay_leave_deduction =  $gross_salary_day * ($attandance_data['absent_days'] - $leave);
+        // dd($no_pay_leave_deduction );
         $late_hours = $attandance_data['late_minutes'] / 60;
         if ($late_hours <= 3) {
             $late_hours = 0;
@@ -204,7 +217,7 @@ class PayslipController extends Controller
 
         // $increments = $holiday_payment + $extra_days_payment + $incentivesF + $ot + $other_incrmeents ;
         $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF + $other_incrmeents + $extra_days_payment;
-        $deductions = $employee_epf + $taxAmount + $advance;
+        $deductions = $employee_epf + $taxAmount + $advance+ $other_deductions+$Hostal;
         // dd($total_basic_pay);
         $netSalary =  $increments - $deductions;
         $payslip = Payslip::firstOrCreate([
