@@ -11,6 +11,7 @@ class HalfDay extends Model
     protected $table = 'half_day';
     protected $fillable = [
         'employee_id',
+        'date',
         'half_day_count',
     ];
     public function employee()
