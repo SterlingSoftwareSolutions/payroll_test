@@ -66,9 +66,9 @@
                             <div class="form-group text-center">
                                 <button class="btn btn-primary account-btn field" id="login" type="submit">Login</button>
                             </div>
-                            <div class="account-footer">
+                            {{-- <div class="account-footer">
                                 <strong><p>Don't have an account yet? <a href="{{ route('register') }}">Register</a></p></strong>
-                            </div>
+                            </div> --}}
                         </form>
                     </div>
                     
