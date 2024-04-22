@@ -4,7 +4,7 @@
     <!-- Include Bootstrap CSS and JS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <!-- Include Bootstrap DateTimePicker CSS and JS -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
@@ -97,13 +97,10 @@
                                 @foreach ($result as $key => $user)
                                     <tr>
                                         <td>
-                                            <span hidden class="image">{{ $user->avatar }}</span>
+                                            <span hidden class="image" id="imagea">{{ $user->avatar}}</span>
                                             <h2 class="table-avatar">
-                                                <a href="{{ url('employee/profile/' . $user->user_id) }}" class="avatar"><img
-                                                        src="{{ URL::to('/images/' . $user->avatar) }}"
-                                                        alt="{{ $user->avatar }}"></a>
-                                                <a href="{{ url('employee/profile/' . $user->user_id) }}"
-                                                    class="name">{{ $user->name }}</span></a>
+                                                    <img class="avatar " src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}">
+                                                <a href="#" class="name">{{ $user->name }}</a>
                                             </h2>
                                         </td>
                                         <td hidden class="ids">{{ $user->id }}</td>
@@ -242,7 +239,7 @@
                                 <div class="row">
                                     <div class="col-right ">
                                         <label for="">Department</label><br>
-                                        <select class="form-control" name="department" id="department">
+                                        <select class="form-control" name="department" id="departmenta">
                                             <option value="" selected disabled>-- Select Department --</option>
                                             @foreach ($department as $departments)
                                                 <option value="{{ $departments->department }}">
@@ -332,93 +329,11 @@
                                 <div class="col-auto float-right ml-auto">
                                     <br><br>
                                     <button id="add_user_btn" class="btn add-btn" data-toggle="modal"
-                                        data-target="#add_user" disabled>
+                                        data-target="#add_user" >
                                         <i class="fa fa-plus"></i> Add User
                                     </button>
                                 </div>
                             </div>
-
-                            {{-- <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Full Name</label>
-                                        <input class="form-control @error('name') is-invalid @enderror" type="text" id="" name="name" value="{{ old('name') }}" placeholder="Enter Name">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Emaill Address</label>
-                                    <input class="form-control" type="email" id="" name="email" placeholder="Enter Email">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label>Role Name</label>
-                                    <select class="select" name="role_name" id="role_name">
-                                        <option selected disabled> --Select --</option>
-                                        @foreach ($role_name as $role)
-                                        <option value="{{ $role->role_type }}">{{ $role->role_type }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Position</label>
-                                    <select class="select" name="position" id="position">
-                                        <option selected disabled> --Select --</option>
-                                        @foreach ($position as $positions)
-                                        <option value="{{ $positions->position }}">{{ $positions->position }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Phone</label>
-                                        <input class="form-control" type="tel" id="" name="phone" placeholder="Enter Phone">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Department</label>
-                                    <select class="select" name="department" id="department">
-                                        <option selected disabled> --Select --</option>
-                                        @foreach ($department as $departments)
-                                        <option value="{{ $departments->department }}">{{ $departments->department }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label>Status</label>
-                                    <select class="select" name="status" id="status">
-                                        <option selected disabled> --Select --</option>
-                                        @foreach ($status_user as $status)
-                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Photo</label>
-                                    <input class="form-control" type="file" id="image" name="image">
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Password</label>
-                                        <input type="password" class="form-control" name="password" placeholder="Enter Password">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>Repeat Password</label>
-                                    <input type="password" class="form-control" name="password_confirmation" placeholder="Choose Repeat Password">
-                                </div>
-                            </div>
-                            <div class="submit-section">
-                                <button type="submit" class="btn btn-primary submit-btn">Submit</button>
-                            </div> --}}
                         </form>
                     </div>
                 </div>
@@ -439,35 +354,55 @@
                     <br>
                     <div class="modal-body">
                         <form action="{{ route('update') }}" method="POST" enctype="multipart/form-data">
-                            <div class="rows">
+                             <div class="rows">
                                 <div class="group" id="uploadGroup">
                                     <div class="user-profile">
                                         <span hidden class="image"></span>
-                                        <a href="{{ url('employee/profile/' . $user->user_id) }}" id="e_image"><img
-                                                src="{{ URL::to('/images/' . $user->avatar) }}"
-                                                alt="{{ $user->avatar }}"></a>
-                                        <span class="edit-text" onclick="openFileInput()">Edit</span>
+                                        <img src="" alt="" id="profileImages">
+                                        <input name="images" type="file" id="fileInputs" style="display: none;" accept="image/*" onchange="handleImagePreview()">
+                                        <span class="edit-text" onclick="openImageDialog()">Edit</span>
                                     </div>
-                                    <input type="file" name="avatar" id="fileInput" style="display: none;"
-                                        accept="image/*" onchange="previewImage()">
+
+                                    <script>
+                                        function openImageDialog() {
+                                            document.getElementById('fileInputs').click();
+                                        }
+
+                                        function handleImagePreview() {
+                                            const fileInputs = document.getElementById('fileInputs');
+                                            const profileImages = document.getElementById('profileImages');
+
+                                            const selectedFile = fileInputs.files[0];
+
+                                            if (selectedFile) {
+                                                const reader = new FileReader();
+
+                                                reader.onload = function (e) {
+                                                    profileImages.src = e.target.result;
+                                                };
+
+                                                reader.readAsDataURL(selectedFile);
+                                            }
+                                        }
+                                    </script>
+
+                                    <input type="file" name="avatar" id="fileInputs" style="display: none;" accept="image/*" onchange="handleImagePreview()">
                                 </div>
                                 <div class="row">
                                     <div class="col-sms">
                                         <div class="col-sm col-sm-input">
                                             <label for="">User Id</label><br>
                                             @csrf
-                                            <input class="form-control col-sm" type="text" name="user_id"
-                                                id="e_id"readonly>
+                                            <input class="form-control col-sm" type="text"  name="user_id" id="e_id"readonly>
                                         </div>
                                     </div>
 
                                     <div class="col-sms">
                                         <div class="col-sm col-sm-input">
                                             <label for="">User Role</label><br>
-                                            <select class="form-control col-sm" name="role_name" id="role_name" disabled>
+                                            <select class="form-control col-sm" name="role_name" id="role_name" disabled required>
                                                 @foreach ($role_name as $role)
-                                                    <option value="{{ $role->role_type }}">{{ $role->role_type }}
-                                                    </option>
+                                                    <option value="{{ $role->role_type }}" >{{ $role->role_type }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -477,78 +412,75 @@
                                 <div class="row">
                                     <div class="col-right ">
                                         <label for="">Department</label>
-                                        <select class="select" name="department" id="e_department">
+                                        <select class="select" name="department" id="e_department" required>
                                             @foreach ($department as $departments)
-                                                <option value="{{ $departments->department }}">
-                                                    {{ $departments->department }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col-right ">
-                                        <label for="">Position</label><br>
-                                        <select class="select" name="position" id="e_position">
-                                            @foreach ($position as $positions)
-                                                <option value="{{ $positions->position }}">{{ $positions->position }}
+                                                <option value="{{ $departments->department }}"
+                                                    @if ($departments->department == $user->department) selected @endif>
+                                                    {{ $departments->department }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                </div>
+                                   </div>
+
+                                   <div class="col-right ">
+                                        <label for="">Position</label><br>
+                                        <select class="select" name="position" id="e_position" required>
+                                            @foreach ($position as $positions )
+                                            <option value="{{ $positions->position }}">{{ $positions->position }}</option>
+                                            @endforeach
+                                        </select>
+                                   </div>
+                               </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Name</label>
-                                        <input class="form-control" type="text" name="name" id="e_name"
-                                            value="" />
+                                        <input class="form-control" type="text" name="name" id="e_name" value="" required/>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Email</label>
-                                    <input class="form-control" type="text" name="email" id="e_email"
-                                        value="" />
+                                    <input class="form-control" type="text" name="email" id="e_email" value=""required/>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Phone</label>
-                                        <input class="form-control" type="text" id="e_phone_number" name="phone"
-                                            value="" />
+                                        <input class="form-control" type="text" id="e_phone_number" name="phone" value=""required/>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Created Date and Time</label>
-                                    <input class="form-control" type="text" id="e_join_date" name="join"
-                                        value="" readonly />
+                                    <input class="form-control" type="text" id="e_join_date" name="join" value="" readonly/>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Password</label>
-                                        <input type="password" class="form-control" name="password">
+                                        <input type="password" class="form-control" name="password" required>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>Repeat Password</label>
-                                    <input type="password" class="form-control" name="password_confirmation">
+                                    <input type="password" class="form-control" name="password_confirmation" required>
                                 </div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label>Status</label>
-                                    <select class="select" name="status_user" id="e_status">
-                                        @foreach ($status_user as $status)
-                                            <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
+                                    <select class="select" name="status_user" id="e_status"required>
+                                        @foreach ($status_user as $status )
+                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-auto float-right ml-auto">
                                     <br><br>
-                                    <button type="submit" class="btn add-btn">Update</button>
+                                <button type="submit" class="btn add-btn">Update</button>
                                 </div>
                             </div>
                         </form>
@@ -724,7 +656,7 @@
         $(document).on('click', '.userDelete', function() {
             var _this = $(this).parents('tr');
             $('.e_id').val(_this.find('.ids').text());
-            $('.e_avatar').val(_this.find('.image').text());
+            $('.e_avatar').val(_this.find('#imagea').text());
         });
     </script>
 
@@ -736,7 +668,7 @@
             var phone = $('input[name="phone"]').val();
             var password = $('input[name="password"]').val();
             var confirmPassword = $('input[name="password_confirmation"]').val();
-            var department = $('#department').val();
+            var department = $('#departmenta').val();
             var position = $('#position').val();
             var fullname = $('#fullname').val();
 

@@ -71,7 +71,24 @@ border-color: red !important;
                             </select>
                         </div>
                     </div>
+
                     <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Work ID <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                             id="work_id" name="work_id" value="{{ $employee->work_id }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">ETF No <span class="text-danger">*</span></label>
+                            <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                             id="etf_no" name="etf_no" value="{{ $employee->etf_no }}" required>
+                        </div>
+                    </div>
+
+                    {{-- <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
@@ -83,7 +100,7 @@ border-color: red !important;
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class="col-form-label">First Name <span class="text-danger">*</span></label>
@@ -93,7 +110,7 @@ border-color: red !important;
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="col-form-label">Larst Name <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Last Name <span class="text-danger">*</span></label>
                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                 id="l_name" name="l_name" value="{{ $employee->l_name }}" required>
                         </div>
@@ -255,11 +272,115 @@ border-color: red !important;
                     </script>
                     <div class="col-sm-6">
                         <div class="form-group">
+                            <label class="col-form-label">Department Name <span class="text-danger">*</span></label>
+                            <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                                id="d_name" name="d_name">
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}" @if ($employee->d_name == $department->id) selected @endif>
+                                        {{ $department->department }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Job Status <span class="text-danger">*</span></label>
+                            <select class="form-control" style="width: 100%;" id="j_status" name="j_status" required>
+                                <option value="{{$job_status->id}}" >{{$job_status->status_name}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        $(document).ready(function() {
+                            $('#d_name').change(function() {
+                                var selectedDepartment = $(this).val();
+                                var jobStatusDropdown = $('#j_status');
+                                jobStatusDropdown.empty();
+                                // console.log(selectedDepartment);
+                                // if (selectedDepartment === 'D000002' || selectedDepartment === 'D000001') {
+                                $.ajax({
+                                    url: '/get-job-statuses',
+                                    method: 'GET',
+                                    data: {
+                                        department_id: selectedDepartment
+                                    },
+                                    success: function(response) {
+                                    var uniqueStatusNames = new Set();
+                                    response.forEach(function(status) {
+                                        uniqueStatusNames.add(status);
+                                    });
+
+                                    // Clear existing options
+                                    jobStatusDropdown.empty();
+
+                                    // Add unique status names as options
+                                    uniqueStatusNames.forEach(function(statusName) {
+                                        jobStatusDropdown.append('<option value="' + statusName.id + '">' + statusName.status_name + '</option>');
+                                    });
+                                },
+
+
+                                    error: function(xhr, status, error) {
+                                        console.log('Error: ' + error); // Log the error for debugging
+                                    }
+                                });
+                                // }
+                            });
+                        });
+                    </script>
+
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
+                            <select class="form-control" style="width: 100%;" id="j_title" name="j_title" required>
+                                <option value="{{$job_title->id}}" >{{$job_title->title_name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            $('#d_name, #j_status').change(function() {
+                                var selectedDepartment = $('#d_name').val();
+                                var selectedJobStatus = $('#j_status').val();
+                                var jobTitleDropdown = $('#j_title');
+                                jobTitleDropdown.empty();
+                                console.log(selectedJobStatus);
+                                $.ajax({
+                                    url: '/get-job-titles',
+                                    method: 'GET',
+                                    data: {
+                                        department_id: selectedDepartment,
+                                        job_status_id: selectedJobStatus
+                                    },
+                                    success: function(response) {
+                                        // console.log(response);
+                                        // Clear existing options
+                                        jobTitleDropdown.empty();
+
+                                        // Add job titles as options
+                                        response.forEach(function(jobTitle) {
+                                            jobTitleDropdown.append('<option value="' + jobTitle.id +
+                                                '">' + jobTitle.title_name + '</option>');
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.log('Error: ' + error); // Log the error for debugging
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    {{-- <div class="col-sm-6">
+                        <div class="form-group">
                             <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                 id="j_title" name="j_title" value="{{ $employee->j_title }}" required>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Joined Date <span class="text-danger">*</span></label>
@@ -269,6 +390,17 @@ border-color: red !important;
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-form-label">Appointment Date <span class="text-danger">*</span></label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text" id="appointmentDate"
+                                    name="appointmentDate" value="{{ $employee->appointmentDate }}" required>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Created Date <span class="text-danger">*</span></label>
@@ -313,14 +445,23 @@ border-color: red !important;
                 </div>
                 <!-- ... existing form fields ... -->
                 <div class="row" style="padding-left:20px; padding-right:20px;">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Address</label>
                             <textarea class="form-control" style="width: 100%; height: 100%" tabindex="-1" aria-hidden="true" id="address"
                                 name="address">{{ $employee->address }}</textarea>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <label class="col-form-label">Working Hours <span class="text-danger">*</span></label>
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="workingHours" name="workingHours">
+                            <option value="" @if (!$employee->workingHours) selected @endif hidden></option>
+                            <option value="5day" @if ($employee->workingHours == '5day') selected @endif>10</option>
+                            <option value="6day" @if ($employee->workingHours == '6day') selected @endif>9 + 1</option>
+                        </select>
+                    </div>
                 </div>
+
 
                 <br><br><br>
                 <!-- new accordian  -->

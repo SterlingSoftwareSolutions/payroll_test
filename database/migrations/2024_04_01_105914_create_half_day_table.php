@@ -13,17 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attendances', function (Blueprint $table) {
-            $table->string('id')->unique()->primary();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
-            $table->integer('WorkId');
-
+        Schema::create('half_day', function (Blueprint $table) {
+            $table->id();
+            $table->string('employee_id');
+            $table->integer('half_day_count');
             $table->date('date');
-            $table->time('punch_in');
-            $table->time('punch_out');
-            $table->time('workHours');
-            $table->time('OT');
-            $table->time('late');
             $table->timestamps();
         });
     }
@@ -35,7 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('half_day');
     }
-
 };

@@ -97,7 +97,9 @@
                                             <td class="text-left">{{ $employee->full_name }}</td>
                                             <td class="text-left">{{ $employee->email }}</td>
                                             <td class="text-left">{{ $employee->c_number }}</td>
-                                            <td class="text-left">{{ $employee->j_title }} </td>
+                                            <td class="text-left">
+                                                {{ \App\Models\JobTitle::where('id', $employee->j_title)->value('title_name') }}
+                                            </td>
                                             <td class="text-center">
                                                 <div class="dropdown dropdown-action">
                                                     <a href="#" class="action-icon dropdown-toggle"

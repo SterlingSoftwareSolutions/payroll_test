@@ -48,6 +48,7 @@ return new class extends Migration
             // Company EPF & ETF
             $table->decimal('company_epf', 10, 2);
             $table->decimal('etf', 10, 2);
+            $table->decimal('net_salary', 10, 2);
 
             // Bank account details
             $table->string('account_name');

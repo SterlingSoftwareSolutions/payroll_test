@@ -8,15 +8,20 @@ use DatePeriod;
 use DateInterval;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\HalfDay;
 use App\Models\Holiday;
 use App\Models\Employee;
+use App\Models\JobTitle;
+use App\Models\JobStatus;
 use App\Models\Attendance;
 use App\Models\department;
+use App\Models\AnnualLeaves;
 use App\Models\SalaryDetail;
 use Illuminate\Http\Request;
 use App\Models\module_permission;
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
+use App\Models\DepartmentTitleStatus;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
@@ -45,7 +50,7 @@ class EmployeeController extends Controller
         return redirect()->back()->with('success', 'Salary details submitted successfully!');
     }
 
-
+    //
     // all employee list
     public function listAllEmployee(Request $request)
     {
@@ -89,7 +94,6 @@ class EmployeeController extends Controller
     // Add employee view
     public function createEmployee()
     {
-
         $departments = Department::pluck('department', 'id');
         $maxId = \App\Models\Employee::max('employee_id');
 
@@ -100,31 +104,82 @@ class EmployeeController extends Controller
             $nextUserId = 'E000001';
         }
 
-        // The rest of your code...
+        // Retrieve other data
+        $jobTitles = JobTitle::all();
+        $jobStatuses = JobStatus::all();
+        $departmentTitleStatuses = DepartmentTitleStatus::all();
 
-        return view('form.employeeform', compact('nextUserId', 'departments'));
-
-        $departments = department::all();
-
-
-        return view('form.employeeform', compact('departments'));
+        return view('form.employeeform', compact('nextUserId', 'departments', 'jobTitles', 'jobStatuses', 'departmentTitleStatuses'));
     }
+    public function getJobStatuses(Request $request)
+    {
+        // dd('$request');
+        // $departmentId = $request->input('department_id');
+
+        // // Fetch job statuses based on the department ID
+        // $jobStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
+
+        // return response()->json($jobStatuses);
+        $departmentId = $request->input('department_id');
+
+        // Fetch job statuses based on the department ID
+        $departmentTitleStatuses = DepartmentTitleStatus::where('department_id', $departmentId)->get();
+
+        // Extract job status IDs from the department title statuses
+        $jobStatusIds = $departmentTitleStatuses->pluck('job_status_id');
+
+        // Fetch job statuses using the IDs
+        $jobStatuses = JobStatus::whereIn('id', $jobStatusIds)->get();
+
+        return response()->json($jobStatuses);
+    }
+    public function getJobTitles(Request $request)
+    {
+        $jobStatusName = $request->input('job_status_id');
+
+        $jobStatus = JobStatus::where('id', $jobStatusName)->first();
+
+        if (!$jobStatus) {
+            return response()->json(['error' => 'Job status not found'], 404);
+        }
+
+        $departmentId = $request->input('department_id');
+
+        $jobTitles = DepartmentTitleStatus::where('job_status_id', $jobStatus->id)
+            ->where('department_id', $departmentId)
+            ->pluck('job_title_id'); // Pluck the job_title_id values from the collection
+
+        $jobTitles = JobTitle::whereIn('id', $jobTitles)->get(); // Find JobTitle records with the extracted IDs
+
+        return response()->json($jobTitles);
+    }
+
+
+
 
 
     // save data employee
     public function saveRecord(Request $request)
     {
+        // dd($request);
         $validated = $request->validate([
             'id' => 'required',
             'work_id' => 'required|unique:employees,work_id',
+            'etf_no' => 'required|numeric',
             'd_name' => 'required',
             'f_name' => 'required',
             'l_name' => 'required',
             'full_name' => 'required',
             'dob' => 'required',
+            'email' => 'required',
+            'nic' => 'required',
+            'c_number' => 'required',
+            'address' => 'required',
             'gender' => 'required',
             'j_title' => 'required',
+            'j_status' => 'required',
             'joinedDate' => 'required',
+            'appointmentDate' => 'required',
             'createdDate' => 'required',
             'status' => 'required',
             'account_name' => 'required',
@@ -132,7 +187,9 @@ class EmployeeController extends Controller
             'bank_name' => 'required',
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
+            'workingHours' =>'required',
         ]);
+
         $validated['employee_id'] = $validated['id'];
         unset($validated['id']);
 
@@ -140,6 +197,10 @@ class EmployeeController extends Controller
             'createdDate' => now()
         ]));
 
+        $this->addHalfDay(
+            $employee->id
+        );
+        // dd($validated);
         $this->salary_details(
             $employee->employee_id,
             $request->type,
@@ -148,8 +209,17 @@ class EmployeeController extends Controller
             $request->deduction_dates,
         );
 
-         return redirect()->back();
+        return redirect()->route('all/employee/list');
     }
+    public function addHalfDay($employee_id)
+    {
+        // dd($employee_id);
+        $halfDay = new HalfDay();
+        $halfDay->employee_id = $employee_id;
+        $halfDay->half_day_count = 1;
+        $halfDay->save();
+    }
+
 
     public function salary_details($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
     {
@@ -199,12 +269,38 @@ class EmployeeController extends Controller
     }
     public function ViewEmployee($user)
     {
-
+        // dd($user);
         $employee_id = $user;
 
         $employee = Employee::where('employee_id', $employee_id)->first();
+        $currentYear = date('Y');
+        $annual = AnnualLeaves::where('employee_id', $employee_id)
+            ->where('year', $currentYear)
+            ->first();
+
         // dd($employee);
+        $job_title = JobTitle::where('id', $employee->j_title)->value('title_name');
+        $job_status = JobStatus::where('id', $employee->j_status)->value('status_name');
+        // dd($job_status);
         $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+
+        $job_statusID = $employee->j_status;
+        $job_status = JobStatus::where('id', $job_statusID)->first();
+        // dd($job_status);
+        $status_name = strtoupper(trim($job_status->status_name));
+        // dd($status_name);
+        $joinedDate = $employee->joinedDate;
+        $oneYearAgo = now()->subYear();
+        // dd($oneYearAgo);
+        if ($status_name != "INTERN" && $joinedDate <= $oneYearAgo) {
+            // $status_name === "INTERN" ||  $joinedDate <= $oneYearAgo
+            $annualLeaves = "true";
+            // dd($annualLeaves);
+        } else {
+            $annualLeaves = "false";
+            // dd($annualLeaves);
+            // dd("false");
+        }
 
         $departments = department::all();
         $holiday = Holiday::all();
@@ -256,33 +352,42 @@ class EmployeeController extends Controller
             'extraDaysCount',
             'employeeHolidayCounts',
             'totDays',
-            'weekendCount'
+            'weekendCount',
+            'job_title',
+            'job_status',
+            'annual',
+            'annualLeaves',
         ));
     }
 
     // use Carbon\Carbon;
 
-public function EditEmployee($user)
-{
-    $employee_id = $user;
+    public function EditEmployee($user)
+    {
+        $employee_id = $user;
 
-    $userList = DB::table('users')->get();
-    $permission_lists = DB::table('permission_lists')->get();
+        $userList = DB::table('users')->get();
 
-    // Retrieve the employee and salary details
-    $employee = Employee::where('employee_id', $employee_id)->first();
-    $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+        $permission_lists = DB::table('permission_lists')->get();
 
-    // Format the date in the salary details
-    foreach ($salary as $s) {
-        $formattedDate = Carbon::parse($s->date)->format('d-m-Y');
-        $s->date = $formattedDate;
+        // Retrieve the employee and salary details
+        $employee = Employee::where('employee_id', $employee_id)->first();
+        //  dd($employee);
+        $job_title = JobTitle::where('id', $employee->j_title)->first();
+        $job_status = JobStatus::where('id', $employee->j_status)->first();
+        // dd($job_status);
+        $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+
+        // Format the date in the salary details
+        foreach ($salary as $s) {
+            $formattedDate = Carbon::parse($s->date)->format('d-m-Y');
+            $s->date = $formattedDate;
+        }
+
+        $departments = Department::all();
+
+        return view('form.edit.employeeedit', compact('employee', 'departments', 'salary', 'job_title', 'job_status'));
     }
-
-    $departments = Department::all();
-
-    return view('form.edit.employeeedit', compact('employee', 'departments', 'salary'));
-}
 
 
 
@@ -305,11 +410,18 @@ public function EditEmployee($user)
         $request->validate([
             'd_name' => 'required',
             'f_name' => 'required',
+            'work_id' => 'required',
+            'etf_no' => 'required',
             'l_name' => 'required',
             'full_name' => 'required',
             'dob' => 'required',
             'gender' => 'required',
+            'c_number' => 'required',
+            'nic' => 'required',
+            'email' => 'required',
+            'address' => 'required',
             'j_title' => 'required',
+            'j_status' => 'required',
             'joinedDate' => 'required',
             'status' => 'required',
             'account_name' => 'required',
@@ -317,6 +429,7 @@ public function EditEmployee($user)
             'bank_name' => 'required',
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
+            'workingHours'=> 'required',
         ]);
 
         try {
@@ -338,6 +451,8 @@ public function EditEmployee($user)
             // Update employee details
             $employee->d_name = $request->input('d_name');
             $employee->f_name = $request->input('f_name');
+            $employee->work_id = $request->input('work_id');
+            $employee->etf_no = $request->input('etf_no');
             $employee->email = $request->input('email');
             $employee->nic = $request->input('nic');
             $employee->c_number = $request->input('c_number');
@@ -347,13 +462,16 @@ public function EditEmployee($user)
             $employee->dob = $request->input('dob');
             $employee->gender = $request->input('gender');
             $employee->j_title = $request->input('j_title');
+            $employee->j_status = $request->input('j_status');
             $employee->joinedDate = $request->input('joinedDate');
+            $employee->appointmentDate = $request->input('appointmentDate');
             $employee->status = $request->input('status');
             $employee->account_name = $request->input('account_name');
             $employee->account_number = $request->input('account_number');
             $employee->bank_name = $request->input('bank_name');
             $employee->branch = $request->input('branch');
             $employee->basic_Salary = $request->input('basic_Salary');
+            $employee->workingHours = $request->input('workingHours');
 
             // Save the updated employee record
             $employee->save();
@@ -361,63 +479,66 @@ public function EditEmployee($user)
             Toastr::success('Employee record updated successfully :)', 'Success');
             return redirect()->route('all/employee/list');
         } catch (\Exception $e) {
+
             Toastr::error('An error occurred while updating the employee record. Please try again.', 'Error');
             return redirect()->back();
         }
     }
     public function updateSalaryDetails($employee_id, $types, $incrementNames, $incrementAmounts, $dates)
     {
-        $arraySize = count($dates);
+        if ($dates !== null) {
+            $arraySize = count($dates);
 
-        // Fetch existing salary records for the employee
-        $salaryRecords = SalaryDetail::where('employee_id', $employee_id)->get();
+            // Fetch existing salary records for the employee
+            $salaryRecords = SalaryDetail::where('employee_id', $employee_id)->get();
 
-        // Filter the collection to get records with the specific employee_id
-        $filteredRecords = $salaryRecords->where('employee_id', $employee_id);
+            // Filter the collection to get records with the specific employee_id
+            $filteredRecords = $salaryRecords->where('employee_id', $employee_id);
 
-        // Extract only the "id" column values from the filtered records
-        $filteredIds = $filteredRecords->pluck('id')->toArray();
+            // Extract only the "id" column values from the filtered records
+            $filteredIds = $filteredRecords->pluck('id')->toArray();
 
-        // Iterate over the array of "types" and update or add records
-        for ($i = 0; $i < $arraySize; $i++) {
-            // Check if there is a record to update
-            if (isset($filteredIds[$i])) {
-                if ($incrementAmounts[$i] == 0) {
-                    // Delete the record if $incrementAmounts is 0
-                    SalaryDetail::destroy($filteredIds[$i]);
-                } else {
-                    // Update the columns in the existing record with the corresponding "id"
-                    $recordToUpdate = SalaryDetail::find($filteredIds[$i]);
+            // Iterate over the array of "types" and update or add records
+            for ($i = 0; $i < $arraySize; $i++) {
+                // Check if there is a record to update
+                if (isset($filteredIds[$i])) {
+                    if ($incrementAmounts[$i] == 0) {
+                        // Delete the record if $incrementAmounts is 0
+                        SalaryDetail::destroy($filteredIds[$i]);
+                    } else {
+                        // Update the columns in the existing record with the corresponding "id"
+                        $recordToUpdate = SalaryDetail::find($filteredIds[$i]);
 
-                    if ($recordToUpdate) {
-                        // Sanitize and update the record fields
-                        $recordToUpdate->type = $types[$i];
-                        $recordToUpdate->increment_name = $incrementNames[$i];
-                        $recordToUpdate->increment_amount = $incrementAmounts[$i];
+                        if ($recordToUpdate) {
+                            // Sanitize and update the record fields
+                            $recordToUpdate->type = $types[$i];
+                            $recordToUpdate->increment_name = $incrementNames[$i];
+                            $recordToUpdate->increment_amount = $incrementAmounts[$i];
 
-                        // Validate and format the date
-                        $formattedDate = Carbon::createFromFormat('d-m-Y', $dates[$i]);
-                        if ($formattedDate) {
-                            $recordToUpdate->date = $formattedDate->format('Y-m-d');
-                        } else {
-                            // Handle date format error, e.g., throw an exception
-                            // return response()->json(['error' => 'Invalid date format.'], 400);
+                            // Validate and format the date
+                            $formattedDate = Carbon::createFromFormat('d-m-Y', $dates[$i]);
+                            if ($formattedDate) {
+                                $recordToUpdate->date = $formattedDate->format('Y-m-d');
+                            } else {
+                                // Handle date format error, e.g., throw an exception
+                                // return response()->json(['error' => 'Invalid date format.'], 400);
+                            }
+
+                            // Save the updated record
+                            $recordToUpdate->save();
                         }
-
-                        // Save the updated record
-                        $recordToUpdate->save();
                     }
-                }
-            } else {
-                if ($incrementAmounts[$i] != 0) {
-                    // Create a new record for cases where there is no corresponding record to update
-                    SalaryDetail::create([
-                        'employee_id' => $employee_id,
-                        'type' => $types[$i],
-                        'increment_name' => $incrementNames[$i],
-                        'increment_amount' => $incrementAmounts[$i],
-                        'date' => Carbon::createFromFormat('d-m-Y', $dates[$i])->format('Y-m-d'),
-                    ]);
+                } else {
+                    if ($incrementAmounts[$i] != 0) {
+                        // Create a new record for cases where there is no corresponding record to update
+                        SalaryDetail::create([
+                            'employee_id' => $employee_id,
+                            'type' => $types[$i],
+                            'increment_name' => $incrementNames[$i],
+                            'increment_amount' => $incrementAmounts[$i],
+                            'date' => Carbon::createFromFormat('d-m-Y', $dates[$i])->format('Y-m-d'),
+                        ]);
+                    }
                 }
             }
         }
@@ -773,5 +894,6 @@ public function EditEmployee($user)
     {
 
         $url = route('save.record'); // Include the correct namespace
-    }
+
+   }
 }

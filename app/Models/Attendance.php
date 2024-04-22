@@ -15,6 +15,9 @@ class Attendance extends Model
         'date',
         'punch_in',
         'punch_out',
+        'workHours',
+        'OT',
+        'late',
     ];
 
     protected $dates = [
@@ -55,5 +58,5 @@ class Attendance extends Model
         'id' => 'string'
     ];
 
-    
+
 }
