@@ -213,11 +213,11 @@ class EmployeeController extends Controller
     }
     public function addHalfDay($employee_id)
     {
-        // dd($employee_id);
-        $halfDay = new HalfDay();
-        $halfDay->employee_id = $employee_id;
-        $halfDay->half_day_count = 1;
-        $halfDay->save();
+            $halfDay = new HalfDay();
+            $halfDay->employee_id = $employee_id;
+            $halfDay->half_day_count = 1;
+            $halfDay->date = Carbon::now()->toDateString();
+            $halfDay->save();
     }
 
 
