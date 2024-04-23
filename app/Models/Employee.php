@@ -76,9 +76,17 @@ class Employee extends Model
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
 
         $month_days_count = $current->daysInMonth;
-        $month_weekends_count = $current->diffInDaysFiltered(function (Carbon $date){
-            return $date->isSaturday() || $date->isSunday();
-        }, $current->copy()->lastOfMonth());
+        $firstOfMonth = $current->copy()->firstOfMonth();
+        $lastOfMonth = $current->copy()->lastOfMonth();
+
+        $weekendCount = 0;
+        for ($date = $firstOfMonth; $date->lte($lastOfMonth); $date->addDay()) {
+            if ($date->isWeekend()) {
+                $weekendCount++;
+            }
+        }
+
+        $month_weekends_count = $weekendCount;
         $month_holidays = Holiday::whereMonth('date_holiday', $current->month)->whereYear('date_holiday', $current->year)->get();
         $month_holiday_weekends = with(clone $month_holidays)->filter(function ($holiday){
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
