@@ -132,7 +132,7 @@
                                 <td>{{ $report->month_weekends}}</td>
                                 <td>{{ $report->month_holidays }}</td>
                                 <td>{{ $report->work_days }}</td>
-                                <td>{{ $report->ot_minutes }}</td>
+                                <td>{{ $report->ot_minutes /60 }}</td>
                                 <td>{{ $report->days_worked_weekend }}</td>
                                 <td>{{ $report->annual_leaves }}</td> 
 
