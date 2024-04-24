@@ -79,12 +79,34 @@ class Employee extends Model
         $firstOfMonth = $current->copy()->firstOfMonth();
         $lastOfMonth = $current->copy()->lastOfMonth();
 
+        
+        $work_hours = $this->workingHours == "6day" ? 9 : 10;
         $weekendCount = 0;
+        $month_days_count = $current->daysInMonth;
+        $firstOfMonth = $current->copy()->firstOfMonth();
+        $lastOfMonth = $current->copy()->lastOfMonth();
+        
+        $work_hours = $this->workingHours == "6day" ? 9 : 10;
+        $weekendCount = 0;
+        
         for ($date = $firstOfMonth; $date->lte($lastOfMonth); $date->addDay()) {
             if ($date->isWeekend()) {
-                $weekendCount++;
+                if ($work_hours == 9) {
+                    if ($date->dayOfWeek == Carbon::SATURDAY) {
+                        $weekendCount += 0.5;
+                    } else {
+                        $weekendCount += 1;
+                    }
+                } elseif ($work_hours == 10) {
+                    $weekendCount += 1;
+                }
             }
         }
+        
+
+echo $weekendCount;
+
+        
 
         $month_weekends_count = $weekendCount;
         $month_holidays = Holiday::whereMonth('date_holiday', $current->month)->whereYear('date_holiday', $current->year)->get();
@@ -92,7 +114,6 @@ class Employee extends Model
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
         });
         $work_days = $month_days_count - $month_weekends_count;
-        $work_hours = $this->workingHours == "6day" ? 9 : 10;
 
         // Employee details
         $attendances = Attendance::where('employee_id', $this->id)

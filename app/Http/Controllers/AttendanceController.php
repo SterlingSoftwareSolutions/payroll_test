@@ -94,10 +94,16 @@ class AttendanceController extends Controller
         $OT = '00:00';
         $late = '00:00';
 
-        if ($employee->workingHours == '5day' && ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday')) {
-            // Your code here
-        } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
-            // Your code here
+        if ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+            // dd($employee->workingHours);
+            $otStartTime = new DateTime('00:00');
+            $workHoursTime = new DateTime($workHours);
+
+            if ($workHoursTime > $otStartTime) {
+                $otInterval = $workHoursTime->diff($otStartTime);
+                $OT = $otInterval->format('%H:%I');
+                // dd($OT);
+            }
         } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
             $otStartTime = new DateTime('05:00');
             $workHoursTime = new DateTime($workHours);
@@ -509,11 +515,17 @@ class AttendanceController extends Controller
                 $OT = '00:00';
                 $late = '00:00';
 
-                if ($employee->workingHours == '5day' && ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday')) {
-                    // Your code here
-                } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
-                    // Your code here
-                } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+                if ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+                    // dd($employee->workingHours);
+                    $otStartTime = new DateTime('00:00');
+                    $workHoursTime = new DateTime($workHours);
+
+                    if ($workHoursTime > $otStartTime) {
+                        $otInterval = $workHoursTime->diff($otStartTime);
+                        $OT = $otInterval->format('%H:%I');
+                        // dd($OT);
+                    }
+                } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
                     $otStartTime = new DateTime('05:00');
                     $workHoursTime = new DateTime($workHours);
 

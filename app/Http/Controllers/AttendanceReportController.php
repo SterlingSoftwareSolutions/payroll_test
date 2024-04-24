@@ -61,6 +61,8 @@ class AttendanceReportController extends Controller
 
         $employees->each(function ($employee) use ($request){
             $attendanceData = $employee->attendance_data($request->year ?? null, $request->month ?? null);
+            // dd($attendanceData);
+            $atten=abs($attendanceData["no_pay_leaves"]);
             AttendanceReport::firstOrCreate([
                 'employee_id' => $employee->id,
                 'date' => $attendanceData['current']
@@ -78,7 +80,7 @@ class AttendanceReportController extends Controller
                 "ot_minutes" => $attendanceData["ot_minutes"],
                 "annual_leaves_taken" => 0,
                 "annual_leaves" => $attendanceData["annualLeaves"] ?? 0,
-                "absent_days" => $attendanceData["no_pay_leaves"],
+                "absent_days" => $atten,
             ]);
         });
 

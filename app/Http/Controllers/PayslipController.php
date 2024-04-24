@@ -180,11 +180,12 @@ class PayslipController extends Controller
             $annual_leaves_taken = 0;
         }
 
-
+        $attendance_date = abs($attandance_data['absent_days']);
+        // dd($attendance_date);
         $leave = $annual_leaves_taken + $half_day;
         // No pay leave deduction
-        $no_pay_leave_deduction =  $gross_salary_day * ($attandance_data['absent_days'] - $leave);
-        // dd($no_pay_leave_deduction );
+        $no_pay_leave_deduction =  $gross_salary_day * ($attendance_date - $leave);
+        // dd( $attandance_data['absent_days'] );
         $late_hours = $attandance_data['late_minutes'] / 60;
         if ($late_hours <= 3) {
             $late_hours = 0;
@@ -208,7 +209,7 @@ class PayslipController extends Controller
             $company_epf = ($total_basic_pay / 100) * 12;
             $etf = ($total_basic_pay / 100) * 3;
         }
-        $incentivesF = ($incentives / 30) * (30 - $attandance_data['absent_days']);
+        $incentivesF = ($incentives / 30) * (30 - $attendance_date);
         // dd($incentivesF);
         $payslip = new Payslip();
 
