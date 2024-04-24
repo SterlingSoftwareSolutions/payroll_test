@@ -204,6 +204,11 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
+                                            <label for="extra_days_payment">Extra Day Payment</label>
+                                            <input type="number" step="0.01" class="form-control" id="extra_days_payment" name="extra_days_payment" readonly>
+                                        </div>
+
+                                        <div class="form-group col-md-12">
                                             <label for="incentives">Incentives</label>
                                             <input type="number" step="0.01" class="form-control" id="incentives" name="incentives" readonly>
                                         </div>
@@ -358,6 +363,7 @@
                         $('#fixed_allowance').val(payslip.fixed_allowance);
                         $('#attendance_allowance').val(payslip.attendance_allowance);
                         $('#no_pay_leave_deduction').val(payslip.no_pay_leave_deduction);
+                        $('#extra_days_payment').val(payslip.extra_days_payment);
                         $('#late_deduction').val(payslip.late_deduction);
                         $('#employee_epf').val(payslip.employee_epf);
                         $('#paye').val(payslip.paye);

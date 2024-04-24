@@ -19,21 +19,20 @@ return new class extends Migration
             // $table->date('date');
             $table->date('date')->nullable();
             $table->integer('month_days');
-            $table->integer('month_weekends');
+            $table->decimal('month_weekends', 10, 1);
             $table->integer('month_holidays');
-            $table->integer('work_days');
-            $table->integer('work_hours');
-            $table->integer('absent_days'); 
-            $table->integer('days_worked');
-            $table->integer('days_worked_holiday');
-            $table->integer('days_worked_weekend');
-            $table->integer('days_worked_holiday_weekend');
-            $table->integer('late_minutes');
-            $table->integer('ot_minutes');
+            $table->decimal('work_days', 10, 1);
+            $table->decimal('work_hours', 10, 1);
+            $table->decimal('absent_days', 10, 1); 
+            $table->decimal('days_worked', 10, 1);
+            $table->decimal('days_worked_holiday', 10, 1);
+            $table->decimal('days_worked_weekend', 10, 1);
+            $table->decimal('days_worked_holiday_weekend', 10, 1);
+            $table->decimal('late_minutes', 10, 2);
+            $table->decimal('ot_minutes', 10, 2);
             $table->integer('half_day')->nullable();
             $table->integer('annual_leaves')->nullable();
-            $table->integer('annual_leaves_taken')->default(0);
-           
+            $table->decimal('annual_leaves_taken', 10, 1)->default(0);
 
             $table->timestamps();
         });
