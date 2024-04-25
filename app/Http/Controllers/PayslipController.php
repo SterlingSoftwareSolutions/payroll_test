@@ -155,7 +155,7 @@ class PayslipController extends Controller
         }
 
         // Holiday payment
-        $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day;
+        $holiday_payment = $attandance_data['days_worked_holiday'] * ($gross_salary_day*2);
 
         // Extra days payment
         $extra_days = ($attandance_data['days_worked_weekend'] - $attandance_data['days_worked_holiday_weekend']);
@@ -163,6 +163,7 @@ class PayslipController extends Controller
 
         // Overtime
         $ot_hours = $attandance_data['ot_minutes'] / 60;
+        // dd($ot_hours);
         // dd( $attandance_data['annual_leaves_taken']);
         $ot_rate = $gross_salary / 240 * 1.5;
         $ot = $ot_rate * $ot_hours;
@@ -287,7 +288,9 @@ class PayslipController extends Controller
     // Generate payslips for current month
     public function generate_payslips()
     {
-        $attendanceReports = AttendanceReport::whereDate('date', now()->subMonth()->startOfMonth());
+        $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
+        $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
         $attendanceReports->each(function ($attendanceReport) {
             $this->create_payslip($attendanceReport);
         });
