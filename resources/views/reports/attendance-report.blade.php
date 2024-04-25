@@ -132,7 +132,11 @@
                                 <td>{{ $report->month_weekends}}</td>
                                 <td>{{ $report->month_holidays }}</td>
                                 <td>{{ $report->days_worked }}</td>
-                                <td>{{ number_format($report->ot_minutes / 60, 2) }}</td>
+                                @php
+                                    $hours = floor($report->ot_minutes / 60);
+                                    $minutes = $report->ot_minutes % 60;
+                                @endphp
+                                <td>{{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}</td>
                                 <td>{{ $report->days_worked_weekend }}</td>
                                 <td>{{ $report->annual_leaves }}</td> 
 

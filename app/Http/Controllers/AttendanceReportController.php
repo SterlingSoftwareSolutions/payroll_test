@@ -33,8 +33,10 @@ class AttendanceReportController extends Controller
      */
     public function index(Request $request)    //attendance report page view
     {
-        $date = Carbon::create($request->year ?? now()->subMonth()->year, $request->month ?? now()->subMonth()->month);
-        $attendanceReports = AttendanceReport::whereDate('date', $date )->get();
+        $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
+        $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+        // dd($attendanceReports);
         if($request->department){
             $dep = $request->department;
             $attendanceReports = $attendanceReports->filter(function ($attendanceReport) use ($dep){
@@ -53,6 +55,7 @@ class AttendanceReportController extends Controller
 
 
     public function generate_reports(Request $request){
+
         if($request->department_id){
             $employees = Employee::where('status', 'active')->where('d_name', $request->department_id);
         } else{
@@ -62,6 +65,7 @@ class AttendanceReportController extends Controller
         $employees->each(function ($employee) use ($request){
             $attendanceData = $employee->attendance_data($request->year ?? null, $request->month ?? null);
             // dd($attendanceData);
+            // dd($attendanceData["ot_minutes"],);
             $atten=abs($attendanceData["no_pay_leaves"]);
             AttendanceReport::firstOrCreate([
                 'employee_id' => $employee->id,
@@ -72,7 +76,7 @@ class AttendanceReportController extends Controller
                 "month_holidays" => $attendanceData["month_holidays"]->count(),
                 "work_days" => $attendanceData["work_days"],
                 "work_hours" => $attendanceData["work_hours"],
-                "days_worked" => $attendanceData["days_worked"]->count(),
+                "days_worked" => $attendanceData["days_worked"],
                 "days_worked_holiday" => $attendanceData["days_worked_holiday"]->count(),
                 "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
                 "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"]->count(),

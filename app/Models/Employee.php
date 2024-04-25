@@ -75,17 +75,11 @@ class Employee extends Model
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
 
+
         $month_days_count = $current->daysInMonth;
         $firstOfMonth = $current->copy()->firstOfMonth();
         $lastOfMonth = $current->copy()->lastOfMonth();
 
-        
-        $work_hours = $this->workingHours == "6day" ? 9 : 10;
-        $weekendCount = 0;
-        $month_days_count = $current->daysInMonth;
-        $firstOfMonth = $current->copy()->firstOfMonth();
-        $lastOfMonth = $current->copy()->lastOfMonth();
-        
         $work_hours = $this->workingHours == "6day" ? 9 : 10;
         $weekendCount = 0;
         
@@ -102,36 +96,124 @@ class Employee extends Model
                 }
             }
         }
-        
+        $dates = Attendance::where('employee_id', $this->id)
+            ->whereMonth('date', $current->month)
+            ->whereYear('date', $current->year)
+            ->pluck('date')
+            ->filter(function ($date) use ($work_hours) {
+                return !$date->isWeekend() || ($work_hours == 9 && $date->dayOfWeek == Carbon::SATURDAY);
+            })
+            ->map(function ($date) {
+                return $date->format('Y-m-d');
+            })
+            ->toArray();
 
-echo $weekendCount;
-
+        $datesWithoutWeekends = collect($dates)->filter(function ($date) use ($work_hours) {
+            $carbonDate = Carbon::parse($date);
+            if ($carbonDate->dayOfWeek == Carbon::SUNDAY && $work_hours == 9) {
+                return false;
+            }
+            if (($carbonDate->dayOfWeek == Carbon::SATURDAY || $carbonDate->dayOfWeek == Carbon::SUNDAY) && $work_hours == 10) {
+                return false;
+            }
+            return true;
+        })->toArray();
+    
+        // dd($datesWithoutWeekends);
         
+        $holiday_dates = Holiday::whereMonth('date_holiday', $current->month)
+        ->whereYear('date_holiday', $current->year)
+        ->pluck('date_holiday')
+        ->map(function ($date) {
+            return $date->format('Y-m-d');
+        })
+        ->toArray();    
+        $holiday_datescount=count($holiday_dates);
+        $datesWithoutWeekends = collect($dates)->filter(function ($date) use ($work_hours, $holiday_dates) {
+            $carbonDate = Carbon::parse($date);
+            if ($carbonDate->dayOfWeek == Carbon::SUNDAY && $work_hours == 9) {
+                return false;
+            }
+            if (($carbonDate->dayOfWeek == Carbon::SATURDAY || $carbonDate->dayOfWeek == Carbon::SUNDAY) && $work_hours == 10) {
+                return false;
+            }
+            return !in_array($date, $holiday_dates);
+        })->toArray();
+        
+        $countWithoutWH = count($datesWithoutWeekends);
+
+        // dd($countd);
+
+
+        // dd($holiday_dates);
 
         $month_weekends_count = $weekendCount;
         $month_holidays = Holiday::whereMonth('date_holiday', $current->month)->whereYear('date_holiday', $current->year)->get();
+        // dd($month_holidays);
         $month_holiday_weekends = with(clone $month_holidays)->filter(function ($holiday){
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
         });
-        $work_days = $month_days_count - $month_weekends_count;
+        $work_days = $month_days_count - ($month_weekends_count + $holiday_datescount);
+        // dd($work_days);
+        if ($work_days > $countWithoutWH) {
+            $no_pay_leaves = $work_days - $countWithoutWH;
+        } else {
+            $no_pay_leaves = 0;
+        }
 
         // Employee details
         $attendances = Attendance::where('employee_id', $this->id)
         ->whereMonth('date', $current->month)
         ->whereYear('date', $current->year);
 
+        // dd($attendances);
         $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
             if($this->workingHours == "6day"){
                 return !$attendance->date->isSunday();
             }
             return !$attendance->date->isSaturday() && !$attendance->date->isSunday();
         });
+        // dd($days_worked->count());
+
+        $daysInMonth = $current->daysInMonth;
+
+        // Initialize a count variable for Saturdays
+        $saturdayCount = 0;
+
+        // Iterate over each day of the month
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            // Set the day of the month in the current Carbon instance
+            $current->day($day);
+
+            // Check if the current day is a Saturday (Carbon uses ISO-8601, where Saturday is day 6)
+            if ($current->dayOfWeekIso == Carbon::SATURDAY) {
+                $saturdayCount++;
+            }
+        }
+// dd($saturdayCount);
+
+        if($this->workingHours == "6day"){
+            $days_worked = $days_worked->count() - ($saturdayCount / 2);
+            if ($days_worked < 0) {
+                $days_worked = 0;
+            }
+        }
+        else{
+            $days_worked=$days_worked->count();
+            // dd("5" + $days_worked);
+        }
+
 
         $days_worked_holiday = with(clone $attendances)->whereIn('date', $month_holidays->pluck('date_holiday'))->get();
 
         $days_worked_weekend = with(clone $attendances)->get()->filter(function($attendance){
-            return $attendance->date->isSaturday() || $attendance->date->isSunday();
+            if ($this->workingHours == "6day") {
+                return $attendance->date->isSunday();
+            } else {
+                return $attendance->date->isSaturday() || $attendance->date->isSunday();
+            }
         });
+               
 
         $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department){
             if($this->workingHours == "6day"){
@@ -140,29 +222,58 @@ echo $weekendCount;
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
         });
 
-        $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
+        // $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
+        
+    
+        // $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
+        //     if($this->workingHours == "6day" && $attendance->date->isSaturday()){
+        //         $diff = 5 * 60 - $attendance->duration();
+        //     } else{
+        //         $diff = $work_hours * 60 - $attendance->duration();
+        //     }
+        //     return $diff > 0 ? $diff : 0;
+        // });
 
-        $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-            if($this->workingHours == "6day" && $attendance->date->isSaturday()){
-                $diff = 5 * 60 - $attendance->duration();
-            } else{
-                $diff = $work_hours * 60 - $attendance->duration();
-            }
-            return $diff > 0 ? $diff : 0;
+        // $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
+        //     if($this->workingHours == "6day" && $attendance->date->isSaturday()){
+        //         $diff = $attendance->duration() - 5 * 60;
+        //     } else{
+        //         $diff = $attendance->duration() - $work_hours * 60;
+        //     }
+        //     return $diff > 0 ? $diff : 0;
+        // });
+        $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) {
+            // Get the "OT" time from the current attendance record
+            $otTime = $attendance->OT;
+        
+            // Split the time into hours, minutes, and seconds
+            $timeParts = explode(':', $otTime);
+        
+            // Calculate the total overtime minutes
+            $totalMinutes = ($timeParts[0] * 60) + $timeParts[1] + ($timeParts[2] / 60);
+        
+            return $totalMinutes;
         });
+        //  dd($ot_minutes);       
 
-        $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-            if($this->workingHours == "6day" && $attendance->date->isSaturday()){
-                $diff = $attendance->duration() - 5 * 60;
-            } else{
-                $diff = $attendance->duration() - $work_hours * 60;
-            }
-            return $diff > 0 ? $diff : 0;
+        $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) {
+            // Get the "late" time from the current attendance record
+            $lateTime = $attendance->late;
+
+            // Split the time into hours, minutes, and seconds
+            $timeParts = explode(':', $lateTime);
+
+            // Calculate the total late minutes
+            $totalMinutes = ($timeParts[0] * 60) + $timeParts[1] + ($timeParts[2] / 60);
+
+            return $totalMinutes;
         });
+        // dd($late_minutes);
+ 
         $annualLeaves = $this->calculate_annual_leaves($current->year);
 
 
-        
+
         return compact(
             'month_days_count',
             'month_weekends_count',
