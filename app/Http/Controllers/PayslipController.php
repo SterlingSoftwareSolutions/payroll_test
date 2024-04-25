@@ -64,11 +64,21 @@ class PayslipController extends Controller
     }
 
     public function print(Payslip $payslip)
-    {
-        $pdf = Pdf::loadView('payslip_pdf', compact('payslip'))->setPaper('a4', 'portrait');
+    { 
+        $currentDate = Carbon::now()->format('F j, Y');
+        $pdf = Pdf::loadView('payslip_pdf', compact('payslip', 'currentDate'))->setPaper('a4', 'portrait');
         $fileName = strtoupper(preg_split('#\s+#', $payslip->employee->full_name)[0]) . '.pdf';
+        // set_time_limit(120);
+
+          
         return $pdf->download($fileName);
     }
+
+    public function jobStatus()
+{
+    return $this->belongsTo(JobStatus::class, 'j_status');
+}
+
 
     public function create_payslip(AttendanceReport $attendanceReport)
     {
