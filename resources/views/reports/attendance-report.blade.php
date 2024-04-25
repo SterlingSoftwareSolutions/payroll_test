@@ -153,10 +153,9 @@
                                                 <i class="fa fa-pencil m-r-5"></i> Edit
                                             </a>
 
-                                            <a href="/form/attendance/download/{{ $report->employee->id }}"
-                                                class="download-link">
+                                            <a href="{{ route('form.attendance.download', ['employee' => $report->employee->id, 'report' => $report->id]) }}" class="download-link">
                                                 <i class="fa fa-download"></i> Download PDF
-                                            </a>
+                                            </a>                                            
                                         </div>
 
                                     </div>

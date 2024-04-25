@@ -155,7 +155,7 @@ class PayslipController extends Controller
         }
 
         // Holiday payment
-        $holiday_payment = $attandance_data['days_worked_holiday'] * ($gross_salary_day*2);
+        $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day;
 
         // Extra days payment
         $extra_days = ($attandance_data['days_worked_weekend'] - $attandance_data['days_worked_holiday_weekend']);
