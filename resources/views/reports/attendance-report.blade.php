@@ -131,8 +131,12 @@
                                 <td>{{ $report->absent_days }}</td>
                                 <td>{{ $report->month_weekends}}</td>
                                 <td>{{ $report->month_holidays }}</td>
-                                <td>{{ $report->work_days }}</td>
-                                <td>{{ $report->ot_minutes }}</td>
+                                <td>{{ $report->days_worked }}</td>
+                                @php
+                                    $hours = floor($report->ot_minutes / 60);
+                                    $minutes = $report->ot_minutes % 60;
+                                @endphp
+                                <td>{{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}</td>
                                 <td>{{ $report->days_worked_weekend }}</td>
                                 <td>{{ $report->annual_leaves }}</td> 
 
@@ -149,10 +153,9 @@
                                                 <i class="fa fa-pencil m-r-5"></i> Edit
                                             </a>
 
-                                            <a href="/form/attendance/download/{{ $report->employee->id }}"
-                                                class="download-link">
+                                            <a href="{{ route('form.attendance.download', ['employee' => $report->employee->id, 'report' => $report->id]) }}" class="download-link">
                                                 <i class="fa fa-download"></i> Download PDF
-                                            </a>
+                                            </a>                                            
                                         </div>
 
                                     </div>

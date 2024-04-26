@@ -14,7 +14,7 @@ use App\Models\Holiday;
 use App\Models\Employee;
 use League\Csv\Statement;
 use App\Models\Attendance;
-
+use App\Models\AttendanceReport;
 use App\Models\department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -94,10 +94,16 @@ class AttendanceController extends Controller
         $OT = '00:00';
         $late = '00:00';
 
-        if ($employee->workingHours == '5day' && ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday')) {
-            // Your code here
-        } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
-            // Your code here
+        if ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+            // dd($employee->workingHours);
+            $otStartTime = new DateTime('00:00');
+            $workHoursTime = new DateTime($workHours);
+
+            if ($workHoursTime > $otStartTime) {
+                $otInterval = $workHoursTime->diff($otStartTime);
+                $OT = $otInterval->format('%H:%I');
+                // dd($OT);
+            }
         } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
             $otStartTime = new DateTime('05:00');
             $workHoursTime = new DateTime($workHours);
@@ -270,18 +276,34 @@ class AttendanceController extends Controller
 
         // Generate PDF using the 'attendance.form' Blade view and data
         $pdf = PDF::loadView('reports.attendance-report', compact('attendances'));
-
         // Download the PDF with a custom filename
         return $pdf->download('form/attendance/pdf');
     }
 
-    public function download(Employee $employee)
-    {
-        $data = $employee->attendance_data();
-        $data['employee'] = $employee;
-        $pdf = Pdf::loadView('pdf', $data)->setPaper('a5', 'landscape');;
-        return $pdf->download();
+    public function download($employee_id, $report_id)
+{
+    $employee = Employee::find($employee_id);
+    $report = AttendanceReport::find($report_id);
+
+    $attendances = Attendance::where('employee_id', $report->employee_id)
+    ->whereYear('date', date('Y', strtotime($report->date)))
+    ->whereMonth('date', date('m', strtotime($report->date)))
+    ->get()
+    ->toArray();
+
+
+    if (!$employee || !$report) {
+        // Handle the case where employee or report is not found
+        abort(404, 'Employee or report not found');
     }
+    // dd( $attendances);
+    $data = ['employee' => $employee, 'report' => $report, 'attendances' => $attendances];
+    $pdf = PDF::loadView('pdf', $data)->setPaper('a5', 'portrait');
+    $fileName = strtoupper(preg_split('#\s+#', $employee->full_name)[0]) . '.pdf';
+    return $pdf->download($fileName);
+}
+
+   
 
     public function attendanceSearch(Request $request)
     {
@@ -509,11 +531,17 @@ class AttendanceController extends Controller
                 $OT = '00:00';
                 $late = '00:00';
 
-                if ($employee->workingHours == '5day' && ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday')) {
-                    // Your code here
-                } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
-                    // Your code here
-                } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+                if ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+                    // dd($employee->workingHours);
+                    $otStartTime = new DateTime('00:00');
+                    $workHoursTime = new DateTime($workHours);
+
+                    if ($workHoursTime > $otStartTime) {
+                        $otInterval = $workHoursTime->diff($otStartTime);
+                        $OT = $otInterval->format('%H:%I');
+                        // dd($OT);
+                    }
+                } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
                     $otStartTime = new DateTime('05:00');
                     $workHoursTime = new DateTime($workHours);
 
@@ -548,7 +576,7 @@ class AttendanceController extends Controller
                     }
                 }
 
-                // dd($dayOfWeek);
+                // dd($OT);
                 // Create attendance entry
                 $attendance = Attendance::updateOrCreate([
                     'employee_id' => $employee->id,
