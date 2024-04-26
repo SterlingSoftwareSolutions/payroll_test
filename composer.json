@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "barryvdh/laravel-dompdf": "^2.0",
         "brian2694/laravel-toastr": "^5.57",
+        "dompdf/dompdf": "2.0.4",
         "guzzlehttp/guzzle": "^7.2",
         "haruncpi/laravel-id-generator": "^1.1",
         "laravel/framework": "^9.2",

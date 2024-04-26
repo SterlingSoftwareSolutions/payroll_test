@@ -141,7 +141,9 @@
  <div class="header-line"></div>
 
  <div style="width: 150px;">
-    <img src="https://sterlinglanka.com/wp-content/uploads/2022/06/sterling_logo-300x82.png" alt="Logo" style="max-width: 100%; height: auto;">
+    <img src="public/images/sterlinglogo.png" alt="Logo" style="max-width: 100%; height: auto;">
+	{{-- <img src="{{ asset('images/sterlinglogo.png') }}" alt="Logo" style="max-width: 100%; height: auto;"> --}}
+
 </div>
 
 
