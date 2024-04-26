@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Log;
-use view;
-use DateTime;
-use DatePeriod;
-use DateInterval;
-use Carbon\Carbon;
+use App\Models\AnnualLeaves;
+use App\Models\Attendance;
+use App\Models\AttendanceReport;
+use App\Models\department;
+use App\Models\Employee;
 use App\Models\HalfDay;
 use App\Models\Holiday;
-use App\Models\Employee;
-use App\Models\JobTitle;
 use App\Models\JobStatus;
-use App\Models\Attendance;
-use App\Models\department;
-use App\Models\AnnualLeaves;
+use App\Models\JobTitle;
+use App\Models\Note;
 use Brian2694\Toastr\Toastr;
-use Illuminate\Http\Request;
-use App\Models\AttendanceReport;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Log;
+use view;
 
 class AttendanceReportController extends Controller
 {
@@ -92,14 +94,19 @@ class AttendanceReportController extends Controller
     }
 
     public function edit(AttendanceReport $attendanceReport){
+        // dd($attendanceReport);
+        $notes = Note::where('report_id', $attendanceReport->id)->get();
+        // dd($notes);
         $employee_id = $attendanceReport->employee_id;
         $halfDayCount = HalfDay::where('employee_id', $employee_id)->value('half_day_count');
         // dd($halfDayCount);
-        return view("reports/attendance-report-edit", compact('attendanceReport','halfDayCount'));
+        return view("reports/attendance-report-edit", compact('attendanceReport','halfDayCount','notes'));
     }
 
     public function update(AttendanceReport $attendanceReport, Request $request){
-
+        $note=$request->note;
+        $attendanceId= $request->attendance_id;
+        // dd($request);
         $validatedData = $request->validate([
             'employee_id' => 'required|integer',
             'date' => 'required|date',
@@ -117,11 +124,24 @@ class AttendanceReportController extends Controller
             'ot_minutes' => 'required',
             'annual_leaves' => 'required',
             'annual_leaves_taken' => 'required',
-            'half_day'=> 'required'
+            'half_day'=> 'nullable'
         ]);
         // dd($validatedData);
+        if ($note != "") {
+            $this->noteupdate($note,$attendanceId);
+        }
         $attendanceReport->update($validatedData);
+        
         return redirect()->route('form.attendance.edit', ['attendanceReport' => $attendanceReport]);
+    }
+
+    public function noteupdate($note,$attendanceId) {
+        $user = Auth::user();
+        Note::create([
+            'report_id' => $attendanceId,
+            'user_id' => $user->id,
+            'note' => $note,
+        ]);
     }
 
     public function calculateAnnualLeave($employeeId)

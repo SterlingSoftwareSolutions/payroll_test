@@ -147,11 +147,11 @@ class PayslipController extends Controller
         // dd($gross_salary);
         $gross_salary_day = $gross_salary / 30;
         // dd($gross_salary_day);
-        if($Edepartment=="IT"){
-            $gross_salary_hour = $gross_salary_day / 10;
+        if($Edepartment=="Local"){
+            $gross_salary_hour = $gross_salary_day / 9;
         }
         else{
-            $gross_salary_hour = $gross_salary_day / 9;
+            $gross_salary_hour = $gross_salary_day / 10;
         }
 
         // Holiday payment
