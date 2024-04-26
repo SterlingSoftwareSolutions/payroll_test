@@ -375,7 +375,7 @@ class AttendanceController extends Controller
                 }
             }
         }
-        return view('form.Attendanceemployee', compact('attendance', 'next_id', 'employees'));
+        return view('form.attendanceemployee', compact('attendance', 'next_id', 'employees'));
     }
     public function attendanceReportSearch(Request $request)
     {
