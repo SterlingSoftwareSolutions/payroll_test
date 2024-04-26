@@ -225,6 +225,31 @@
                         </script>
 
                     </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-form-label">Added Notes </label>
+                            @foreach ($notes as $note)
+                            <div class="note" style="border: 1px solid black; padding: 5px; margin-bottom: 10px; background-color: #f1f3f5">
+                                <div>
+                                    <strong>{{ $loop->index + 1 }}</strong>
+                                    <strong>User:</strong> {{ $note->user_id }}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <strong>Time:</strong> {{ $note->time }}
+                                </div>
+                                <div>
+                                    <strong>Note:</strong> {{ $note->note }}
+                                </div>
+                            </div>
+                        @endforeach                        
+                        </div>
+                    </div>                    
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-form-label">Add Note </label>
+                            <textarea class="form-control" style="width: 100%; height: 100px !important;" tabindex="-1" aria-hidden="true" name="note" id="note"></textarea>
+                            <input type="text" value="{{ $attendanceReport->id }}" id="attendance_id" name="attendance_id" hidden>
+                        </div>
+                    </div>
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Submit</button>
                     </div>
