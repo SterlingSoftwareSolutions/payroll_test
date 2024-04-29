@@ -1,4 +1,5 @@
 <style type="text/css">
+
 	/* CSS styles for the PDF */
 	body {
 		font-family: Arial, sans-serif;
@@ -28,9 +29,27 @@
 		background-color: #f2f2f2;
 	}
  
+/* .left-content{
+	float:left;
+}
 .right-content {
     float: right;
+} */
+
+.container {
+    display: flex; /* Use flexbox to align items */
 }
+
+.left-content {
+    flex: 0 0 30%; /* Set the width of the left content */
+	float:left;
+}
+
+.right-content {
+    flex: 1; /* Let the right content take up the remaining space */
+	float:right;
+}
+
 
 .employee-details {
     clear: both;
@@ -138,23 +157,19 @@
 
 <body>
 
- <div class="header-line"></div>
+<div class="header-line"></div>
+<br>
 
- <div style="width: 150px;">
-    <img src="public/images/sterlinglogo.png" alt="Logo" style="max-width: 100%; height: auto;">
-	{{-- <img src="{{ asset('images/sterlinglogo.png') }}" alt="Logo" style="max-width: 100%; height: auto;"> --}}
-
+<div class="container">
+    <div class="left-content">
+        <img src="../public/images/sterlinglogo.jpg" alt="Logo" style="max-width: 30%; height: auto;">
+    </div>
+    <div class="right-content">
+        <p><span style="color: red; font-size: 25px;">Sterling BPO Solutions (PVT) LTD</span></p>
+        <p>No.12A, 005 Church Rd, Seeduwa 11410</p>
+    </div>
 </div>
 
-
-
-
-
-
-<div class="right-content">
-    <p><span style="color: red; font-size: 20px;">Sterling BPO Solutions (PVT) LTD</span></p>
-    <p>No.12A, 005 Church Rd, Seeduwa 11410</p>
-</div>
 
 <br>
 
@@ -253,7 +268,7 @@
 				'-'}}</td>
 		</tr>
 		<tr style="width: 50%">
-			<td style="width: 20%; padding-left: 33.33%;">Attendance Allowance</td>
+			<td style="width: 50%; padding-left: 33.33%;">Attendance Allowance</td>
 			<td style="text-align: right; padding-right: 40%;">{{$payslip->attendance_allowance ?
 				number_format($payslip->attendance_allowance, 2) : '-'}}</td>
 		</tr>
