@@ -71,7 +71,8 @@
         </div>
 
         <!-- Search Filter -->
-        <form method="GET">
+        <form method="POST" action="{{ route('payslip.search') }}">
+            @csrf
             <div class="row filter-row">
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group form-focus">
@@ -89,9 +90,9 @@
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group ">
                         {{-- <label class="focus-label">Year</label> --}}
-                        <input type="text" class="form-control form-control-1 input-sm from-year" placeholder="Year">
+                        <input type="text" name="year" id="year" class="form-control form-control-1 input-sm from-year" placeholder="Year">
                         <div class="input-group-append">
-                            <span class="input-group-text"><i class="far fa-calendar"></i></span>
+                            {{-- <span class="input-group-text"><i class="far fa-calendar"></i></span> --}}
                         </div>
                     </div>
                 </div>
@@ -144,22 +145,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($employees as $employee)
+                    @foreach ($payslips as $payslip)
                     <tr>
-                        <td>{{ $employee->id }}</td>
-                        <td>{{ $employee->full_name }}</td>
-                        <td>{{ $employee->bank_name }}</td>
-                        <td>{{ $employee->branch }}</td>
-                        <td>{{ $employee->account_number }}</td>
+                        <td>{{ $payslip->employee->id }}</td>
+                        <td>{{ $payslip->employee->full_name }}</td>
+                        <td>{{ $payslip->employee->bank_name }}</td>
+                        <td>{{ $payslip->employee->branch }}</td>
+                        <td>{{ $payslip->employee->account_number }}</td>
+                        <td>{{ $payslip->net_salary}}</td>
 
-                        <td>
+                        {{-- <td>
                             @foreach ($payslips as $payslip)
                             @if($payslip->employee->id === $employee->id)
                             {{ $payslip->net_salary}}
                             @break
                             @endif
                             @endforeach
-                        </td>
+                        </td> --}}
 
                     </tr>
                     @endforeach

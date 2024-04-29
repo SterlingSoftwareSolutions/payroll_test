@@ -62,7 +62,9 @@ class AttendanceController extends Controller
         $attendanceCount = Attendance::count();
         $next_id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
         $employees = Employee::all();
-        return view('form.attendanceemployee', compact('attendance', 'next_id', 'employees', 'attendanceCount'));
+        $employee = $employees->first();
+        // dd($employees);
+        return view('form.attendanceemployee', compact('attendance', 'next_id', 'employees', 'attendanceCount','employee'));
     }
 
     public function store(Request $request)
@@ -311,6 +313,7 @@ class AttendanceController extends Controller
         $next_id = IdGenerator::generate(['table' => 'attendances', 'length' => 10, 'prefix' => 'A']);
         $attendance = DB::table('attendances')->get();
         $employees = Employee::all();
+        // dd($employees);
 
         if ($attendance != null) {
             $attendance = Attendance::where('employee_id', 'LIKE', '%' . $request->employee_id . '%')->get();
