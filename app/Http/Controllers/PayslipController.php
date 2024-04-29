@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\HalfDay;
 use App\Models\Payslip;
 use App\Models\Employee;
+use App\Models\JobTitle;
 use App\Models\JobStatus;
 use App\Models\Attendance;
 use App\Models\department;
@@ -64,11 +65,22 @@ class PayslipController extends Controller
     }
 
     public function print(Payslip $payslip)
-    {
-        $pdf = Pdf::loadView('payslip_pdf', compact('payslip'))->setPaper('a4', 'portrait');
+    { 
+        $job_title=$payslip->employee->j_title;
+        $job_title_name = JobTitle::where('id', $job_title)->pluck('title_name')->first();
+
+        $currentDate = Carbon::now()->format('F j, Y');
+        $pdf = Pdf::loadView('payslip_pdf', compact('payslip', 'currentDate','job_title_name'))->setPaper('a4', 'portrait');
         $fileName = strtoupper(preg_split('#\s+#', $payslip->employee->full_name)[0]) . '.pdf';
+          
         return $pdf->download($fileName);
     }
+
+    public function jobStatus()
+    {
+        return $this->belongsTo(JobStatus::class, 'j_status');
+    }
+    
 
     public function create_payslip(AttendanceReport $attendanceReport)
     {
