@@ -354,7 +354,7 @@
                         </div>
                     </div>
                 </div>
-                @if ($annualLeaves == 'true')
+                @if ($annualLeaves == 'true' && $annual !=null)
                     <div class="">
                         <div class="content container-fluid">
                             <div class="card profile-box flex-fill" style="min-height: 25px;">

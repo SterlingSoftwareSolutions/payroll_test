@@ -329,7 +329,8 @@
         <!-- /Page Content -->
 
         <!-- Add Attendance Modal -->
-        <div id="add_attendance" class="modal custom-modal fade" role="dialog">
+        
+           <div id="add_attendance" class="modal custom-modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -339,6 +340,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        @if (!is_null($employee) && !is_null($employee->id))
                         <form action="{{ route('form.attendance.store') }}" method="POST">
                             @csrf
                             <div class="col-md">
@@ -429,10 +431,15 @@
                                 <button class="btn btn-primary submit-btn">Save</button>
                             </div>
                         </form>
+                        @else
+                        <label for="">Employees not found</label>
+                        @endif
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
+        
+        
         <!-- /Add Employee Modal -->
     </div>
 </div>
