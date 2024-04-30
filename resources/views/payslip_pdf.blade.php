@@ -86,7 +86,7 @@
 		text-align: center;
 		margin-top: 50px;
 		font-weight: bold;
-		font-size: 16px;
+		font-size: 14px;
 		color: #000000;
 	}
 
@@ -110,7 +110,7 @@
     text-align: center;
     margin-top: 20px; /* Adjust margin as needed */
     font-weight: bold;
-    font-size: 14px; /* Adjust font size as needed */
+    font-size: 13px; /* Adjust font size as needed */
     color: #000000;
 }
 
@@ -123,7 +123,7 @@
     padding: 8px;
     /* border-bottom: 1px solid #ddd; */
     text-align: left;
-	font-size:13px;
+	font-size:12px;
 }
 
 .bank-details-table td:first-child {
@@ -162,10 +162,10 @@
 
 <div class="container">
     <div class="left-content">
-        <img src="../public/images/sterlinglogo.jpg" alt="Logo" style="max-width: 30%; height: auto;">
+        <img src="../public/pdflogo/sterlinglogo.jpg" alt="Logo" style="max-width: 30%; height: auto;">
     </div>
     <div class="right-content">
-        <p><span style="color: red; font-size: 25px;">Sterling BPO Solutions (PVT) LTD</span></p>
+        <p><span style="color: red; font-size: 24px;">Sterling BPO Solutions (PVT) LTD</span></p>
         <p>No.12A, 005 Church Rd, Seeduwa 11410</p>
     </div>
 </div>
@@ -176,7 +176,7 @@
 <!-- First Employee Details Table -->
 <div class="employee-details">
     <div class="employee-table">
-        <table>
+    <table style="font-size: 14px;">
             <tr>
                 <td style="width:5%;">Name:</td>
                 <<td style="text-align: right;">{{ $payslip->employee->full_name }}</td>
@@ -192,10 +192,10 @@
         </table>
     </div>
     <div class="employee-table">
-        <table>
+        <table style="font-size: 14px;">
             <tr>
                 <td style="width:40%;">ETF No:</td>
-                <<td style="text-align: right;">{{$payslip->etf ? number_format($payslip->etf, 2) : '-'}}</td>
+                <<td style="text-align: right;">{{$payslip->employee->etf_no}}</td>
             </tr>
             <tr>
                 <td style="width:20%;">NIC No:</td>
@@ -211,7 +211,7 @@
 	</div>
 
 
-	<table>
+	<table style='font-size: 13px'>
 
 		<tr>
 			<td style="width: 20%;">Basic Salary</td>
@@ -256,7 +256,7 @@
 
 
 		<tr style="width: 50%">
-			<td style="width: 20%;">Incentive</td>
+			<td style="width: 20%;"><b>Incentive</b></td>
 		</tr>
 		<tr style="width: 50%">
 			<td style="width: 20%; padding-left: 33.33%;">Incentive - 1</td>
@@ -282,9 +282,15 @@
 				number_format($payslip->holiday_payment, 2) : '-'}}</td>
 		</tr>
 
+		<tr style="width: 50%">
+			<td style="width: 50%; padding-left: 33.33%;">Extra Day Payment</td>
+			<td style="text-align: right; padding-right: 40%;">{{$payslip->extra_days_payment ?
+				number_format($payslip->extra_days_payment, 2) : '-'}}</td>
+		</tr>
+
 		<br>
 		<tr style="width: 50%">
-			<td style="width: 20%;">Deductions</td>
+			<td style="width: 20%;"><b>Deductions</b></td>
 		</tr>
 		<tr style="width: 50%">
 			<td style="width: 20%; padding-left: 33.33%;">E.P.F (8%)</td>
@@ -321,6 +327,20 @@
 		</tr>
 	</table>
 
+	<table style="font-size:13px;">
+
+		<tr>
+			<td style="width: 20%;">EPF 12%</td>
+			<td style="text-align: right;">{{$payslip->company_epf ? number_format($payslip->company_epf, 2) : '-'}}
+			</td>
+		</tr>
+		<tr>
+			<td style="width: 20%;">ETF 3%</td>
+			<td style="text-align: right;">{{$payslip->etf ? number_format($payslip->etf, 2) : '-'}}
+			</td>
+		</tr>
+
+	</table>
 
 	
 		
