@@ -6,8 +6,6 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <!-- Include Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.21.0/font/bootstrap-icons.css" rel="stylesheet">
-<!-- Include Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <!-- Include datepicker.css -->
 <link rel="stylesheet" href="path/to/datepicker.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -24,12 +22,19 @@
 <!-- Include Bootstrap Datepicker JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-.accordion-button:focus {
-border-color: red !important;
-}
 @extends('layouts.master')
 @section('content')
-
+<style>
+    
+    .user-menu.nav > li > a {
+        margin-top: 15px !important;
+        margin-right: 10px !important;
+        height: 90% !important;
+}
+.bar-icon {
+    margin-top: 15px !important;
+}
+</style>
     <!-- Page Wrapper -->
     {!! Toastr::message() !!}
     <div class="page-wrapper">
@@ -569,11 +574,11 @@ border-color: red !important;
                             <button class="accordion-button collapsed"
                                 style="padding-top:20px; padding-bottom: 20px; padding-left:20px; " type="button"
                                 data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo"
-                                aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
                                 <h3>Salary Details</h3>
                             </button>
                         </h2>
-                        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+                        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show"
                             aria-labelledby="panelsStayOpen-headingTwo">
                             <div class="accordion-body">
                                 <div id="collapseOne" class="accordion-collapse collapse show"
