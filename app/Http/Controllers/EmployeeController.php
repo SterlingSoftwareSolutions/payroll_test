@@ -22,6 +22,7 @@ use App\Models\module_permission;
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use App\Models\DepartmentTitleStatus;
+use Error;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
@@ -270,6 +271,7 @@ class EmployeeController extends Controller
     public function ViewEmployee($user)
     {
         // dd($user);
+        try{
         $employee_id = $user;
 
         $employee = Employee::where('employee_id', $employee_id)->first();
@@ -359,11 +361,16 @@ class EmployeeController extends Controller
             'annualLeaves',
         ));
     }
+    catch (\Exception $e) {
+    return view('errors/404');
+}
+    }
 
     // use Carbon\Carbon;
 
     public function EditEmployee($user)
     {
+        try{
         $employee_id = $user;
 
         $userList = DB::table('users')->get();
@@ -387,6 +394,10 @@ class EmployeeController extends Controller
         $departments = Department::all();
 
         return view('form.edit.employeeedit', compact('employee', 'departments', 'salary', 'job_title', 'job_status'));
+    }
+    catch (\Exception $e) {
+    return view('errors/404');
+}
     }
 
 

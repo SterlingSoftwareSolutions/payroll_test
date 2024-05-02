@@ -47,42 +47,51 @@
             <!-- /Page Header -->
 
             <!-- Search Filter -->
-            <form method="GET">
+            <form method="POST" action="{{ route('payslip.approve.search') }}">
+                @csrf
                 <div class="row filter-row">
-                    <div class="col">
+                    {{-- <div class="col">
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" name="employee_id">
                             <label class="focus-label">Employee ID</label>
                         </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group form-focus">
-                            <input type="text" class="form-control form-control-1 input-sm from-year">
-                            <label class="focus-label">Year</label>
+                    </div> --}}
+                    <div class="col-sm-6 col-md-3">
+                        <div class="form-group ">
+                            {{-- <label class="focus-label">Year</label> --}}
+                            <input type="text" name="year" id="year" class="form-control form-control-1 input-sm from-year" placeholder="Year">
+                            <div class="input-group-append">
+                                {{-- <span class="input-group-text"><i class="far fa-calendar"></i></span> --}}
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group form-focus">
-                            <select class="form-control floating" id="monthDropdown" name="month">
-                                <option value=""></option>
-                                <option value="1" @selected(request('month') == 1)>January</option>
-                                <option value="2" @selected(request('month') == 2)>February</option>
-                                <option value="3" @selected(request('month') == 3)>March</option>
-                                <option value="4" @selected(request('month') == 4)>April</option>
-                                <option value="5" @selected(request('month') == 5)>May</option>
-                                <option value="6" @selected(request('month') == 6)>June</option>
-                                <option value="7" @selected(request('month') == 7)>July</option>
-                                <option value="8" @selected(request('month') == 8)>August</option>
-                                <option value="9" @selected(request('month') == 9)>September</option>
-                                <option value="10" @selected(request('month') == 10)>October</option>
-                                <option value="11" @selected(request('month') == 11)>November</option>
-                                <option value="12" @selected(request('month') == 12)>December</option>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="form-group ">
+                            <select class="select form-control floating" id="monthDropdown" name="month">
+                                <option value="" selected disabled>--Select Month--</option>
+                                <option value="1" @selected(request('month')==1)>January</option>
+                                <option value="2" @selected(request('month')==2)>February</option>
+                                <option value="3" @selected(request('month')==3)>March</option>
+                                <option value="4" @selected(request('month')==4)>April</option>
+                                <option value="5" @selected(request('month')==5)>May</option>
+                                <option value="6" @selected(request('month')==6)>June</option>
+                                <option value="7" @selected(request('month')==7)>July</option>
+                                <option value="8" @selected(request('month')==8)>August</option>
+                                <option value="9" @selected(request('month')==9)>September</option>
+                                <option value="10" @selected(request('month')==10)>October</option>
+                                <option value="11" @selected(request('month')==11)>November</option>
+                                <option value="12" @selected(request('month')==12)>December</option>
                             </select>
-                            <label class="focus-label">Month</label>
+                            {{-- <label class="focus-label">Month</label> --}}
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-danger fa fa-search"></button>
+                    <div class="col-sm-6 col-md-3 ">
+                    </div>
+                    <div class="col-sm-6 col-md-3 ">
+                        <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+                            <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+                            &nbsp;&nbsp;Search
+                        </button>
                     </div>
                 </div>
             </form>

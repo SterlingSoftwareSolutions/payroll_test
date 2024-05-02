@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\HalfDay;
 use App\Models\Payslip;
 use App\Models\Employee;
+use App\Models\JobTitle;
 use App\Models\JobStatus;
 use App\Models\Attendance;
 use App\Models\department;
@@ -64,11 +65,22 @@ class PayslipController extends Controller
     }
 
     public function print(Payslip $payslip)
-    {
-        $pdf = Pdf::loadView('payslip_pdf', compact('payslip'))->setPaper('a4', 'portrait');
+    { 
+        $job_title=$payslip->employee->j_title;
+        $job_title_name = JobTitle::where('id', $job_title)->pluck('title_name')->first();
+
+        $currentDate = Carbon::now()->format('F j, Y');
+        $pdf = Pdf::loadView('payslip_pdf', compact('payslip', 'currentDate','job_title_name'))->setPaper('a4', 'portrait');
         $fileName = strtoupper(preg_split('#\s+#', $payslip->employee->full_name)[0]) . '.pdf';
+          
         return $pdf->download($fileName);
     }
+
+    public function jobStatus()
+    {
+        return $this->belongsTo(JobStatus::class, 'j_status');
+    }
+    
 
     public function create_payslip(AttendanceReport $attendanceReport)
     {
@@ -310,12 +322,90 @@ class PayslipController extends Controller
     public function get_salary_report()
     {
 
-        $query = Employee::query();
-        $employees = $query->get();
+        // $query = Employee::query();
+        // $employees = $query->get();
         $payslips = Payslip::all();
         $departments = department::all();
+        // foreach ($payslips as $payslip) {
+        //     dd($payslip->employee->full_name);
+        // }
+        
 
-        return view('reports/salary-report', compact('departments', 'employees', 'payslips'));
+        return view('reports/salary-report', compact('departments', 'payslips'));
+    }
+    public function search(Request $request){
+        $pay = Payslip::all();
+        $departments = Department::all();
+        $year = $request->input('year'); // Assuming the year is sent in the request
+        $month = $request->input('month'); // Assuming the month is sent in the request
+        $department = $request->input('department');
+        
+        if ($year != null) {
+            $payslips = Payslip::whereRaw('YEAR(date) = ?', [$year])->get();
+        }
+        if ($month != null) {
+            $payslips = Payslip::whereRaw('MONTH(date) = ?', [$month])->get();
+        }
+        if ($department != null) {
+            $payslips = $pay->filter(function ($payslip) use ($department) {
+                return $payslip->employee->d_name == $department;
+            });
+        }
+        if ($year != null && $month != null) {
+            $payslips = Payslip::whereRaw('YEAR(date) = ? AND MONTH(date) = ?', [$year, $month])->get();
+        }
+        if ($year != null && $department != null) {
+            $payslips = Payslip::whereRaw('YEAR(date) = ?', [$year])
+                                ->get()
+                                ->filter(function ($payslip) use ($department) {
+                                    return $payslip->employee->d_name == $department;
+                                });
+        }
+        if ($month != null && $department != null) {
+            $payslips = Payslip::whereRaw('MONTH(date) = ?', [$month])
+                                ->get()
+                                ->filter(function ($payslip) use ($department) {
+                                    return $payslip->employee->d_name == $department;
+                                });
+        }
+        if ($year != null && $month != null && $department != null) {
+            $payslips = Payslip::whereRaw('YEAR(date) = ? AND MONTH(date) = ?', [$year, $month])->get()
+                                ->filter(function ($payslip) use ($department) {
+                                    return $payslip->employee->d_name == $department;
+                                });
+        }
+        if ($year == null && $month == null){
+            $payslips = Payslip::all();
+        }
+        
+
+        return view('reports/salary-report', compact('departments', 'payslips'));
+    }
+    
+    public function searchPayslip(Request $request)
+    {
+        // Your logic to search payslips here
+        // dd($request);
+        $year = $request->input('year'); // Assuming the year is sent in the request
+        $month = $request->input('month'); // Assuming the month is sent in the request
+        if ($year != null) {
+            $payslips = Payslip::whereRaw('YEAR(date) = ?', [$year])->get();
+        }
+        if ($month != null) {
+            $payslips = Payslip::whereRaw('MONTH(date) = ?', [$month])->get();
+        }
+        if ($year != null && $month != null) {
+            $payslips = Payslip::whereRaw('YEAR(date) = ? AND MONTH(date) = ?', [$year, $month])->get();
+        }
+        if ($year == null && $month == null){
+            $payslips = Payslip::all();
+        }
+        if ($year == null && $month == null){
+            $date = now()->startOfMonth()->subMonth();
+            $payslips = Payslip::whereDate('date', $date)->get();
+        }
+        
+        return view('reports/payslip-approve', compact(['payslips']));
     }
 
     public function getDetails($employeeId)

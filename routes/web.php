@@ -414,6 +414,9 @@ Route::controller(PayslipController::class)->group(function () {
 Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');
 Route::get('/get-positions/{department}', [PositionController::class, 'getPositions'])->name('get-positions');
 
+Route::post('/payslip/search', [PayslipController::class, 'search'])->name('payslip.search');
+
+Route::post('payslip/approve/search', [PayslipController::class, 'searchPayslip'])->name('payslip.approve.search');
 
 // Route::get('/upload', [CsvUploadController::class, 'index']);
 // Route::post('/upload', [CsvUploadController::class, 'upload'])->name('upload');
