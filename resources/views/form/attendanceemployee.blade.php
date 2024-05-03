@@ -340,7 +340,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        @if (!is_null($employee) && !is_null($employee->id))
+                        @if (isset($employee) && !is_null($employee) && !is_null($employee->id))
                         <form action="{{ route('form.attendance.store') }}" method="POST">
                             @csrf
                             <div class="col-md">

@@ -218,8 +218,13 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="incentives">Incentives</label>
-                                            <input type="number" step="0.01" class="form-control" id="incentives" name="incentives" readonly>
+                                            <label for="incentive1">Incentive1</label>
+                                            <input type="number" step="0.01" class="form-control" id="incentive1" name="incentive1" readonly>
+                                        </div>
+
+                                        <div class="form-group col-md-12">
+                                            <label for="incentive2">Incentive2</label>
+                                            <input type="number" step="0.01" class="form-control" id="incentive2" name="incentive2" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
@@ -382,7 +387,8 @@
                         $('#other_deductions').val(payslip.other_deductions);
                         $('#other_increments').val(payslip.other_increments);
                         $('#holiday_payment').val(payslip.holiday_payment);
-                        $('#incentives').val(payslip.incentives);
+                        $('#incentive1').val(payslip.incentive1);
+                        $('#incentive2').val(payslip.incentive2);
                         $('#ot').val(payslip.ot);
                         $('#company_epf').val(payslip.company_epf);
                         $('#etf').val(payslip.etf);
