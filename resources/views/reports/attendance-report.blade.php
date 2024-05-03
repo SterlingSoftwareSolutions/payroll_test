@@ -80,7 +80,7 @@
                 <div class="col-sm-6 col-md-3">
                     <div class="form-group ">
                         <select class="form-control floating" id="monthDropdown" name="month">
-                            <option value="" disabled selected>--Select Month--</option>
+                            <option value=""  selected>--Select Month--</option>
                             @for ($i = 1; $i <= 12; $i++) <option value="{{ $i }}" @if (request('month')==$i) selected
                                 @endif>
                                 {{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
@@ -122,6 +122,7 @@
                         </thead>
                         <tbody>
                             @foreach ($attendanceReports as $report)
+                            @if ($report->employee)
                             <tr data-employee-id="{{ $report->employee->id }}">
                                 <td>{{ $report->employee->full_name }}</td>
                                 <td>{{ $report->employee->department->department }}</td>
@@ -161,6 +162,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            @endif
                             @endforeach
                         </tbody>
                     </table>

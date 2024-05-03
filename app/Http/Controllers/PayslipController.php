@@ -45,7 +45,8 @@ class PayslipController extends Controller
             "fixed_allowance" => 'required',
             "attendance_allowance" => 'required',
             "holiday_payment" => 'required',
-            "incentives" => 'required',
+            "incentive1" => 'required',
+            "incentive2" => 'required',
             "ot" => 'required',
             "other_increments" => 'required',
             "no_pay_leave_deduction" => 'required',
@@ -99,9 +100,15 @@ class PayslipController extends Controller
             ->where('type', 'increments')
             ->sum('increment_amount');
 
-        $incentives = SalaryDetail::where('employee_id', $employee->employee_id)
+        $incentive1 = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
-            ->where('increment_name', 'like', 'Incentive %')
+            ->where('increment_name', 'like', 'Incentive 1')
+            ->where('type', 'increments')
+            ->sum('increment_amount');
+        
+        $incentive2 = SalaryDetail::where('employee_id', $employee->employee_id)
+            ->where('active', true)
+            ->where('increment_name', 'like', 'Incentive 2')
             ->where('type', 'increments')
             ->sum('increment_amount');
 
@@ -135,14 +142,6 @@ class PayslipController extends Controller
             ->where('increment_name', 'Other')
             ->where('type', 'deductions')
             ->sum('increment_amount');
-
-
-        $startDate = now()->subMonth()->startOfMonth()->format('Y-m-d');
-        $endDate = now()->subMonth()->endOfMonth()->format('Y-m-d');
-
-        $attendances = Attendance::where('employee_id', $employee->id)
-            ->whereBetween('date', [$startDate, $endDate])
-            ->get();
 
         $job_status = strtoupper(JobStatus::where('id', $employee->j_status)->value('status_name'));
         // dd($job_status);
@@ -192,7 +191,10 @@ class PayslipController extends Controller
         } else {
             $annual_leaves_taken = 0;
         }
-
+        $workdays=$attandance_data['work_days'];
+        $days_worked=$attandance_data['days_worked'];
+        // dd($workdays);
+        // dd($days_worked);
         $attendance_date = abs($attandance_data['absent_days']);
         // dd($attendance_date);
         $leave = $annual_leaves_taken + $half_day;
@@ -222,15 +224,17 @@ class PayslipController extends Controller
             $company_epf = ($total_basic_pay / 100) * 12;
             $etf = ($total_basic_pay / 100) * 3;
         }
-        $incentivesF = ($incentives / 30) * (30 - $attendance_date);
+        // dd($attandance_data['absent_days']);
+        $incentivesF1 = ($incentive1 / 30) * (30-$attandance_data['absent_days']);
+        $incentivesF2 = ($incentive2 / 30) * (30-$attandance_data['absent_days']);
         // dd($incentivesF);
         $payslip = new Payslip();
 
-        $taxSend = $incentives + $gross_salary;
+        $taxSend = $incentive1 + $incentive2 + $gross_salary;
         $taxAmount = $payslip->calculateTax($taxSend);
 
         // $increments = $holiday_payment + $extra_days_payment + $incentivesF + $ot + $other_incrmeents ;
-        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF + $other_incrmeents + $extra_days_payment;
+        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF1 + $incentivesF2 + $other_incrmeents + $extra_days_payment;
         $deductions = $employee_epf + $taxAmount + $advance+ $other_deductions+$Hostal;
         // dd($total_basic_pay);
         $netSalary =  $increments - $deductions;
@@ -258,7 +262,8 @@ class PayslipController extends Controller
 
             'holiday_payment' => $holiday_payment,
             'extra_days_payment' => $extra_days_payment,
-            'incentives' => $incentives,
+            'incentive1' => $incentivesF1,
+            'incentive2' => $incentivesF2,
             'ot' => $ot,
             'other_increments' => $other_incrmeents,
 
@@ -319,19 +324,37 @@ class PayslipController extends Controller
         return redirect('/form/payslip/approve');
     }
 
-    public function get_salary_report()
+    public function get_salary_report(Request $request)
     {
 
-        // $query = Employee::query();
-        // $employees = $query->get();
-        $payslips = Payslip::all();
-        $departments = department::all();
-        // foreach ($payslips as $payslip) {
-        //     dd($payslip->employee->full_name);
-        // }
-        
+        try {
+            $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
+            $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
+            $payslips = Payslip::whereBetween('date', [$startOfMonth, $endOfMonth]);
+    
+            if ($request->filled('department')) {
+                $payslips->whereHas('employee', function ($query) use ($request) {
+                    $query->where('d_name', $request->department);
+                });
+            }
+    
+            if ($request->filled('year')) {
+                $payslips->whereYear('date', $request->year);
+            }
+    
+            if ($request->filled('month')) {
+                $payslips->whereMonth('date', $request->month);
+            }
+    
+            $payslips = $payslips->get();
+    
+            $departments = Department::select('id', 'department')->distinct()->get();
+    
+            return view('reports/salary-report', compact('departments', 'payslips'));
+        } catch (\Exception $e) {
+            return view('errors.404');
+        }
 
-        return view('reports/salary-report', compact('departments', 'payslips'));
     }
     public function search(Request $request){
         $pay = Payslip::all();

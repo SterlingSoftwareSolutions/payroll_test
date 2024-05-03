@@ -33,25 +33,37 @@ class AttendanceReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)    //attendance report page view
+    public function index(Request $request)
     {
-        $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
-        $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
-        $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
-        // dd($attendanceReports);
-        if($request->department){
-            $dep = $request->department;
-            $attendanceReports = $attendanceReports->filter(function ($attendanceReport) use ($dep){
-                return $attendanceReport->employee->d_name == $dep;
-            });
+        try {
+            $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
+            $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
+            $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth]);
+    
+            if ($request->filled('department')) {
+                $attendanceReports->whereHas('employee', function ($query) use ($request) {
+                    $query->where('d_name', $request->department);
+                });
+            }
+    
+            if ($request->filled('year')) {
+                $attendanceReports->whereYear('date', $request->year);
+            }
+    
+            if ($request->filled('month')) {
+                $attendanceReports->whereMonth('date', $request->month);
+            }
+    
+            $attendanceReports = $attendanceReports->get();
+    
+            $departments = Department::select('id', 'department')->distinct()->get();
+    
+            return view('reports.attendance-report', compact('departments', 'attendanceReports'));
+        } catch (\Exception $e) {
+            return view('errors.404');
         }
-
-        $departments = department::select('id', 'department')->distinct()->get();
-        return view('reports.attendance-report', compact([
-            'departments',
-            'attendanceReports'
-        ]));
     }
+    
 
 
 
