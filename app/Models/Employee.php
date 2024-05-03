@@ -155,11 +155,11 @@ class Employee extends Model
         });
         $work_days = $month_days_count - ($month_weekends_count + $holiday_datescount);
         // dd($work_days);
-        if ($work_days > $countWithoutWH) {
-            $no_pay_leaves = $work_days - $countWithoutWH;
-        } else {
-            $no_pay_leaves = 0;
-        }
+        // if ($work_days > $countWithoutWH) {
+        //     $no_pay_leaves = $work_days - $countWithoutWH;
+        // } else {
+        //     $no_pay_leaves = 0;
+        // }
 
         // Employee details
         $attendances = Attendance::where('employee_id', $this->id)
@@ -222,8 +222,8 @@ class Employee extends Model
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
         });
 
-        // $no_pay_leaves = $work_days - $days_worked->count() - $days_worked_holiday->count();
-        
+        $no_pay_leaves = $work_days - $days_worked- $days_worked_holiday->count();
+        // dd($work_days);
     
         // $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
         //     if($this->workingHours == "6day" && $attendance->date->isSaturday()){

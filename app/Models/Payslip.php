@@ -22,7 +22,8 @@ class Payslip extends Model
 
         $increments = $this->holiday_payment
                     + $this->extra_days_payment
-                    + $this->incentives
+                    + $this->incentive1
+                    + $this->incentive2
                     + $this->ot
                     + $this->other_increments;
 

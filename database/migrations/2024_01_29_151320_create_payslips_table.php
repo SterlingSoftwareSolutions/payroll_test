@@ -41,7 +41,8 @@ return new class extends Migration
             // Extra paymments
             $table->decimal('holiday_payment', 10, 2);
             $table->decimal('extra_days_payment', 10, 2);
-            $table->decimal('incentives', 10, 2);
+            $table->decimal('incentive1', 10, 2);
+            $table->decimal('incentive2', 10, 2);
             $table->decimal('ot', 10, 2);
             $table->decimal('other_increments', 10, 2);
 
