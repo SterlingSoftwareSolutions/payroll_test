@@ -169,8 +169,8 @@ class PayslipController extends Controller
         $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day;
 
         // Extra days payment
-        $extra_days = ($attandance_data['days_worked_weekend'] - $attandance_data['days_worked_holiday_weekend']);
-        $extra_days_payment = $extra_days * $gross_salary_day;
+        // $extra_days = ($attandance_data['days_worked_weekend'] - $attandance_data['days_worked_holiday_weekend']);
+        // $extra_days_payment = $extra_days * $gross_salary_day;
 
         // Overtime
         $ot_hours = $attandance_data['ot_minutes'] / 60;
@@ -233,8 +233,8 @@ class PayslipController extends Controller
         $taxSend = $incentive1 + $incentive2 + $gross_salary;
         $taxAmount = $payslip->calculateTax($taxSend);
 
-        // $increments = $holiday_payment + $extra_days_payment + $incentivesF + $ot + $other_incrmeents ;
-        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF1 + $incentivesF2 + $other_incrmeents + $extra_days_payment;
+        // $increments = $holiday_payment  + $incentivesF + $ot + $other_incrmeents ;
+        $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF1 + $incentivesF2 + $other_incrmeents;
         $deductions = $employee_epf + $taxAmount + $advance+ $other_deductions+$Hostal;
         // dd($total_basic_pay);
         $netSalary =  $increments - $deductions;
@@ -261,7 +261,7 @@ class PayslipController extends Controller
             'other_deductions' => $other_deductions,
 
             'holiday_payment' => $holiday_payment,
-            'extra_days_payment' => $extra_days_payment,
+            'extra_days_payment' => 0,
             'incentive1' => $incentivesF1,
             'incentive2' => $incentivesF2,
             'ot' => $ot,

@@ -69,7 +69,8 @@ class Employee extends Model
     }
 
     //Below functions use to calculate attendance report edit page
-    public function attendance_data($year  = null, $month = null){
+    public function attendance_data($year  = null, $month = null)
+    {
         $department = $this->department->department;
         // Month details
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
@@ -82,7 +83,8 @@ class Employee extends Model
 
         $work_hours = $this->workingHours == "6day" ? 9 : 10;
         $weekendCount = 0;
-        
+
+
         for ($date = $firstOfMonth; $date->lte($lastOfMonth); $date->addDay()) {
             if ($date->isWeekend()) {
                 if ($work_hours == 9) {
@@ -96,6 +98,18 @@ class Employee extends Model
                 }
             }
         }
+
+        // dd($weekendCount);
+
+        $holiday_dates = Holiday::whereMonth('date_holiday', $current->month)
+            ->whereYear('date_holiday', $current->year)
+            ->pluck('date_holiday')
+            ->map(function ($date) {
+                return $date->format('Y-m-d');
+            })
+            ->toArray();
+        // dd($holiday_dates);
+
         $dates = Attendance::where('employee_id', $this->id)
             ->whereMonth('date', $current->month)
             ->whereYear('date', $current->year)
@@ -107,7 +121,7 @@ class Employee extends Model
                 return $date->format('Y-m-d');
             })
             ->toArray();
-
+        // dd($dates);
         $datesWithoutWeekends = collect($dates)->filter(function ($date) use ($work_hours) {
             $carbonDate = Carbon::parse($date);
             if ($carbonDate->dayOfWeek == Carbon::SUNDAY && $work_hours == 9) {
@@ -118,17 +132,17 @@ class Employee extends Model
             }
             return true;
         })->toArray();
-    
+
         // dd($datesWithoutWeekends);
-        
+
         $holiday_dates = Holiday::whereMonth('date_holiday', $current->month)
-        ->whereYear('date_holiday', $current->year)
-        ->pluck('date_holiday')
-        ->map(function ($date) {
-            return $date->format('Y-m-d');
-        })
-        ->toArray();    
-        $holiday_datescount=count($holiday_dates);
+            ->whereYear('date_holiday', $current->year)
+            ->pluck('date_holiday')
+            ->map(function ($date) {
+                return $date->format('Y-m-d');
+            })
+            ->toArray();
+        $holiday_datescount = count($holiday_dates);
         $datesWithoutWeekends = collect($dates)->filter(function ($date) use ($work_hours, $holiday_dates) {
             $carbonDate = Carbon::parse($date);
             if ($carbonDate->dayOfWeek == Carbon::SUNDAY && $work_hours == 9) {
@@ -139,36 +153,32 @@ class Employee extends Model
             }
             return !in_array($date, $holiday_dates);
         })->toArray();
-        
+
         $countWithoutWH = count($datesWithoutWeekends);
 
-        // dd($countd);
 
-
-        // dd($holiday_dates);
 
         $month_weekends_count = $weekendCount;
         $month_holidays = Holiday::whereMonth('date_holiday', $current->month)->whereYear('date_holiday', $current->year)->get();
         // dd($month_holidays);
-        $month_holiday_weekends = with(clone $month_holidays)->filter(function ($holiday){
+        $month_holiday_weekends = $month_holidays->filter(function ($holiday) {
+
             return $holiday->date_holiday->isSaturday() || $holiday->date_holiday->isSunday();
         });
-        $work_days = $month_days_count - ($month_weekends_count + $holiday_datescount);
-        // dd($work_days);
-        // if ($work_days > $countWithoutWH) {
-        //     $no_pay_leaves = $work_days - $countWithoutWH;
-        // } else {
-        //     $no_pay_leaves = 0;
-        // }
 
-        // Employee details
+
+        $holydayf = $holiday_datescount - $month_holiday_weekends->count();
+
+        $work_days = $month_days_count - ($month_weekends_count + $holydayf);
+        // dd($work_days);
+
         $attendances = Attendance::where('employee_id', $this->id)
-        ->whereMonth('date', $current->month)
-        ->whereYear('date', $current->year);
+            ->whereMonth('date', $current->month)
+            ->whereYear('date', $current->year);
 
         // dd($attendances);
-        $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function($attendance) use ($department){
-            if($this->workingHours == "6day"){
+        $days_worked = with(clone $attendances)->whereNotIn('date', $month_holidays->pluck('date_holiday'))->get()->filter(function ($attendance) use ($department) {
+            if ($this->workingHours == "6day") {
                 return !$attendance->date->isSunday();
             }
             return !$attendance->date->isSaturday() && !$attendance->date->isSunday();
@@ -178,83 +188,58 @@ class Employee extends Model
         $daysInMonth = $current->daysInMonth;
 
         // Initialize a count variable for Saturdays
-        $saturdayCount = 0;
+        $count_worked_saturdays = 0;
 
         // Iterate over each day of the month
-        for ($day = 1; $day <= $daysInMonth; $day++) {
-            // Set the day of the month in the current Carbon instance
-            $current->day($day);
+        $days_worked_saturdays = $attendances->get()->filter(function ($attendance) use ($month_holidays) {
+            return $attendance->date->isWeekend() && !in_array($attendance->date->format('Y-m-d'), $month_holidays->pluck('date_holiday')->toArray());
+        })->filter(function ($attendance) {
+            return $this->workingHours == "6day" && $attendance->date->dayOfWeek == Carbon::SATURDAY;
+        });
 
-            // Check if the current day is a Saturday (Carbon uses ISO-8601, where Saturday is day 6)
-            if ($current->dayOfWeekIso == Carbon::SATURDAY) {
-                $saturdayCount++;
-            }
-        }
-// dd($saturdayCount);
-
-        if($this->workingHours == "6day"){
-            $days_worked = $days_worked->count() - ($saturdayCount / 2);
+        $count_worked_saturdays = $days_worked_saturdays->count();
+        // dd($count_worked_saturdays);
+        if ($this->workingHours == "6day") {
+            $days_worked = $days_worked->count() - ($count_worked_saturdays / 2);
             if ($days_worked < 0) {
                 $days_worked = 0;
             }
-        }
-        else{
-            $days_worked=$days_worked->count();
+        } else {
+            $days_worked = $days_worked->count();
             // dd("5" + $days_worked);
         }
 
-
         $days_worked_holiday = with(clone $attendances)->whereIn('date', $month_holidays->pluck('date_holiday'))->get();
-
-        $days_worked_weekend = with(clone $attendances)->get()->filter(function($attendance){
+        // dd($days_worked_holiday);
+        $days_worked_weekend = with(clone $attendances)->get()->filter(function ($attendance) {
             if ($this->workingHours == "6day") {
                 return $attendance->date->isSunday();
             } else {
                 return $attendance->date->isSaturday() || $attendance->date->isSunday();
             }
         });
-               
 
-        $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department){
-            if($this->workingHours == "6day"){
-                return $attendance->date->isSunday();
-            }
+        $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department) {
+            
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
         });
+        $days_worked=$days_worked+$days_worked_holiday_weekend->count();
+// dd($days_worked_holiday);
+        $no_pay_leaves = $work_days - $days_worked;
+        // dd($no_pay_leaves);
 
-        $no_pay_leaves = $work_days - $days_worked- $days_worked_holiday->count();
-        // dd($work_days);
-    
-        // $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-        //     if($this->workingHours == "6day" && $attendance->date->isSaturday()){
-        //         $diff = 5 * 60 - $attendance->duration();
-        //     } else{
-        //         $diff = $work_hours * 60 - $attendance->duration();
-        //     }
-        //     return $diff > 0 ? $diff : 0;
-        // });
-
-        // $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) use ($department, $work_hours){
-        //     if($this->workingHours == "6day" && $attendance->date->isSaturday()){
-        //         $diff = $attendance->duration() - 5 * 60;
-        //     } else{
-        //         $diff = $attendance->duration() - $work_hours * 60;
-        //     }
-        //     return $diff > 0 ? $diff : 0;
-        // });
         $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) {
             // Get the "OT" time from the current attendance record
             $otTime = $attendance->OT;
-        
+
             // Split the time into hours, minutes, and seconds
             $timeParts = explode(':', $otTime);
-        
+
             // Calculate the total overtime minutes
             $totalMinutes = ($timeParts[0] * 60) + $timeParts[1] + ($timeParts[2] / 60);
-        
             return $totalMinutes;
         });
-        //  dd($ot_minutes);       
+
 
         $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) {
             // Get the "late" time from the current attendance record
@@ -268,10 +253,10 @@ class Employee extends Model
 
             return $totalMinutes;
         });
-        // dd($late_minutes);
- 
+
         $annualLeaves = $this->calculate_annual_leaves($current->year);
 
+        $days_worked_holiday=$days_worked_holiday->count()-$days_worked_holiday_weekend->count();
 
 
         return compact(
@@ -290,33 +275,31 @@ class Employee extends Model
             'annualLeaves',
             'current'
         );
-
     }
 
     public function annual_leaves($year = null)
     {
-        if(!$year){
+        if (!$year) {
             $year = now()->year;
         }
 
         $annual_leaves = AnnualLeaves::where('employee_id', $this->id)->where('year', $year)->first();
-        if(!$annual_leaves){
+        if (!$annual_leaves) {
             AnnualLeaves::create([
                 'employee_id' => $this->id,
                 'year' => $year,
                 'total_leaves' => $this->calculate_annual_leaves($year)
             ]);
-
-
         }
     }
 
-    private function calculate_annual_leaves($year){
+    private function calculate_annual_leaves($year)
+    {
         $joinedDate = $this->joinedDate;
         $years = now()->diffInYears($joinedDate);
-        if($years >= 2){
+        if ($years >= 2) {
             return 14;
-        } elseif($years < 1){
+        } elseif ($years < 1) {
             return 0;
         }
 
