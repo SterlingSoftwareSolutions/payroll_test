@@ -64,7 +64,7 @@ class AttendanceController extends Controller
         $employees = Employee::all();
         $employee = $employees->first();
         // dd($employees);
-        return view('form.attendanceemployee', compact('attendance', 'next_id', 'employees', 'attendanceCount','employee'));
+        return view('form.attendanceemployee', compact('attendance', 'next_id', 'employees', 'attendanceCount', 'employee'));
     }
 
     public function store(Request $request)
@@ -248,7 +248,6 @@ class AttendanceController extends Controller
             // Use Toastr for flash messages
             Toastr::success('Record updated successfully :)', 'Success');
             return redirect()->back();
-
         } catch (\Exception $e) {
             dd($e);
             DB::rollback();
@@ -283,29 +282,29 @@ class AttendanceController extends Controller
     }
 
     public function download($employee_id, $report_id)
-{
-    $employee = Employee::find($employee_id);
-    $report = AttendanceReport::find($report_id);
+    {
+        $employee = Employee::find($employee_id);
+        $report = AttendanceReport::find($report_id);
 
-    $attendances = Attendance::where('employee_id', $report->employee_id)
-    ->whereYear('date', date('Y', strtotime($report->date)))
-    ->whereMonth('date', date('m', strtotime($report->date)))
-    ->get()
-    ->toArray();
+        $attendances = Attendance::where('employee_id', $report->employee_id)
+            ->whereYear('date', date('Y', strtotime($report->date)))
+            ->whereMonth('date', date('m', strtotime($report->date)))
+            ->get()
+            ->toArray();
 
 
-    if (!$employee || !$report) {
-        // Handle the case where employee or report is not found
-        abort(404, 'Employee or report not found');
+        if (!$employee || !$report) {
+            // Handle the case where employee or report is not found
+            abort(404, 'Employee or report not found');
+        }
+        // dd( $attendances);
+        $data = ['employee' => $employee, 'report' => $report, 'attendances' => $attendances];
+        $pdf = PDF::loadView('pdf', $data)->setPaper('a5', 'portrait');
+        $fileName = strtoupper(preg_split('#\s+#', $employee->full_name)[0]) . '.pdf';
+        return $pdf->download($fileName);
     }
-    // dd( $attendances);
-    $data = ['employee' => $employee, 'report' => $report, 'attendances' => $attendances];
-    $pdf = PDF::loadView('pdf', $data)->setPaper('a5', 'portrait');
-    $fileName = strtoupper(preg_split('#\s+#', $employee->full_name)[0]) . '.pdf';
-    return $pdf->download($fileName);
-}
 
-   
+
 
     public function attendanceSearch(Request $request)
     {
@@ -509,89 +508,115 @@ class AttendanceController extends Controller
 
         foreach ($attendances as $date => $attendances_current_day) {
             foreach ($attendances_current_day as $WorkId => $attendance) {
-                $employee = Employee::where('work_id', $WorkId)->first();
+                $punchIn = Carbon::parse($attendance['punch_in']);
+                $punchOut = Carbon::parse($attendance['punch_out']);
 
-                // Check if employee exists in the system
-                if (!$employee) {
-                    $errors[$date][$WorkId] = "Employee not found.";
-                    continue;
+                // Calculate the time difference in hours
+                $timeDifference = $punchIn->diffInHours($punchOut);
+
+                if ($timeDifference >= 2) {
+                    $employee = Employee::where('work_id', $WorkId)->first();
+
+                    // Check if employee exists in the system
+                    if (!$employee) {
+                        $errors[$date][$WorkId] = "Employee not found.";
+                        continue;
+                    }
+
+                    // Check if the employee has punched out
+                    if (!isset($attendance['punch_out'])) {
+                        $errors[$date][$WorkId] = "$employee->f_name - Punch out time not found.";
+                        continue;
+                    }
+
+                    // Assuming $attendance['punch_out'] is a string in a format like 'Y-m-d H:i:s'
+                    $punchOut = new DateTime($attendance['punch_out']);
+                    $punchIn = new DateTime($attendance['punch_in']);
+                    $workHours = $punchOut->diff($punchIn)->format('%H:%I');
+                    // dd($workHours);
+                    $dateTime = new DateTime($date);
+                    $dateString = $dateTime->format('Y-m-d');
+
+                    $dayOfWeek = $dateTime->format('l');
+
+                    $isWeekend = $dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday';
+
+                    $OT = '00:00';
+                    $late = '00:00';
+                    $holidays = Holiday::all();
+                    $holidaysFormatted = $holidays->map(function ($holiday) {
+                        return $holiday->date_holiday->format('Y-m-d');
+                    });
+
+                    if ($holidaysFormatted->contains($isWeekend)) {
+
+                        $otStartTime = new DateTime('00:00');
+                        $workHoursTime = new DateTime($workHours);
+
+                        if ($workHoursTime > $otStartTime) {
+                            $otInterval = $workHoursTime->diff($otStartTime);
+                            $OT = $otInterval->format('%H:%I');
+                            // dd($OT);
+                        }
+                    } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
+                        // dd($employee->workingHours);
+                        $otStartTime = new DateTime('00:00');
+                        $workHoursTime = new DateTime($workHours);
+
+                        if ($workHoursTime > $otStartTime) {
+                            $otInterval = $workHoursTime->diff($otStartTime);
+                            $OT = $otInterval->format('%H:%I');
+                            // dd($OT);
+                        }
+                    } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
+                        $otStartTime = new DateTime('05:00');
+                        $workHoursTime = new DateTime($workHours);
+
+                        if ($workHoursTime > $otStartTime) {
+                            $otInterval = $workHoursTime->diff($otStartTime);
+                            $OT = $otInterval->format('%H:%I');
+                        } else {
+                            $lateInterval = $otStartTime->diff($workHoursTime);
+                            $late = $lateInterval->format('%H:%I');
+                        }
+                    } elseif ($employee->workingHours == '5day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
+                        $otStartTime = new DateTime('10:00');
+                        $workHoursTime = new DateTime($workHours);
+
+                        if ($workHoursTime > $otStartTime) {
+                            $otInterval = $workHoursTime->diff($otStartTime);
+                            $OT = $otInterval->format('%H:%I');
+                        } else {
+                            $lateInterval = $otStartTime->diff($workHoursTime);
+                            $late = $lateInterval->format('%H:%I');
+                        }
+                    } elseif ($employee->workingHours == '6day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
+                        $otStartTime = new DateTime('09:00');
+                        $workHoursTime = new DateTime($workHours);
+
+                        if ($workHoursTime > $otStartTime) {
+                            $otInterval = $workHoursTime->diff($otStartTime);
+                            $OT = $otInterval->format('%H:%I');
+                        } else {
+                            $lateInterval = $otStartTime->diff($workHoursTime);
+                            $late = $lateInterval->format('%H:%I');
+                        }
+                    }
+
+                    // dd($OT);
+                    // Create attendance entry
+                    $attendance = Attendance::updateOrCreate([
+                        'employee_id' => $employee->id,
+                        'date' => Carbon::parse($date)
+                    ], [
+                        'WorkId' => $WorkId,
+                        'punch_in' => $attendance['punch_in'],
+                        'punch_out' => $attendance['punch_out'],
+                        'workHours' => $workHours,
+                        'OT' => $OT,
+                        'late' => $late,
+                    ]);
                 }
-
-                // Check if the employee has punched out
-                if (!isset($attendance['punch_out'])) {
-                    $errors[$date][$WorkId] = "$employee->f_name - Punch out time not found.";
-                    continue;
-                }
-
-                // Assuming $attendance['punch_out'] is a string in a format like 'Y-m-d H:i:s'
-                $punchOut = new DateTime($attendance['punch_out']);
-                $punchIn = new DateTime($attendance['punch_in']);
-                $workHours = $punchOut->diff($punchIn)->format('%H:%I');
-                // dd($workHours);
-                $dateTime = new DateTime($date);
-                $dayOfWeek = $dateTime->format('l');
-
-                $OT = '00:00';
-                $late = '00:00';
-
-                if ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
-                    // dd($employee->workingHours);
-                    $otStartTime = new DateTime('00:00');
-                    $workHoursTime = new DateTime($workHours);
-
-                    if ($workHoursTime > $otStartTime) {
-                        $otInterval = $workHoursTime->diff($otStartTime);
-                        $OT = $otInterval->format('%H:%I');
-                        // dd($OT);
-                    }
-                } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
-                    $otStartTime = new DateTime('05:00');
-                    $workHoursTime = new DateTime($workHours);
-
-                    if ($workHoursTime > $otStartTime) {
-                        $otInterval = $workHoursTime->diff($otStartTime);
-                        $OT = $otInterval->format('%H:%I');
-                    } else {
-                        $lateInterval = $otStartTime->diff($workHoursTime);
-                        $late = $lateInterval->format('%H:%I');
-                    }
-                } elseif ($employee->workingHours == '5day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
-                    $otStartTime = new DateTime('10:00');
-                    $workHoursTime = new DateTime($workHours);
-
-                    if ($workHoursTime > $otStartTime) {
-                        $otInterval = $workHoursTime->diff($otStartTime);
-                        $OT = $otInterval->format('%H:%I');
-                    } else {
-                        $lateInterval = $otStartTime->diff($workHoursTime);
-                        $late = $lateInterval->format('%H:%I');
-                    }
-                } elseif ($employee->workingHours == '6day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
-                    $otStartTime = new DateTime('09:00');
-                    $workHoursTime = new DateTime($workHours);
-
-                    if ($workHoursTime > $otStartTime) {
-                        $otInterval = $workHoursTime->diff($otStartTime);
-                        $OT = $otInterval->format('%H:%I');
-                    } else {
-                        $lateInterval = $otStartTime->diff($workHoursTime);
-                        $late = $lateInterval->format('%H:%I');
-                    }
-                }
-
-                // dd($OT);
-                // Create attendance entry
-                $attendance = Attendance::updateOrCreate([
-                    'employee_id' => $employee->id,
-                    'date' => Carbon::parse($date)
-                ], [
-                    'WorkId' => $WorkId,
-                    'punch_in' => $attendance['punch_in'],
-                    'punch_out' => $attendance['punch_out'],
-                    'workHours' => $workHours,
-                    'OT' => $OT,
-                    'late' => $late,
-                ]);
             }
         }
 

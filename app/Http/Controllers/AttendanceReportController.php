@@ -91,7 +91,7 @@ class AttendanceReportController extends Controller
                 "work_days" => $attendanceData["work_days"],
                 "work_hours" => $attendanceData["work_hours"],
                 "days_worked" => $attendanceData["days_worked"],
-                "days_worked_holiday" => $attendanceData["days_worked_holiday"]->count(),
+                "days_worked_holiday" => $attendanceData["days_worked_holiday"],
                 "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
                 "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"]->count(),
                 "late_minutes" => $attendanceData["late_minutes"],
