@@ -225,8 +225,8 @@ class PayslipController extends Controller
             $etf = ($total_basic_pay / 100) * 3;
         }
         // dd($attandance_data['absent_days']);
-        $incentivesF1 = ($incentive1 / 30) * (30-$attandance_data['absent_days']);
-        $incentivesF2 = ($incentive2 / 30) * (30-$attandance_data['absent_days']);
+        $incentivesF1 = ($incentive1 / 30) * (30-($attandance_data['absent_days']-$half_day));
+        $incentivesF2 = ($incentive2 / 30) * (30-($attandance_data['absent_days']-$half_day));
         // dd($incentivesF);
         $payslip = new Payslip();
 

@@ -396,22 +396,21 @@
                             <table class="table table-striped custom-table datatable ">
                                 <thead class="thead-light">
                                     <tr>
-
-                                        <th scope="col">Employee ID</th>
                                         <th scope="col">Month</th>
                                         <th scope="col">Employee Name</th>
-                                        <th scope="col">Position</th>
+                                        <th scope="col">Lone</th>
+                                        <th scope="col">Advance</th>
                                         <th scope="col">Net Salary</th>
                                     </tr>
                                 </thead>
                                 <tbody class="customtable">
-                                    @foreach ($salary as $salary)
+                                    @foreach ($salary_details as $salary_details)
                                         <tr>
-                                            <td>{{ $employee->employee_id }}</td>
-                                            <td>{{ $salary->date }}</td>
+                                            <td>{{ $salary_details->date->format('Y-m-d') }}</td>
                                             <td>{{ $employee->full_name }}</td>
-                                            <td>{{ $employee->j_title }}</td>
-                                            <td>{{ $employee->basic_Salary }}</td>
+                                            <td>{{ $salary_details->lone }}</td>
+                                            <td>{{ $salary_details->advance }}</td>
+                                            <td>{{ $salary_details->net_salary }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -431,47 +430,26 @@
                             <table class="table table-striped custom-table datatable border=1" id="attendanceTable">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
                                         <th>Number of days</th>
                                         <th>Absent days</th>
                                         <th>WO</th>
                                         <th>Holidays</th>
+                                        <th>Work days</th>
                                         <th>Working days</th>
                                         <th>OT</th>
                                         <th>Extra days</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($attendances as $attendance)
-                                        @php
-                                            $holiday = $holiday
-                                                ? $holiday->where('date_holiday', $attendance->date)->first()
-                                                : null;
-                                        @endphp
-                                        <tr data-employee-id="{{ $attendance->employee->id }}">
-                                            <td>{{ optional($attendance->employee)->full_name ?? '' }}</td>
-                                            <td>{{ $totDays }}</td>
-                                            <td>{{ $totDays -
-                                                ($attendanceCounts->where('employee_id', optional($attendance->employee)->id)->first()->attendance_count ?? 0) -
-                                                optional($attendance->employee->holiday)->count() }}
-                                            </td>
-                                            <td>{{ $weekendCount }}</td>
-                                            {{-- <td>
-                                                @if ($attendance->is_holiday)
-                                                <span class="badge badge-warning badge-pill float-right">{{ $attendance->holiday_name }}</span>
-                                                @endif
-                                            </td> --}}
-                                            <td>{{ $employeeHolidayCounts[$attendance->employee_id] ?? 0 }}</td>
-                                            <td>{{ $attendanceCounts->where('employee_id', optional($attendance->employee)->id)->first()->attendance_count ?? 0 }}
-                                            </td>
-                                            <td>{{ $attendance->overtime ?? 'N/A' }}</td>
-                                            <td>{{ $extraDaysCount }}</td>
-                                            <td>
-                                                <button
-                                                    onclick="generateAndDownloadEmployeePDF({{ $attendance->employee->id }})">Download
-                                                    PDF</button>
-                                            </td>
+                                    @foreach ($attendancesreport as $attendancesreport)
+                                            <td>{{ $attendancesreport->month_days }}</td>
+                                            <td>{{ $attendancesreport->absent_days }}</td>
+                                            <td>{{ $attendancesreport->month_weekends }}</td>
+                                            <td>{{ $attendancesreport->month_holidays }}</td>
+                                            <td>{{ $attendancesreport->work_days }}</td>
+                                            <td>{{ $attendancesreport->days_worked }}</td>
+                                            <td>{{ number_format($attendancesreport->ot_minutes / 60, 2) }}</td>
+                                            <td>{{ $attendancesreport->days_worked_holiday }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
