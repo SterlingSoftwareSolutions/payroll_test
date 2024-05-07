@@ -195,28 +195,28 @@
         <div class="employee-table">
             <table style="font-size: 14px;">
                 <tr>
-                    <td style="width:5%;">Name:</td>
-                    <<td style="text-align: right;">{{ $payslip->employee->full_name }}</td>
+                    <td style="width:40%;">Name:</td>
+                    <<td style="text-align: left;">{{ $payslip->employee->full_name }}</td>
                 </tr>
                 <tr>
-                    <td style="width:5%;">Department:</td>
-                    <<td style="text-align: right;">{{ $payslip->employee->department->department }}</td>
+                    <td style="width:40%;">Department:</td>
+                    <<td style="text-align: left;">{{ $payslip->employee->department->department }}</td>
                 </tr>
                 <tr>
-                    <td style="width:5%;">Designation:</td>
-                    <td style="text-align: right;">{{ $job_title_name }}</td>
+                    <td style="width:40%;">Designation:</td>
+                    <td style="text-align: left;">{{ $job_title_name }}</td>
                 </tr>
             </table>
         </div>
         <div class="employee-table">
             <table style="font-size: 14px;">
                 <tr>
-                    <td style="width:40%;">ETF No:</td>
-                    <<td style="text-align: right;">{{ $payslip->employee->etf_no }}</td>
+                    <td style="width:30%;">ETF No:</td>
+                    <<td style="text-align: left;">{{ $payslip->employee->etf_no }}</td>
                 </tr>
                 <tr>
-                    <td style="width:20%;">NIC No:</td>
-                    <<td style="text-align: right;">{{ $payslip->employee->nic }}</td>
+                    <td style="width:30%;">NIC No:</td>
+                    <<td style="text-align: left;">{{ $payslip->employee->nic }}</td>
                 </tr>
             </table>
         </div>
@@ -228,7 +228,7 @@
     </div>
 
 
-    <table style='font-size: 13px'>
+    <table style='font-size: 13px; margin-left: 40px; padding-right: 80px'>
 
         <tr>
             <td style="width: 20%;">Basic Salary</td>
@@ -377,7 +377,7 @@
         </tr>
     </table>
 
-    <table style="font-size:13px;">
+    <table class="bank-details-table" style="margin-left: 40px; padding-right: 80px">
 
         <tr>
             <td style="width: 20%;">EPF 12%</td>
@@ -399,7 +399,7 @@
         BANK DETAILS
     </div>
 
-    <table class="bank-details-table">
+    <table class="bank-details-table" style="margin-left: 40px; padding-right: 80px">
         <tr>
             <td style="width: 70%;">BANK :</td>
             <td style="text-align: right;">{{ $payslip->bank_name ?? '-' }}</td>

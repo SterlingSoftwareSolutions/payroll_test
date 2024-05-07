@@ -14,6 +14,7 @@ use App\Models\Employee;
 use App\Models\JobTitle;
 use App\Models\JobStatus;
 use App\Models\Attendance;
+use App\Models\AttendanceReport;
 use App\Models\department;
 use App\Models\AnnualLeaves;
 use App\Models\SalaryDetail;
@@ -22,6 +23,7 @@ use App\Models\module_permission;
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use App\Models\DepartmentTitleStatus;
+use App\Models\Payslip;
 use Error;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -309,6 +311,13 @@ class EmployeeController extends Controller
         $findid = $employee->id ?? null;
         $attendances = Attendance::where('employee_id', $findid)->get();
 
+        // Salry detail Find Payslip table
+        $salary_details=Payslip::where('employee_id', $findid)->get();
+
+        // Attendace details Find Attendance Report table
+        $attendancesreport = AttendanceReport::where('employee_id', $findid)->get();
+        // dd($attendancesreport);
+
         $employeeHolidayCounts = [];
 
         $attendances->each(function ($attendance) use ($holiday, &$employeeHolidayCounts, &$user) {
@@ -345,8 +354,10 @@ class EmployeeController extends Controller
 
         return view('form.employeedetails', compact(
             'employee',
+            'salary_details',
             'salary',
             'attendances',
+            'attendancesreport',
             'attendanceCounts',
             'holiday',
             'curmnth',
