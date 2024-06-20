@@ -606,7 +606,7 @@ class AttendanceController extends Controller
                     }
 
                     // OT calculation is correct
-                    dd("if out " .$dayOfWeek . " " . $OT." ". $employee->workingHours );
+                    dd("if out " .$dayOfWeek . " " . $OT." ". $employee->workingHours ." ". $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s') );
                     
 
                     // Create attendance entry
