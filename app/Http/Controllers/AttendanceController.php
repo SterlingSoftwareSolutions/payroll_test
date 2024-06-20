@@ -571,7 +571,7 @@ class AttendanceController extends Controller
                     } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
                         $otStartTime = new DateTime('05:00');
                         $workHoursTime = new DateTime($workHours);
-                        dd("else if". $employee->workingHours);
+                        dd("else if ". $workHoursTime ." " .$otStartTime);
                         if ($workHoursTime > $otStartTime) {
                             $otInterval = $workHoursTime->diff($otStartTime);
                             $OT = $otInterval->format('%H:%I');
