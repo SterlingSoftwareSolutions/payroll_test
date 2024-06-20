@@ -602,8 +602,11 @@ class AttendanceController extends Controller
                             $late = $lateInterval->format('%H:%I');
                         }
                     }
+
                     // OT calculation is correct
-                    // dd($OT);
+                    dd($OT);
+                    
+
                     // Create attendance entry
                     $attendance = Attendance::updateOrCreate([
                         'employee_id' => $employee->id,
