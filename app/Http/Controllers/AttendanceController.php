@@ -606,6 +606,7 @@ class AttendanceController extends Controller
                     // OT calculation is correct
                     dd($OT);
                     
+
                     // Create attendance entry
                     $attendance = Attendance::updateOrCreate([
                         'employee_id' => $employee->id,
