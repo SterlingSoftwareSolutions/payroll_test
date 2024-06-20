@@ -575,6 +575,7 @@ class AttendanceController extends Controller
                         if ($workHoursTime > $otStartTime) {
                             $otInterval = $workHoursTime->diff($otStartTime);
                             $OT = $otInterval->format('%H:%I');
+                            dd("if in " .$dayOfWeek . " " . $OT);
                         } else {
                             $lateInterval = $otStartTime->diff($workHoursTime);
                             $late = $lateInterval->format('%H:%I');
@@ -604,7 +605,7 @@ class AttendanceController extends Controller
                     }
 
                     // OT calculation is correct
-                    dd($OT);
+                    dd("if out " .$dayOfWeek . " " . $OT);
                     
 
                     // Create attendance entry
