@@ -249,7 +249,7 @@ class AttendanceController extends Controller
             Toastr::success('Record updated successfully :)', 'Success');
             return redirect()->back();
         } catch (\Exception $e) {
-            dd($e);
+            // dd($e);
             DB::rollback();
             // Use Toastr for flash messages
             Toastr::error('Failed to update record :(', 'Error');
@@ -571,12 +571,12 @@ class AttendanceController extends Controller
                     } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
                         $otStartTime = new DateTime('05:00');
                         $workHoursTime = new DateTime($workHours);
-                        dd("else if " . $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s'));
+                        // dd("else if " . $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s'));
                         
                         if ($workHoursTime > $otStartTime) {
                             $otInterval = $workHoursTime->diff($otStartTime);
                             $OT = $otInterval->format('%H:%I');
-                            dd("if in " .$dayOfWeek . " " . $OT);
+                            // dd("if in " .$dayOfWeek . " " . $OT);
                         } else {
                             $lateInterval = $otStartTime->diff($workHoursTime);
                             $late = $lateInterval->format('%H:%I');
@@ -606,7 +606,7 @@ class AttendanceController extends Controller
                     }
 
                     // OT calculation is correct
-                    dd("if out " .$dayOfWeek . " " . $OT." ". $employee->workingHours ." ". $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s') );
+                    // dd("if out " .$dayOfWeek . " " . $OT." ". $employee->workingHours ." ". $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s') );
                     
 
                     // Create attendance entry
