@@ -498,7 +498,6 @@ class AttendanceController extends Controller
         $errors = [];
 
         // Attendances grouped by date.
-        // First punch_in of the day will be taken as punch_in, and the last one as punch_out.
         foreach ($entries as $row) {
             $entry = array_combine($headers, $row);
             if (isset($attendances[$entry['Date']][$entry['WorkId']]['punch_in'])) {
@@ -512,108 +511,30 @@ class AttendanceController extends Controller
             foreach ($attendances as $date => $attendances_current_day) {
                 foreach ($attendances_current_day as $WorkId => $attendance) {
                     $punchIn = Carbon::parse($attendance['punch_in']);
-                    $punchOut = Carbon::parse($attendance['punch_out']);
+                    $punchOut = Carbon::parse($attendance['punch_out'] ?? null);
 
-                    // Calculate the time difference in hours
-                    $timeDifference = $punchIn->diffInHours($punchOut);
-
-                    if ($timeDifference >= 2) {
+                    // Check if punch_out exists and calculate time difference in hours
+                    if ($punchOut && $punchIn->diffInHours($punchOut) >= 2) {
                         $employee = Employee::where('work_id', $WorkId)->first();
 
-                        // Check if employee exists in the system
+                        // Validate employee existence
                         if (!$employee) {
                             $errors[$date][$WorkId] = "Employee not found.";
                             continue;
                         }
 
-                        // Check if the employee has punched out
-                        if (!isset($attendance['punch_out'])) {
-                            $errors[$date][$WorkId] = "$employee->f_name - Punch out time not found.";
-                            continue;
-                        }
-
-                        // Assuming $attendance['punch_out'] is a string in a format like 'Y-m-d H:i:s'
-                        $punchOut = new DateTime($attendance['punch_out']);
-                        $punchIn = new DateTime($attendance['punch_in']);
+                        // Calculate work hours
                         $workHours = $punchOut->diff($punchIn)->format('%H:%I');
-                        // dd($workHours);
                         $dateTime = new DateTime($date);
-                        $dateString = $dateTime->format('Y-m-d');
-
                         $dayOfWeek = $dateTime->format('l');
-
                         $isWeekend = $dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday';
+                        $holidays = Holiday::all()->pluck('date_holiday')->map->format('Y-m-d');
 
-                        $OT = '00:00';
-                        $late = '00:00';
-                        $holidays = Holiday::all();
-                        $holidaysFormatted = $holidays->map(function ($holiday) {
-                            return $holiday->date_holiday->format('Y-m-d');
-                        });
+                        // Calculate OT and late hours
+                        list($OT, $late) = $this->calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
 
-                        if ($holidaysFormatted->contains($isWeekend)) {
-
-                            $otStartTime = new DateTime('00:00');
-                            $workHoursTime = new DateTime($workHours);
-
-                            if ($workHoursTime > $otStartTime) {
-                                $otInterval = $workHoursTime->diff($otStartTime);
-                                $OT = $otInterval->format('%H:%I');
-                                // dd($OT);
-                            }
-                        } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Sunday') {
-                            // dd($employee->workingHours);
-                            $otStartTime = new DateTime('00:00');
-                            $workHoursTime = new DateTime($workHours);
-
-                            if ($workHoursTime > $otStartTime) {
-                                $otInterval = $workHoursTime->diff($otStartTime);
-                                $OT = $otInterval->format('%H:%I');
-                                // dd($OT);
-                            }
-                        } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
-                            $otStartTime = new DateTime('05:00');
-                            $workHoursTime = new DateTime($workHours);
-                            // dd("else if " . $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s'));
-
-                            if ($workHoursTime > $otStartTime) {
-                                $otInterval = $workHoursTime->diff($otStartTime);
-                                $OT = $otInterval->format('%H:%I');
-                                // dd("if in " .$dayOfWeek . " " . $OT);
-                            } else {
-                                $lateInterval = $otStartTime->diff($workHoursTime);
-                                $late = $lateInterval->format('%H:%I');
-                            }
-                        } elseif ($employee->workingHours == '5day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
-                            $otStartTime = new DateTime('10:00');
-                            $workHoursTime = new DateTime($workHours);
-
-                            if ($workHoursTime > $otStartTime) {
-                                $otInterval = $workHoursTime->diff($otStartTime);
-                                $OT = $otInterval->format('%H:%I');
-                            } else {
-                                $lateInterval = $otStartTime->diff($workHoursTime);
-                                $late = $lateInterval->format('%H:%I');
-                            }
-                        } elseif ($employee->workingHours == '6day' && in_array($dayOfWeek, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
-                            $otStartTime = new DateTime('09:00');
-                            $workHoursTime = new DateTime($workHours);
-
-                            if ($workHoursTime > $otStartTime) {
-                                $otInterval = $workHoursTime->diff($otStartTime);
-                                $OT = $otInterval->format('%H:%I');
-                            } else {
-                                $lateInterval = $otStartTime->diff($workHoursTime);
-                                $late = $lateInterval->format('%H:%I');
-                            }
-                        }
-
-                        // OT calculation is correct
-                        // dd("if out " .$dayOfWeek . " " . $OT." ". $employee->workingHours ." ". $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s') );
-
-
-                        // Create attendance entry
-                        $attendance = Attendance::updateOrCreate([
+                        // Create or update attendance entry
+                        Attendance::updateOrCreate([
                             'employee_id' => $employee->id,
                             'date' => Carbon::parse($date)
                         ], [
@@ -624,14 +545,66 @@ class AttendanceController extends Controller
                             'OT' => $OT,
                             'late' => $late,
                         ]);
+                    } else {
+                        $errors[$date][$WorkId] = "$employee->f_name - Punch out time not found or work hours less than 2.";
                     }
                 }
             }
         } catch (Exception $e) {
             return $e->getMessage();
         }
+
         return back()->with('import_errors', $errors);
     }
+
+    private function calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend)
+    {
+        $OT = '00:00';
+        $late = '00:00';
+        $workHoursTime = new DateTime($workHours);
+
+        // if ($isWeekend || $holidays->contains($dayOfWeek)) {
+
+        //     $otStartTime = new DateTime('00:00');
+        //     if ($workHoursTime > $otStartTime) {
+        //         $OT = $workHoursTime->diff($otStartTime)->format('%H:%I');
+        //     }
+            
+        // } else {
+        // dd($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
+
+            switch ($employee->workingHours) {
+
+                
+                case '6day':
+                    
+                    if ($dayOfWeek == 'Sunday') {
+                        $otStartTime = new DateTime('00:00');
+                    } elseif ($dayOfWeek == 'Saturday') {
+                        // dd($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
+                        $otStartTime = new DateTime('05:00');
+                    } else {
+                        $otStartTime = new DateTime('09:00');
+                    }
+                    break;
+                case '5day':
+                    $otStartTime = new DateTime('10:00');
+                    break;
+                default:
+                    $otStartTime = new DateTime('09:00');
+                    break;
+            }
+
+            if ($workHoursTime > $otStartTime) {
+                $OT = $workHoursTime->diff($otStartTime)->format('%H:%I');
+            } else {
+                $late = $otStartTime->diff($workHoursTime)->format('%H:%I');
+            }
+        // }
+
+        return [$OT, $late];
+    }
+
 
     private function processCsv($filePath)
     {
