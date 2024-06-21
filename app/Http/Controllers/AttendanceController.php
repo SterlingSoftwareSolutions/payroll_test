@@ -8,17 +8,18 @@ use DateTime;
 use Validator;
 use DatePeriod;
 use DateInterval;
+use DateTimeZone;
 use League\Csv\Reader;
 use App\Models\CsvData;
 use App\Models\Holiday;
 use App\Models\Employee;
 use League\Csv\Statement;
 use App\Models\Attendance;
-use App\Models\AttendanceReport;
 use App\Models\department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\AttendanceReport;
 use Brian2694\Toastr\Facades\Toastr;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
@@ -569,7 +570,8 @@ class AttendanceController extends Controller
                             // dd($OT);
                         }
                     } elseif ($employee->workingHours == '6day' && $dayOfWeek == 'Saturday') {
-                        $otStartTime = new DateTime('05:00');
+                        $timezone = new DateTimeZone('Asia/Colombo');
+                        $otStartTime = new DateTime('05:00', $timezone);
                         $workHoursTime = new DateTime($workHours);
                         // dd("else if " . $workHoursTime->format('Y-m-d H:i:s') . " " . $otStartTime->format('Y-m-d H:i:s'));
                         
