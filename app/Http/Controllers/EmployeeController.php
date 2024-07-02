@@ -190,7 +190,7 @@ class EmployeeController extends Controller
             'bank_name' => 'required',
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
-            'workingHours' =>'required',
+            'workingHours' => 'required',
         ]);
 
         $validated['employee_id'] = $validated['id'];
@@ -216,11 +216,11 @@ class EmployeeController extends Controller
     }
     public function addHalfDay($employee_id)
     {
-            $halfDay = new HalfDay();
-            $halfDay->employee_id = $employee_id;
-            $halfDay->half_day_count = 1;
-            $halfDay->date = Carbon::now()->toDateString();
-            $halfDay->save();
+        $halfDay = new HalfDay();
+        $halfDay->employee_id = $employee_id;
+        $halfDay->half_day_count = 1;
+        $halfDay->date = Carbon::now()->toDateString();
+        $halfDay->save();
     }
 
 
@@ -273,142 +273,151 @@ class EmployeeController extends Controller
     public function ViewEmployee($user)
     {
         // dd($user);
-        try{
-        $employee_id = $user;
+        try {
+            $employee_id = $user;
 
-        $employee = Employee::where('employee_id', $employee_id)->first();
-        $currentYear = date('Y');
-        $annual = AnnualLeaves::where('employee_id', $employee_id)
-            ->where('year', $currentYear)
-            ->first();
+            $employee = Employee::where('employee_id', $employee_id)->first();
+            $currentYear = date('Y');
+            $annual = AnnualLeaves::where('employee_id', $employee_id)
+                ->where('year', $currentYear)
+                ->first();
 
-        // dd($employee);
-        $job_title = JobTitle::where('id', $employee->j_title)->value('title_name');
-        $job_status = JobStatus::where('id', $employee->j_status)->value('status_name');
-        // dd($job_status);
-        $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+            // dd($employee);
+            $job_title = JobTitle::where('id', $employee->j_title)->value('title_name');
+            $job_status = JobStatus::where('id', $employee->j_status)->value('status_name');
+            // dd($job_status);
+            $salary = SalaryDetail::where('employee_id', $employee_id)->get();
 
-        $job_statusID = $employee->j_status;
-        $job_status = JobStatus::where('id', $job_statusID)->first();
-        // dd($job_status);
-        $status_name = strtoupper(trim($job_status->status_name));
-        // dd($status_name);
-        $joinedDate = $employee->joinedDate;
-        $oneYearAgo = now()->subYear();
-        // dd($oneYearAgo);
-        if ($status_name != "INTERN" && $joinedDate <= $oneYearAgo) {
-            // $status_name === "INTERN" ||  $joinedDate <= $oneYearAgo
-            $annualLeaves = "true";
-            // dd($annualLeaves);
-        } else {
-            $annualLeaves = "false";
-            // dd($annualLeaves);
-            // dd("false");
+            $job_statusID = $employee->j_status;
+            $job_status = JobStatus::where('id', $job_statusID)->first();
+            // dd($job_status);
+            $status_name = strtoupper(trim($job_status->status_name));
+            // dd($status_name);
+            $joinedDate = $employee->joinedDate;
+            $oneYearAgo = now()->subYear();
+            // dd($oneYearAgo);
+            if ($status_name != "INTERN" && $joinedDate <= $oneYearAgo) {
+                // $status_name === "INTERN" ||  $joinedDate <= $oneYearAgo
+                $annualLeaves = "true";
+                // dd($annualLeaves);
+            } else {
+                $annualLeaves = "false";
+                // dd($annualLeaves);
+                // dd("false");
+            }
+
+            $departments = department::all();
+            $holiday = Holiday::all();
+            $findid = $employee->id ?? null;
+            $attendances = Attendance::where('employee_id', $findid)->get();
+
+            // Salry detail Find Payslip table
+            $salary_details = Payslip::where('employee_id', $findid)->get();
+
+            // Attendace details Find Attendance Report table
+            $attendancesreport = AttendanceReport::where('employee_id', $findid)->get();
+            // dd($attendancesreport);
+
+            $employeeHolidayCounts = [];
+
+            $attendances->each(function ($attendance) use ($holiday, &$employeeHolidayCounts, &$user) {
+                $attendanceDate = date('d-m-Y', strtotime($attendance->date));
+
+                $attendance->is_holiday = $holiday->contains('date_holiday', $attendanceDate);
+
+                $employeeId = $user;
+                $employeeHolidayCounts[$employeeId] = ($employeeHolidayCounts[$employeeId] ?? 0) + ($attendance->is_holiday ? 1 : 0);
+
+                $punchIn = new DateTime($attendance->punch_in);
+                $punchOut = new DateTime($attendance->punch_out);
+                $workHours = $punchOut->diff($punchIn)->format('%H:%I');
+
+                $regularWorkingHours = new DateTime('10:00');
+                $workHours = new DateTime($punchOut->diff($punchIn)->format('%H:%I'));
+                $overtime = $workHours > $regularWorkingHours ? $workHours->diff($regularWorkingHours)->format('%H:%I') : '00:00';
+
+                $attendance->overtime = $overtime;
+            });
+            $attendanceCounts = DB::table('attendances')
+                ->select('employee_id', DB::raw('count(*) as attendance_count'))
+                ->groupBy('employee_id')
+                ->get();
+
+            $curmnth = date('m');
+            $curyear = date('Y');
+            $totDays = $this->getDaysInMonth($curmnth, $curyear);
+            $weekendCount = $this->getWeekendCount($curmnth, $curyear);
+            $extraDaysCount = $attendances->filter(function ($attendance) {
+                $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
+                return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
+            })->count();
+
+            return view('form.employeedetails', compact(
+                'employee',
+                'salary_details',
+                'salary',
+                'attendances',
+                'attendancesreport',
+                'attendanceCounts',
+                'holiday',
+                'curmnth',
+                'curyear',
+                'extraDaysCount',
+                'employeeHolidayCounts',
+                'totDays',
+                'weekendCount',
+                'job_title',
+                'job_status',
+                'annual',
+                'annualLeaves',
+            ));
+        } catch (\Exception $e) {
+            return view('errors/404');
         }
-
-        $departments = department::all();
-        $holiday = Holiday::all();
-        $findid = $employee->id ?? null;
-        $attendances = Attendance::where('employee_id', $findid)->get();
-
-        // Salry detail Find Payslip table
-        $salary_details=Payslip::where('employee_id', $findid)->get();
-
-        // Attendace details Find Attendance Report table
-        $attendancesreport = AttendanceReport::where('employee_id', $findid)->get();
-        // dd($attendancesreport);
-
-        $employeeHolidayCounts = [];
-
-        $attendances->each(function ($attendance) use ($holiday, &$employeeHolidayCounts, &$user) {
-            $attendanceDate = date('d-m-Y', strtotime($attendance->date));
-
-            $attendance->is_holiday = $holiday->contains('date_holiday', $attendanceDate);
-
-            $employeeId = $user;
-            $employeeHolidayCounts[$employeeId] = ($employeeHolidayCounts[$employeeId] ?? 0) + ($attendance->is_holiday ? 1 : 0);
-
-            $punchIn = new DateTime($attendance->punch_in);
-            $punchOut = new DateTime($attendance->punch_out);
-            $workHours = $punchOut->diff($punchIn)->format('%H:%I');
-
-            $regularWorkingHours = new DateTime('10:00');
-            $workHours = new DateTime($punchOut->diff($punchIn)->format('%H:%I'));
-            $overtime = $workHours > $regularWorkingHours ? $workHours->diff($regularWorkingHours)->format('%H:%I') : '00:00';
-
-            $attendance->overtime = $overtime;
-        });
-        $attendanceCounts = DB::table('attendances')
-            ->select('employee_id', DB::raw('count(*) as attendance_count'))
-            ->groupBy('employee_id')
-            ->get();
-
-        $curmnth = date('m');
-        $curyear = date('Y');
-        $totDays = $this->getDaysInMonth($curmnth, $curyear);
-        $weekendCount = $this->getWeekendCount($curmnth, $curyear);
-        $extraDaysCount = $attendances->filter(function ($attendance) {
-            $dayOfWeek = Carbon::parse($attendance->date)->dayOfWeek;
-            return $dayOfWeek == 6 || $dayOfWeek == 0;  // Note Saturday (6) or Sunday (0)
-        })->count();
-
-        return view('form.employeedetails', compact(
-            'employee',
-            'salary_details',
-            'salary',
-            'attendances',
-            'attendancesreport',
-            'attendanceCounts',
-            'holiday',
-            'curmnth',
-            'curyear',
-            'extraDaysCount',
-            'employeeHolidayCounts',
-            'totDays',
-            'weekendCount',
-            'job_title',
-            'job_status',
-            'annual',
-            'annualLeaves',
-        ));
-    }
-    catch (\Exception $e) {
-    return view('errors/404');
-}
     }
 
     // use Carbon\Carbon;
 
     public function EditEmployee($user)
     {
-        try{
-        $employee_id = $user;
+        try {
+            $employee_id = $user;
 
-        $userList = DB::table('users')->get();
+            $userList = DB::table('users')->get();
 
-        $permission_lists = DB::table('permission_lists')->get();
+            $permission_lists = DB::table('permission_lists')->get();
 
-        // Retrieve the employee and salary details
-        $employee = Employee::where('employee_id', $employee_id)->first();
-        //  dd($employee);
-        $job_title = JobTitle::where('id', $employee->j_title)->first();
-        $job_status = JobStatus::where('id', $employee->j_status)->first();
-        // dd($job_status);
-        $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+            // Retrieve the employee and salary details
+            $employee = Employee::where('employee_id', $employee_id)->first();
+            // dd($employee);
+            // Format the date of birth
+            $dob = $employee->dob->format('d-m-Y');
 
-        // Format the date in the salary details
-        foreach ($salary as $s) {
-            $formattedDate = Carbon::parse($s->date)->format('d-m-Y');
-            $s->date = $formattedDate;
+            // Format the join date
+            $joindate = $employee->joinedDate->format('d-m-Y');
+
+            // Format the appointment date
+            $appointmentDate = $employee->appointmentDate->format('d-m-Y');
+
+            // Format the created date
+            $createdDate = $employee->createdDate->format('d-m-Y');
+            $job_title = JobTitle::where('id', $employee->j_title)->first();
+            $job_status = JobStatus::where('id', $employee->j_status)->first();
+            // dd($job_status);
+            $salary = SalaryDetail::where('employee_id', $employee_id)->get();
+
+            // Format the date in the salary details
+            foreach ($salary as $s) {
+                $formattedDate = Carbon::parse($s->date)->format('d-m-Y');
+                $s->date = $formattedDate;
+            }
+
+            $departments = Department::all();
+
+            return view('form.edit.employeeedit', compact('employee', 'departments', 'salary', 'job_title', 'job_status', 'joindate', 'dob', 'appointmentDate', 'createdDate'));
+        } catch (\Exception $e) {
+            return view('errors/404');
         }
-
-        $departments = Department::all();
-
-        return view('form.edit.employeeedit', compact('employee', 'departments', 'salary', 'job_title', 'job_status'));
-    }
-    catch (\Exception $e) {
-    return view('errors/404');
-}
     }
 
 
@@ -451,7 +460,7 @@ class EmployeeController extends Controller
             'bank_name' => 'required',
             'branch' => 'required',
             'basic_Salary' => 'required|numeric',
-            'workingHours'=> 'required',
+            'workingHours' => 'required',
         ]);
 
         try {
@@ -917,5 +926,5 @@ class EmployeeController extends Controller
 
         $url = route('save.record'); // Include the correct namespace
 
-   }
+    }
 }

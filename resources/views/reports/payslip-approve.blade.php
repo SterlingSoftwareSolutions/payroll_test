@@ -59,7 +59,8 @@
                     <div class="col-sm-6 col-md-3">
                         <div class="form-group ">
                             {{-- <label class="focus-label">Year</label> --}}
-                            <input type="text" name="year" id="year" class="form-control form-control-1 input-sm from-year" placeholder="Year">
+                            <input type="text" name="year" id="year"
+                                class="form-control form-control-1 input-sm from-year" placeholder="Year">
                             <div class="input-group-append">
                                 {{-- <span class="input-group-text"><i class="far fa-calendar"></i></span> --}}
                             </div>
@@ -69,18 +70,18 @@
                         <div class="form-group ">
                             <select class="select form-control floating" id="monthDropdown" name="month">
                                 <option value="" selected disabled>--Select Month--</option>
-                                <option value="1" @selected(request('month')==1)>January</option>
-                                <option value="2" @selected(request('month')==2)>February</option>
-                                <option value="3" @selected(request('month')==3)>March</option>
-                                <option value="4" @selected(request('month')==4)>April</option>
-                                <option value="5" @selected(request('month')==5)>May</option>
-                                <option value="6" @selected(request('month')==6)>June</option>
-                                <option value="7" @selected(request('month')==7)>July</option>
-                                <option value="8" @selected(request('month')==8)>August</option>
-                                <option value="9" @selected(request('month')==9)>September</option>
-                                <option value="10" @selected(request('month')==10)>October</option>
-                                <option value="11" @selected(request('month')==11)>November</option>
-                                <option value="12" @selected(request('month')==12)>December</option>
+                                <option value="1" @selected(request('month') == 1)>January</option>
+                                <option value="2" @selected(request('month') == 2)>February</option>
+                                <option value="3" @selected(request('month') == 3)>March</option>
+                                <option value="4" @selected(request('month') == 4)>April</option>
+                                <option value="5" @selected(request('month') == 5)>May</option>
+                                <option value="6" @selected(request('month') == 6)>June</option>
+                                <option value="7" @selected(request('month') == 7)>July</option>
+                                <option value="8" @selected(request('month') == 8)>August</option>
+                                <option value="9" @selected(request('month') == 9)>September</option>
+                                <option value="10" @selected(request('month') == 10)>October</option>
+                                <option value="11" @selected(request('month') == 11)>November</option>
+                                <option value="12" @selected(request('month') == 12)>December</option>
                             </select>
                             {{-- <label class="focus-label">Month</label> --}}
                         </div>
@@ -111,37 +112,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if(count($payslips))
-                                    @foreach ($payslips as $payslip)
-                                        <tr>
-                                            <td><i class="fa {{ $payslip->approved_at ? 'fa-check text-success' : 'fa-times text-danger'}}"></i></td>
-                                            <td>{{ $payslip->employee->employee_id }}</td>
-                                            <td>{{ $payslip->employee->full_name }}</td>
-                                            <td>{{ $payslip->date->format('F Y') }}</td>
-                                            <td>{{ $payslip->net_salary }}</td>
-                                            <!--need to calaculation-->
-                                            <td class="text-center">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
-                                                        aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        @if($payslip->approved_at)
-                                                            <a class="dropdown-item" href="/form/payslip/print/{{$payslip->id}}">
-                                                                <i class="fa fa-print m-r-5"></i>
-                                                                Print
-                                                            </a>
-                                                        @else
-                                                            <a class="dropdown-item userUpdate" data-toggle="modal"
-                                                                data-id="{{ $payslip->id }}" data-target="#edit_payslip">
-                                                                <i class="fa fa-pencil m-r-5"></i>
-                                                                Edit
-                                                            </a>
-                                                        @endif
+                                @if (count($payslips))
+                                    @if (isset($payslips))
+                                        @foreach ($payslips as $payslip)
+                                            <tr>
+                                                <td><i
+                                                        class="fa {{ $payslip->approved_at ? 'fa-check text-success' : 'fa-times text-danger' }}"></i>
+                                                </td>
+                                                <td>{{ $payslip->employee->employee_id }}</td>
+                                                <td>{{ $payslip->employee->full_name }}</td>
+                                                <td>{{ $payslip->date->format('F Y') }}</td>
+                                                <td>{{ $payslip->net_salary }}</td>
+                                                <!--need to calaculation-->
+                                                <td class="text-center">
+                                                    <div class="dropdown dropdown-action">
+                                                        <a href="#" class="action-icon dropdown-toggle"
+                                                            data-toggle="dropdown" aria-expanded="false"><i
+                                                                class="material-icons">more_vert</i></a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            @if ($payslip->approved_at)
+                                                                <a class="dropdown-item"
+                                                                    href="/form/payslip/print/{{ $payslip->id }}">
+                                                                    <i class="fa fa-print m-r-5"></i>
+                                                                    Print
+                                                                </a>
+                                                            @else
+                                                                <a class="dropdown-item userUpdate" data-toggle="modal"
+                                                                    data-id="{{ $payslip->id }}"
+                                                                    data-target="#edit_payslip">
+                                                                    <i class="fa fa-pencil m-r-5"></i>
+                                                                    Edit
+                                                                </a>
+                                                            @endif
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 @else
                                     <tr>
                                         <td colspan="6" class="text-center">
@@ -178,7 +186,8 @@
 
                                     <div class="form-group col-md-12 p-3">
                                         <label for="employee_id">Selected Employee</label>
-                                        <input type="text" class="form-control" id="employee_id" name="employee_id" readonly>
+                                        <input type="text" class="form-control" id="employee_id" name="employee_id"
+                                            readonly>
                                     </div>
 
                                     <!-- Left Column -->
@@ -189,52 +198,62 @@
 
                                         <div class="form-group col-md-12">
                                             <label for="basic_salary">Basic Salary</label>
-                                            <input type="number" step="0.01" class="form-control" id="basic_salary" name="basic_salary" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="basic_salary"
+                                                name="basic_salary" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="br_allowance">BR Allowance</label>
-                                            <input type="number" step="0.01" class="form-control" id="br_allowance" name="br_allowance" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="br_allowance"
+                                                name="br_allowance" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="fixed_allowance">Fixed Allowance</label>
-                                            <input type="number" step="0.01" class="form-control" id="fixed_allowance" name="fixed_allowance" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="fixed_allowance" name="fixed_allowance" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="attendance_allowance">Attendance Allowance</label>
-                                            <input type="number" step="0.01" class="form-control" id="attendance_allowance" name="attendance_allowance" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="attendance_allowance" name="attendance_allowance" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="holiday_payment">Holiday Payment</label>
-                                            <input type="number" step="0.01" class="form-control" id="holiday_payment" name="holiday_payment" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="holiday_payment" name="holiday_payment" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="extra_days_payment">Extra Day Payment</label>
-                                            <input type="number" step="0.01" class="form-control" id="extra_days_payment" name="extra_days_payment" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="extra_days_payment" name="extra_days_payment" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="incentive1">Incentive1</label>
-                                            <input type="number" step="0.01" class="form-control" id="incentive1" name="incentive1" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="incentive1"
+                                                name="incentive1" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="incentive2">Incentive2</label>
-                                            <input type="number" step="0.01" class="form-control" id="incentive2" name="incentive2" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="incentive2"
+                                                name="incentive2" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="ot">OT</label>
-                                            <input type="number" step="0.01" class="form-control" id="ot" name="ot" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="ot"
+                                                name="ot" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="other_increments">Other Increments</label>
-                                            <input type="number" step="0.01" class="form-control" id="other_increments" name="other_increments" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="other_increments" name="other_increments" readonly>
                                         </div>
                                     </div>
 
@@ -246,46 +265,54 @@
 
                                         <div class="form-group col-md-12">
                                             <label for="no_pay_leave_deduction">No Pay Leave Deduction</label>
-                                            <input type="number" step="0.01" class="form-control" id="no_pay_leave_deduction" name="no_pay_leave_deduction" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="no_pay_leave_deduction" name="no_pay_leave_deduction" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="late_deduction">Late Deduction</label>
-                                            <input type="number" step="0.01" class="form-control" id="late_deduction" name="late_deduction" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="late_deduction" name="late_deduction" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="employee_epf">EPF (Employee)</label>
-                                            <input type="number" step="0.01" class="form-control" id="employee_epf" name="employee_epf" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="employee_epf"
+                                                name="employee_epf" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="paye">P.A.Y.E.</label>
-                                            <input type="number" step="0.01" class="form-control" id="paye" name="paye" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="paye"
+                                                name="paye" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="stamp_duty">Stamp Duty</label>
-                                            <input type="number" step="0.01" class="form-control" id="stamp_duty" name="stamp_duty" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="stamp_duty"
+                                                name="stamp_duty" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="advance">Advance</label>
-                                            <input type="number" step="0.01" class="form-control" id="advance" name="advance" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="advance"
+                                                name="advance" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="loan">Loan</label>
-                                            <input type="number" step="0.01" class="form-control" id="loan" name="loan" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="loan"
+                                                name="loan" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="other_deductions">Other Deductions</label>
-                                            <input type="number" step="0.01" class="form-control" id="other_deductions" name="other_deductions" readonly>
+                                            <input type="number" step="0.01" class="form-control"
+                                                id="other_deductions" name="other_deductions" readonly>
                                         </div>
                                     </div>
 
-                                   <!-- Company Deductions -->
+                                    <!-- Company Deductions -->
                                     <div class="col-md-12">
                                         <div class="form-group col-md-12">
                                             <label for="deductions" style="color: #ff0404;">Company Deductions</label>
@@ -293,12 +320,14 @@
 
                                         <div class="form-group col-md-12">
                                             <label for="company_epf">EPF (Company)</label>
-                                            <input type="number" step="0.01" class="form-control" id="company_epf" name="company_epf" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="company_epf"
+                                                name="company_epf" readonly>
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="etf">ETF</label>
-                                            <input type="number" step="0.01" class="form-control" id="etf" name="etf" readonly>
+                                            <input type="number" step="0.01" class="form-control" id="etf"
+                                                name="etf" readonly>
                                         </div>
                                     </div>
 
@@ -307,14 +336,15 @@
                                         style="flex-direction: row; width: 400px;">
                                         <div
                                             style="background-color: red; display: flex; align-items: center; justify-content: center; color: white; width: 300px; margin-left: 15px; border-radius: 10px">
-                                            <label >Total Pay: <span id="net_salary">0.00</span></label>
+                                            <label>Total Pay: <span id="net_salary">0.00</span></label>
                                         </div>
 
                                         <div>
                                             <button type="submit" class="btn btn-success"
                                                 style="background-color:transparent ;color: #05c46b ;border-color: #05c46b; width: 150px;">Approve</button>
                                             <button type="submit" name="print" class="btn btn-success"
-                                                style="background-color: #05c46b; width: 150px;border-color: #05c46b;">Approve &
+                                                style="background-color: #05c46b; width: 150px;border-color: #05c46b;">Approve
+                                                &
                                                 Print</button>
                                         </div>
                                     </div>

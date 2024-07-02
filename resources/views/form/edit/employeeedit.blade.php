@@ -76,7 +76,7 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">Work ID <span class="text-danger">*</span></label>
                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                             id="work_id" name="work_id" value="{{ $employee->work_id }}" required>
+                                id="work_id" name="work_id" value="{{ $employee->work_id }}" required>
                         </div>
                     </div>
 
@@ -84,7 +84,7 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">ETF No <span class="text-danger">*</span></label>
                             <input class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
-                             id="etf_no" name="etf_no" value="{{ $employee->etf_no }}" required>
+                                id="etf_no" name="etf_no" value="{{ $employee->etf_no }}" required>
                         </div>
                     </div>
 
@@ -126,8 +126,8 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">DOB <span class="text-danger">*</span></label>
                             <div class="cal-icon">
-                                <input class="form-control datetimepicker" tabindex="-1" aria-hidden="true" id="dob"
-                                    name="dob" value="{{ $employee->dob }}" required>
+                                <input class="form-control datetimepicker" tabindex="-1" aria-hidden="true"
+                                    id="dob" name="dob" value="{{ $dob }}" required>
                             </div>
                         </div>
                     </div>
@@ -276,7 +276,8 @@ border-color: red !important;
                             <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
                                 id="d_name" name="d_name">
                                 @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}" @if ($employee->d_name == $department->id) selected @endif>
+                                    <option value="{{ $department->id }}"
+                                        @if ($employee->d_name == $department->id) selected @endif>
                                         {{ $department->department }}
                                     </option>
                                 @endforeach
@@ -287,7 +288,7 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">Job Status <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" id="j_status" name="j_status" required>
-                                <option value="{{$job_status->id}}" >{{$job_status->status_name}}</option>
+                                <option value="{{ $job_status->id }}">{{ $job_status->status_name }}</option>
                             </select>
                         </div>
                     </div>
@@ -308,19 +309,20 @@ border-color: red !important;
                                         department_id: selectedDepartment
                                     },
                                     success: function(response) {
-                                    var uniqueStatusNames = new Set();
-                                    response.forEach(function(status) {
-                                        uniqueStatusNames.add(status);
-                                    });
+                                        var uniqueStatusNames = new Set();
+                                        response.forEach(function(status) {
+                                            uniqueStatusNames.add(status);
+                                        });
 
-                                    // Clear existing options
-                                    jobStatusDropdown.empty();
+                                        // Clear existing options
+                                        jobStatusDropdown.empty();
 
-                                    // Add unique status names as options
-                                    uniqueStatusNames.forEach(function(statusName) {
-                                        jobStatusDropdown.append('<option value="' + statusName.id + '">' + statusName.status_name + '</option>');
-                                    });
-                                },
+                                        // Add unique status names as options
+                                        uniqueStatusNames.forEach(function(statusName) {
+                                            jobStatusDropdown.append('<option value="' + statusName.id +
+                                                '">' + statusName.status_name + '</option>');
+                                        });
+                                    },
 
 
                                     error: function(xhr, status, error) {
@@ -337,7 +339,7 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">Job Title <span class="text-danger">*</span></label>
                             <select class="form-control" style="width: 100%;" id="j_title" name="j_title" required>
-                                <option value="{{$job_title->id}}" >{{$job_title->title_name}}</option>
+                                <option value="{{ $job_title->id }}">{{ $job_title->title_name }}</option>
                             </select>
                         </div>
                     </div>
@@ -386,17 +388,16 @@ border-color: red !important;
                             <label class="col-form-label">Joined Date <span class="text-danger">*</span></label>
                             <div class="cal-icon">
                                 <input class="form-control datetimepicker" type="text" id="joinedDate"
-                                    name="joinedDate" value="{{ $employee->joinedDate }}" required>
+                                    name="joinedDate" value="{{ $joindate }}" required>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="col-form-label">Appointment Date <span class="text-danger">*</span></label>
                             <div class="cal-icon">
                                 <input class="form-control datetimepicker" type="text" id="appointmentDate"
-                                    name="appointmentDate" value="{{ $employee->appointmentDate }}" required>
+                                    name="appointmentDate" value="{{ $appointmentDate }}" required>
                             </div>
                         </div>
                     </div>
@@ -405,7 +406,7 @@ border-color: red !important;
                         <div class="form-group">
                             <label class="col-form-label">Created Date <span class="text-danger">*</span></label>
                             <div class="cal-icon">
-                                <input class="form-control" type="text" id="createdDate" name="createdDate" readonly>
+                                <input class="form-control" type="text" value="{{ $createdDate }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -454,7 +455,8 @@ border-color: red !important;
                     </div>
                     <div class="col-md-6">
                         <label class="col-form-label">Working Hours <span class="text-danger">*</span></label>
-                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true" id="workingHours" name="workingHours">
+                        <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true"
+                            id="workingHours" name="workingHours">
                             <option value="" @if (!$employee->workingHours) selected @endif hidden></option>
                             <option value="5day" @if ($employee->workingHours == '5day') selected @endif>10</option>
                             <option value="6day" @if ($employee->workingHours == '6day') selected @endif>9 + 1</option>
@@ -654,21 +656,29 @@ border-color: red !important;
                                                 <div class="increment-container">
                                                     <div class="row">
                                                         <div class="col-sm-6">
-                                                            <label for="type{{ $index }}" class="col-form-label">Type :</label>
-                                                            <select class="form-control" style="width: 100%;" id="type{{ $index }}" name="type[]">
+                                                            <label for="type{{ $index }}"
+                                                                class="col-form-label">Type :</label>
+                                                            <select class="form-control" style="width: 100%;"
+                                                                id="type{{ $index }}" name="type[]">
                                                                 <option value="" disabled>Select a type</option>
-                                                                <option value="increments" @if (old('type.' . $index, $record->type) == 'increments') selected @endif>
+                                                                <option value="increments"
+                                                                    @if (old('type.' . $index, $record->type) == 'increments') selected @endif>
                                                                     Increments
                                                                 </option>
-                                                                <option value="deductions" @if (old('type.' . $index, $record->type) == 'deductions') selected @endif>
+                                                                <option value="deductions"
+                                                                    @if (old('type.' . $index, $record->type) == 'deductions') selected @endif>
                                                                     Deductions
                                                                 </option>
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <label for="incrementName{{ $index }}" class="col-form-label">Name :</label>
-                                                            <select class="form-control" id="incrementName{{ $index }}" name="increment_name[]">
-                                                                <option value="{{ old('increment_name.' . $index, $record->increment_name) }}">
+                                                            <label for="incrementName{{ $index }}"
+                                                                class="col-form-label">Name :</label>
+                                                            <select class="form-control"
+                                                                id="incrementName{{ $index }}"
+                                                                name="increment_name[]">
+                                                                <option
+                                                                    value="{{ old('increment_name.' . $index, $record->increment_name) }}">
                                                                     {{ old('increment_name.' . $index, $record->increment_name) }}
                                                                 </option>
                                                             </select>
@@ -677,7 +687,7 @@ border-color: red !important;
 
                                                     <script>
                                                         // Attach an event listener to the "Type" select element
-                                                        document.getElementById('type{{ $index }}').addEventListener('change', function () {
+                                                        document.getElementById('type{{ $index }}').addEventListener('change', function() {
                                                             // Get the selected type
                                                             var selectedType = this.value;
 
@@ -897,7 +907,7 @@ border-color: red !important;
 
                                     function initializeTypeChangeHandler(typeId, nameId) {
                                         // Attach an event listener to the "Type" select element
-                                        document.getElementById(typeId).addEventListener('change', function () {
+                                        document.getElementById(typeId).addEventListener('change', function() {
                                             // Get the selected type
                                             var selectedType = this.value;
 
