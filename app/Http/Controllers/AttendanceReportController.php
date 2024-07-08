@@ -39,85 +39,94 @@ class AttendanceReportController extends Controller
             $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
             $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
             $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth]);
-    
+
             if ($request->filled('department')) {
                 $attendanceReports->whereHas('employee', function ($query) use ($request) {
                     $query->where('d_name', $request->department);
                 });
             }
-    
+
             if ($request->filled('year')) {
                 $attendanceReports->whereYear('date', $request->year);
             }
-    
+
             if ($request->filled('month')) {
                 $attendanceReports->whereMonth('date', $request->month);
             }
-    
+
             $attendanceReports = $attendanceReports->get();
-    
+
             $departments = Department::select('id', 'department')->distinct()->get();
-    
+
             return view('reports.attendance-report', compact('departments', 'attendanceReports'));
         } catch (\Exception $e) {
             return view('errors.404');
         }
     }
-    
 
 
 
 
-    public function generate_reports(Request $request){
 
-        if($request->department_id){
+    public function generate_reports(Request $request)
+    {
+
+        // dd($request);
+        if ($request->department_id) {
             $employees = Employee::where('status', 'active')->where('d_name', $request->department_id);
-        } else{
+        } else {
             $employees = Employee::where('status', 'active');
         }
 
-        $employees->each(function ($employee) use ($request){
+        $employees->each(function ($employee) use ($request) {
             $attendanceData = $employee->attendance_data($request->year ?? null, $request->month ?? null);
-            // dd($attendanceData);
+            // dd($employee->id);
             // dd($attendanceData["ot_minutes"],);
-            $atten=abs($attendanceData["no_pay_leaves"]);
-            AttendanceReport::firstOrCreate([
-                'employee_id' => $employee->id,
-                'date' => $attendanceData['current']
-            ], [
-                "month_days" => $attendanceData["month_days_count"],
-                "month_weekends" => $attendanceData["month_weekends_count"],
-                "month_holidays" => $attendanceData["month_holidays"]->count(),
-                "work_days" => $attendanceData["work_days"],
-                "work_hours" => $attendanceData["work_hours"],
-                "days_worked" => $attendanceData["days_worked"],
-                "days_worked_holiday" => $attendanceData["days_worked_holiday"],
-                "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
-                "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"]->count(),
-                "late_minutes" => $attendanceData["late_minutes"],
-                "ot_minutes" => $attendanceData["ot_minutes"],
-                "annual_leaves_taken" => 0,
-                "annual_leaves" => $attendanceData["annualLeaves"] ?? 0,
-                "absent_days" => $atten,
-            ]);
+            $attendanceData['current'] = Carbon::parse($attendanceData['current'])->format('Y-m-d');
+            $atten = abs($attendanceData["no_pay_leaves"]);
+            $attendanceReport = AttendanceReport::updateOrCreate(
+                [
+                    'employee_id' => $employee->id,
+                    'date' => $attendanceData['current']
+                ],
+                [
+                    "month_days" => $attendanceData["month_days_count"],
+                    "month_weekends" => $attendanceData["month_weekends_count"],
+                    "month_holidays" => $attendanceData["month_holidays"]->count(),
+                    "work_days" => $attendanceData["work_days"],
+                    "work_hours" => $attendanceData["work_hours"],
+                    "days_worked" => $attendanceData["days_worked"],
+                    "days_worked_holiday" => $attendanceData["days_worked_holiday"],
+                    "days_worked_weekend" => $attendanceData["days_worked_weekend"]->count(),
+                    "days_worked_holiday_weekend" => $attendanceData["days_worked_holiday_weekend"]->count(),
+                    "late_minutes" => $attendanceData["late_minutes"],
+                    "ot_minutes" => $attendanceData["ot_minutes"],
+                    "annual_leaves_taken" => 0,
+                    "annual_leaves" => $attendanceData["annualLeaves"] ?? 0,
+                    "absent_days" => $atten,
+                ]
+            );
+            // dd($attendanceReport);
         });
 
         return redirect()->route('form.attendance.index');
     }
 
-    public function edit(AttendanceReport $attendanceReport){
+    public function edit(AttendanceReport $attendanceReport)
+    {
         // dd($attendanceReport);
         $notes = Note::where('report_id', $attendanceReport->id)->get();
         // dd($notes);
         $employee_id = $attendanceReport->employee_id;
         $halfDayCount = HalfDay::where('employee_id', $employee_id)->value('half_day_count');
         // dd($halfDayCount);
-        return view("reports/attendance-report-edit", compact('attendanceReport','halfDayCount','notes'));
+        return view("reports/attendance-report-edit", compact('attendanceReport', 'halfDayCount', 'notes'));
     }
 
-    public function update(AttendanceReport $attendanceReport, Request $request){
-        $note=$request->note;
-        $attendanceId= $request->attendance_id;
+    public function update(AttendanceReport $attendanceReport, Request $request)
+    {
+        $note = $request->note;
+        $attendanceId = $request->attendance_id;
         // dd($request);
         $validatedData = $request->validate([
             'employee_id' => 'required|integer',
@@ -136,18 +145,19 @@ class AttendanceReportController extends Controller
             'ot_minutes' => 'required',
             'annual_leaves' => 'required',
             'annual_leaves_taken' => 'required',
-            'half_day'=> 'nullable'
+            'half_day' => 'nullable'
         ]);
         // dd($validatedData);
         if ($note != "") {
-            $this->noteupdate($note,$attendanceId);
+            $this->noteupdate($note, $attendanceId);
         }
         $attendanceReport->update($validatedData);
-        
+
         return redirect()->route('form.attendance.edit', ['attendanceReport' => $attendanceReport]);
     }
 
-    public function noteupdate($note,$attendanceId) {
+    public function noteupdate($note, $attendanceId)
+    {
         $user = Auth::user();
         Note::create([
             'report_id' => $attendanceId,
@@ -158,7 +168,7 @@ class AttendanceReportController extends Controller
 
     public function calculateAnnualLeave($employeeId)
     {
-       // dd($employeeId);
+        // dd($employeeId);
 
         $employee = Employee::find($employeeId);
 
@@ -200,12 +210,4 @@ class AttendanceReportController extends Controller
             'employee' => $employee, 'annualLeave' => $annualLeave,
         ]);
     }
-
-
-
-
-
-
-
-
 }
