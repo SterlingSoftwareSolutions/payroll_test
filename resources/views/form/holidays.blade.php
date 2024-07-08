@@ -225,7 +225,9 @@
     <script>
         $(document).on('click', '.userDelete', function() {
             var _this = $(this).parents('tr');
-            $('#holidayd_id').val(_this.find('.id').text());
+            var holidayId = _this.find('.id').text();
+            console.log("Holiday ID to delete:", holidayId);
+            $('#holidayd_id').val(holidayId);
         });
     </script>
 @endsection
