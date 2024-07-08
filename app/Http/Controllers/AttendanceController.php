@@ -301,7 +301,7 @@ class AttendanceController extends Controller
         }
         // dd( $attendances);
         $data = ['employee' => $employee, 'report' => $report, 'attendances' => $attendances];
-        $pdf = PDF::loadView('pdf', $data)->setPaper('a5', 'portrait');
+        $pdf = PDF::loadView('pdf', $data)->setPaper('a5', 'landscape');
         $fileName = strtoupper(preg_split('#\s+#', $employee->full_name)[0]) . '.pdf';
         return $pdf->download($fileName);
     }

@@ -56,11 +56,11 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Number of days</th>
+                <th>Number of work days</th>
                 <th>WO</th>
                 <th>Absent days</th>
-                <th>Holidays</th>
-                <th>Working days</th>
+                <th>Work Holidays</th>
+                <th>Work days</th>
                 <th>Extra days</th>
             </tr>
         </thead>
@@ -80,7 +80,7 @@
     <table>
         <thead>
             <tr>
-                <th>date</th>
+                <th>Date</th>
                 <th>Punch In</th>
                 <th>Punch Out</th>
                 <th>Work Hours</th>
