@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Haruncpi\LaravelIdGenerator\IdGenerator; 
 
 class User extends Authenticatable
 {
@@ -18,6 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'user_id',
         'email',
@@ -31,6 +33,7 @@ class User extends Authenticatable
         'position',
         'department',
         'password',
+        'created_at',
     ];
 
     /**
@@ -42,13 +45,21 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(function ($model) {
+            $model->id = IdGenerator::generate(['table' => 'users', 'length' => 6, 'prefix' =>'U']);
+        });
+    }
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
+        'id' => 'string',
         'email_verified_at' => 'datetime',
+
     ];
 }

@@ -19,6 +19,7 @@ class HolidayController extends Controller
     public function saveRecord(Request $request)
     {
         $request->validate([
+            'holidayId'=> 'required|string|max:255',
             'nameHoliday' => 'required|string|max:255',
             'holidayDate' => 'required|string|max:255',
         ]);
@@ -26,6 +27,7 @@ class HolidayController extends Controller
         DB::beginTransaction();
         try {
             $holiday = new Holiday;
+            $holiday->holiday_id = $request->holidayId;
             $holiday->name_holiday = $request->nameHoliday;
             $holiday->date_holiday  = $request->holidayDate;
             $holiday->save();
@@ -46,12 +48,14 @@ class HolidayController extends Controller
         DB::beginTransaction();
         try{
             $id           = $request->id;
+            $holidayId    = $request->holidayId;
             $holidayName  = $request->holidayName;
             $holidayDate  = $request->holidayDate;
 
             $update = [
 
                 'id'           => $id,
+                'holiday_id'   => $holidayId,
                 'name_holiday' => $holidayName,
                 'date_holiday' => $holidayDate,
             ];
@@ -67,4 +71,26 @@ class HolidayController extends Controller
             return redirect()->back();
         }
     }
+        // delete  
+        public function deleteRecord(Request $request) 
+        {
+            DB::beginTransaction();
+            try {
+                $id = $request->id;
+        
+                Holiday::destroy($id);
+        
+                DB::commit();
+        
+                Toastr::success('Holiday deleted successfully :)', 'Success');
+                return redirect()->back();
+        
+            } catch (\Exception $e) {
+        
+                DB::rollback();
+                Toastr::error('Holiday delete fail :)', 'Error');
+                return redirect()->back();
+            }
+        }
+    
 }

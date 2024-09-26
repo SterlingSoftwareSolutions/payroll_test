@@ -44,12 +44,15 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
+// Ensure the correct namespace for controllers is used
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
+// Correct namespace for controllers
 $kernel = $app->make(Kernel::class);
 
+// Use the correct namespace for the Request class
 $response = tap($kernel->handle(
-    $request = Request::capture()
+    $request = Illuminate\Http\Request::capture()
 ))->send();
 
 $kernel->terminate($request, $response);

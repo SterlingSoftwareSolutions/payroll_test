@@ -1,5 +1,16 @@
 @extends('layouts.master')
 @section('content')
+
+<!-- Include Bootstrap CSS and JS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<!-- Include Bootstrap DateTimePicker CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
     <!-- Page Wrapper -->
     <div class="page-wrapper">
         <!-- Page Content -->
@@ -9,7 +20,7 @@
                 <div class="row align-items-center">
                     <div class="col">
                         <h3 class="page-title">User Management</h3>
-                        <ul class="breadcrumb">
+                        <ul class="breadcrumb" >
                             <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
                             <li class="breadcrumb-item active">User</li>
                         </ul>
@@ -25,24 +36,24 @@
             <form action="{{ route('search/user/list') }}" method="POST">
                 @csrf
                 <div class="row filter-row">
-                    <div class="col-sm-6 col-md-3">  
+                    <div class="col-sm-6 col-md-4">  
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" id="name" name="name">
-                            <label class="focus-label">User Name</label>
+                            <label class="focus-label">Name</label>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3">  
+                    <div class="col-sm-6 col-md-4">  
                         <div class="form-group form-focus">
-                            <input type="text" class="form-control floating" id="name" name="role_name">
-                            <label class="focus-label">Role Name</label>
+                            <input type="text" class="form-control floating" id="name" name="department">
+                            <label class="focus-label">Department</label>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3"> 
+                    {{-- <div class="col-sm-6 col-md-3"> 
                         <div class="form-group form-focus">
                             <input type="text" class="form-control floating" id="name" name="status">
                             <label class="focus-label">Status</label>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-sm-6 col-md-3">  
                         <button type="sumit" class="btn btn-success btn-block"> Search </button>  
                     </div>
@@ -62,11 +73,11 @@
                                     <th hidden></th>
                                     <th>Email</th>
                                     <th>Position</th>
-                                    <th>Phone</th>
-                                    <th>Join Date</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Departement</th>
+                                    {{-- <th>Phone</th> --}}
+                                    {{-- <th>Join Date</th> --}}
+                                    {{-- <th>Role</th>
+                                    <th>Status</th> --}}
+                                    <th>Department</th>
                                     <th class="text-right">Action</th>
                                 </tr>
                             </thead>
@@ -76,7 +87,7 @@
                                     <td>
                                         <span hidden class="image">{{ $user->avatar}}</span>
                                         <h2 class="table-avatar">
-                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="avatar"><img src="{{ URL::to('/assets/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
+                                            <a href="{{ url('employee/profile/'.$user->user_id) }}" class="avatar"><img src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
                                             <a href="{{ url('employee/profile/'.$user->user_id) }}" class="name">{{ $user->name }}</span></a>
                                         </h2>
                                     </td>
@@ -84,9 +95,9 @@
                                     <td class="id">{{ $user->user_id }}</td>
                                     <td class="email">{{ $user->email }}</td>
                                     <td class="position">{{ $user->position }}</td>
-                                    <td class="phone_number">{{ $user->phone_number }}</td>
-                                    <td>{{ $user->join_date }}</td>
-                                    <td>
+                                    <td class="phone_number" hidden>{{ $user->phone_number }}</td>
+                                    <td class="join_date" hidden>{{ $user->join_date }}</td>
+                                    {{-- <td>
                                         @if ($user->role_name=='Admin')
                                             <span class="badge bg-inverse-danger role_name">{{ $user->role_name }}</span>
                                             @elseif ($user->role_name=='Super Admin')
@@ -98,8 +109,8 @@
                                             @elseif ($user->role_name=='Employee')
                                             <span class="badge bg-inverse-dark role_name">{{ $user->role_name }}</span>
                                         @endif
-                                    </td>
-                                    <td>
+                                    </td> --}}
+                                    <td hidden>
                                         <div class="dropdown action-label">
                                             @if ($user->status=='Active')
                                                 <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
@@ -170,7 +181,126 @@
                     <div class="modal-body">
                         <form action="{{ route('user/add/save') }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            <div class="rows">
+                                <div class="group" id="uploadGroup">
+                                    <div class="user-profile">
+                                        <img id="profileImage" src="{{ asset('assets/images/photo_defaults.jpg') }}" alt="">
+                                        <span class="edit-text" onclick="openFileInput()">Edit</span>
+                                    </div>
+                                    <input type="file" name="image" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
+                                </div>
+                                <div class="row">
+                                    <div class="col-sms">
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Id</label><br>
+                                            <input class="form-control col-sm" type="text" name="user_id" id="user_id" value="{{ $nextUserId }}" readonly>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sms">
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Role</label><br>
+                                            <select class="form-control col-sm" name="role_name" id="role_name" disabled>
+                                                @foreach ($role_name as $role)
+                                                    <option value="{{ $role->role_type }}" >{{ $role->role_type }}</option>
+                                                @endforeach
+                                            </select>                                                                                       
+                                        </div>
+                                    </div>                                    
+                                </div>
+                               
+                                <div class="row">
+                                    <div class="col-right ">
+                                        <label for="">Department</label><br>
+                                        <select class="form-control"  name="department" id="department">
+                                            <option selected disabled></option>
+                                            @foreach ($department as $departments )
+                                            <option value="{{ $departments->department }}">{{ $departments->department }}</option>
+                                            @endforeach
+                                        </select>
+                                   </div>
+                                   
+                                   <div class="col-right ">
+                                        <label for="">Position</label><br>
+                                       <select class="form-control" name="position" id="position">
+                                        <option selected disabled></option>
+                                        @foreach ($position as $positions )
+                                        <option value="{{ $positions->position }}">{{ $positions->position }}</option>
+                                        @endforeach
+                                       </select>
+                                   </div>
+                               </div>
+                            </div>
                             <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input class="form-control " type="text" id="" name="name">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"> 
+                                    <label>Emaill Address</label>
+                                    <input class="form-control" type="email" id="" name="email">
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Phone</label>
+                                        <input class="form-control" type="tel" id="" name="phone" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Created Date and Time</label>
+                                        <?php $dateTime = now()->format('Y-m-d H:i:s'); ?>
+                                        <div class='input-group date' id='datetimepicker'>
+                                            <input type='text' class="form-control" name="created_at" id="created_at" value="{{ old('created_at', $dateTime) }}" readonly />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        <script type="text/javascript">
+                                            $(function () {
+                                                $('#datetimepicker').datetimepicker({
+                                                    format: 'YYYY-MM-DD HH:mm:ss', // Include time in the format
+                                                });
+                                            });
+                                        </script>
+                                    </div>
+                                </div>                                                                
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="password" class="form-control" name="password" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"> 
+                                    <label>Repeat Password</label>
+                                    <input type="password" class="form-control" name="password_confirmation" >
+                                </div>
+                            </div>
+                            
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <label>Status</label>
+                                    <select class="form-control" name="status" id="status">
+                                        <option selected disabled> </option>
+                                        @foreach ($status_user as $status )
+                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-auto float-right ml-auto">
+                                    <br><br>
+                                    <button class="btn add-btn" data-toggle="modal" data-target="#add_user"><i class="fa fa-plus"></i> Add User</button>
+                                    
+                                </div>
+                            </div>
+
+                            {{-- <div class="row"> 
                                 <div class="col-sm-6"> 
                                     <div class="form-group">
                                         <label>Full Name</label>
@@ -250,7 +380,7 @@
                             </div>
                             <div class="submit-section">
                                 <button type="submit" class="btn btn-primary submit-btn">Submit</button>
-                            </div>
+                            </div> --}}
                         </form>
                     </div>
                 </div>
@@ -260,6 +390,126 @@
 				
         <!-- Edit User Modal -->
         <div id="edit_user" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <br>
+                    <div class="modal-body">
+                        <form action="{{ route('update') }}" method="POST" enctype="multipart/form-data">
+                             <div class="rows">
+                                <div class="group" id="uploadGroup">
+                                    <div class="user-profile">
+                                        <span hidden class="image"></span>
+                                        <a  href="{{ url('employee/profile/'.$user->user_id) }}" id="e_image"><img  src="{{ URL::to('/images/'. $user->avatar) }}" alt="{{ $user->avatar }}"></a>
+                                        <span class="edit-text" onclick="openFileInput()">Edit</span>
+                                    </div>
+                                    <input type="file" name="avatar" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage()">
+                                </div>
+                                <div class="row">
+                                    <div class="col-sms">
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Id</label><br>
+                                            @csrf
+                                            <input class="form-control col-sm" type="text"  name="user_id" id="e_id"readonly>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sms">
+                                        <div class="col-sm col-sm-input">
+                                            <label for="">User Role</label><br>
+                                            <select class="form-control col-sm" name="role_name" id="role_name" disabled>
+                                                @foreach ($role_name as $role)
+                                                    <option value="{{ $role->role_type }}" >{{ $role->role_type }}</option>
+                                                @endforeach
+                                            </select>                                                                                       
+                                        </div>
+                                    </div>                                    
+                                </div>
+                               
+                                <div class="row">
+                                    <div class="col-right ">
+                                        <label for="">Department</label>
+                                        <select class="select" name="department" id="e_department">
+                                            @foreach ($department as $departments )
+                                            <option value="{{ $departments->department }}">{{ $departments->department }}</option>
+                                            @endforeach
+                                        </select>
+                                   </div>
+                                   
+                                   <div class="col-right ">
+                                        <label for="">Position</label><br>
+                                        <select class="select" name="position" id="e_position">
+                                            @foreach ($position as $positions )
+                                            <option value="{{ $positions->position }}">{{ $positions->position }}</option>
+                                            @endforeach
+                                        </select>
+                                   </div>
+                               </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input class="form-control" type="text" name="name" id="e_name" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"> 
+                                    <label>Email</label>
+                                    <input class="form-control" type="text" name="email" id="e_email" value=""/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Phone</label>
+                                        <input class="form-control" type="text" id="e_phone_number" name="phone" value=""/>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Created Date and Time</label>
+                                    <input class="form-control" type="text" id="e_join_date" name="join" value="" readonly/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="password" class="form-control" name="password" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-6"> 
+                                    <label>Repeat Password</label>
+                                    <input type="password" class="form-control" name="password_confirmation" >
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row"> 
+                                <div class="col-sm-6"> 
+                                    <label>Status</label>
+                                    <select class="select" name="status_user" id="e_status">
+                                        @foreach ($status_user as $status )
+                                        <option value="{{ $status->type_name }}">{{ $status->type_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-auto float-right ml-auto">
+                                    <br><br>
+                                <button type="submit" class="btn add-btn">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- <div id="edit_user" class="modal custom-modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -308,7 +558,7 @@
                                 <div class="col-sm-6"> 
                                     <div class="form-group">
                                         <label>Phone</label>
-                                        <input class="form-control" type="text" id="e_phone_number" name="phone" placeholder="Enter Phone">
+                                        <input class="form-control" type="text" id="e_phone_number" name="phone">
                                     </div>
                                 </div>
                                 <div class="col-sm-6"> 
@@ -343,7 +593,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- /Edit Salary Modal -->
 				
         <!-- Delete User Modal -->
@@ -387,7 +637,10 @@
             $('#e_name').val(_this.find('.name').text());
             $('#e_email').val(_this.find('.email').text());
             $('#e_phone_number').val(_this.find('.phone_number').text());
-            $('#e_image').val(_this.find('.image').text());
+            $('#e_join_date').val(_this.find('.join_date').text());
+            // $('#e_join_date').val(_this.find('.join_date').text());
+
+            $('#e_image').val(_this.find('.avatar').text());
 
             var name_role = (_this.find(".role_name").text());
             var _option = '<option selected value="' + name_role+ '">' + _this.find('.role_name').text() + '</option>'
@@ -403,7 +656,7 @@
 
             var statuss = (_this.find(".statuss").text());
             var _option = '<option selected value="' +statuss+ '">' + _this.find('.statuss').text() + '</option>'
-            $( _option).appendTo("#e_status");
+            $( _option).appendTo("#e_status");var statuss = (_this.find(".statuss").text());
             
         });
     </script>
@@ -416,6 +669,30 @@
             $('.e_avatar').val(_this.find('.image').text());
         });
     </script>
-    @endsection
 
+    
+<script>
+    function openFileInput() {
+        document.getElementById('fileInput').click();
+    }
+
+    function previewImage() {
+        const fileInput = document.getElementById('fileInput');
+        const profileImage = document.getElementById('profileImage');
+
+        const selectedFile = fileInput.files[0];
+
+        if (selectedFile) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                profileImage.src = e.target.result;
+            };
+
+            reader.readAsDataURL(selectedFile);
+        }
+    }
+</script>
+    @endsection
+ 
 @endsection

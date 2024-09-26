@@ -27,7 +27,21 @@ class UserManagementController extends Controller
             $position    = DB::table('position_types')->get();
             $department  = DB::table('departments')->get();
             $status_user = DB::table('user_types')->get();
-            return view('usermanagement.user_control',compact('result','role_name','position','department','status_user'));
+            $maxId = \App\Models\User::max('id');
+
+            if ($maxId) {
+            $user = \App\Models\User::find($maxId);
+    
+            if ($user) {
+            $userId = $user->user_id;
+            $nextUserId = 'U' . str_pad((int)substr($userId, 2) + 1, 6, '0', STR_PAD_LEFT);
+            } else {
+            $nextUserId = 'U000001';
+            }
+            } else {
+            $nextUserId = 'U000001';
+            }
+            return view('usermanagement.user_control',compact('result','role_name','position','department','status_user','nextUserId'));
         }
         else
         {
@@ -51,6 +65,12 @@ class UserManagementController extends Controller
             if($request->name)
             {
                 $result = User::where('name','LIKE','%'.$request->name.'%')->get();
+            }
+
+            // search by Department name
+            if($request->department)
+            {
+                $result = User::where('department','LIKE','%'.$request->department.'%')->get();
             }
 
             // search by role name
@@ -205,52 +225,73 @@ class UserManagementController extends Controller
    
     // save new user
     public function addNewUserSave(Request $request)
-    {
+{
+    try{
         $request->validate([
             'name'      => 'required|string|max:255',
+            'user_id' => 'required',
             'email'     => 'required|string|email|max:255|unique:users',
             'phone'     => 'required|min:11|numeric',
-            'role_name' => 'required|string|max:255',
+            // 'role_name' => 'required|string|max:255',
             'position'  => 'required|string|max:255',
             'department'=> 'required|string|max:255',
             'status'    => 'required|string|max:255',
             'image'     => 'required|image',
             'password'  => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
+            'join_date' => 'nullable|date_format:Y-m-d',
         ]);
-        DB::beginTransaction();
-        try{
-            $dt       = Carbon::now();
-            $todayDate = $dt->toDayDateTimeString();
-
-            $image = time().'.'.$request->image->extension();  
-            $request->image->move(public_path('assets/images'), $image);
-
-            $user = new User;
-            $user->name         = $request->name;
-            $user->email        = $request->email;
-            $user->join_date    = $todayDate;
-            $user->phone_number = $request->phone;
-            $user->role_name    = $request->role_name;
-            $user->position     = $request->position;
-            $user->department   = $request->department;
-            $user->status       = $request->status;
-            $user->avatar       = $image;
-            $user->password     = Hash::make($request->password);
-            $user->save();
-            DB::commit();
-            Toastr::success('Create new account successfully :)','Success');
-            return redirect()->route('userManagement');
-        }catch(\Exception $e){
-            DB::rollback();
-            Toastr::error('User add new account fail :)','Error');
-            return redirect()->back();
+        // Additional validation to check if passwords match
+        if ($request->password !== $request->password_confirmation) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'password' => ['The password and password confirmation do not match.'],
+            ]);
         }
+        // dd($request->all());
+        DB::beginTransaction();
+        
+        $dt       = Carbon::now();
+        $todayDate = $dt->toDayDateTimeString();
+
+        $image = time().'.'.$request->image->extension();  
+        $request->image->move(public_path('images'), $image);
+
+        $user = new User;
+        $user->name         = $request->name;
+        $user->user_id      = $request->user_id;
+        $user->email        = $request->email;
+        $user->join_date    = $todayDate;
+        $user->phone_number = $request->phone;
+        $user->role_name    = "Admin";
+        $user->position     = $request->position;
+        $user->department   = $request->department;
+        $user->status       = $request->status;
+        $user->avatar       = $image;
+        $user->password     = Hash::make($request->password);
+        $user->created_at   = $request->created_at;
+        $user->save();
+
+        DB::commit();
+        // dd($user);
+        Toastr::success('Create new account successfully :)', 'Success');
+        return redirect()->route('userManagement');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Handle validation exception
+        DB::rollback();
+        Toastr::error('Validation error: ' . $e->getMessage(), 'Error');
+        return redirect()->back();
+    } catch (\Exception $e) {
+        // Catch any other exceptions
+        DB::rollback();
+        Toastr::error('User add new account failed : ' . $e->getMessage(), 'Error');
+        return redirect()->back();
     }
-    
+}
+
     // update
     public function update(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try{
             $user_id       = $request->user_id;
@@ -260,7 +301,8 @@ class UserManagementController extends Controller
             $position     = $request->position;
             $phone        = $request->phone;
             $department   = $request->department;
-            $status       = $request->status;
+            $status       = $request->status_user;
+            $password     = Hash::make($request->password);
 
             $dt       = Carbon::now();
             $todayDate = $dt->toDayDateTimeString();
@@ -283,18 +325,25 @@ class UserManagementController extends Controller
                     $image->move(public_path('/assets/images/'), $image_name);
                 }
             }
+            // Additional validation to check if passwords match
+        if ($request->password !== $request->password_confirmation) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'password' => ['The password and password confirmation do not match.'],
+            ]);
+        }
             
             $update = [
 
                 'user_id'       => $user_id,
                 'name'         => $name,
-                'role_name'    => $role_name,
+                'role_name'    => "Admin",
                 'email'        => $email,
                 'position'     => $position,
                 'phone_number' => $phone,
                 'department'   => $department,
                 'status'       => $status,
                 'avatar'       => $image_name,
+                'password'     => $password,
             ];
 
             $activityLog = [
@@ -313,9 +362,15 @@ class UserManagementController extends Controller
             Toastr::success('User updated successfully :)','Success');
             return redirect()->route('userManagement');
 
-        }catch(\Exception $e){
+        }catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation exception
             DB::rollback();
-            Toastr::error('User update fail :)','Error');
+            Toastr::error('Validation error: ' . $e->getMessage(), 'Error');
+            return redirect()->back();
+        } catch (\Exception $e) {
+            // Catch any other exceptions
+            DB::rollback();
+            Toastr::error('User update fail : ' . $e->getMessage(), 'Error');
             return redirect()->back();
         }
     }
@@ -387,12 +442,4 @@ class UserManagementController extends Controller
         return redirect()->intended('home');
     }
 }
-
-
-
-
-
-
-
-
 

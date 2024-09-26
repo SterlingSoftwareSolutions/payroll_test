@@ -9,6 +9,11 @@ class department extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'id',
         'department',
+    ];
+ 
+    protected $casts = [
+        'id' => 'string'
     ];
 }

@@ -117,12 +117,6 @@ class LeavesController extends Controller
         return view('form.attendance');
     }
 
-    // attendance employee
-    public function AttendanceEmployee()
-    {
-        return view('form.attendanceemployee');
-    }
-
     // leaves Employee
     public function leavesEmployee()
     {
