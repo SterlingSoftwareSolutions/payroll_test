@@ -262,7 +262,7 @@ Route::controller(AttendanceController::class)->group(function () {
 
     // Route::get('form/attendance/search/page', 'getDataByYearMonth')->middleware('auth')->name('form.attendance.search.page');
     Route::get('form/attendance/csv', 'showUploadForm')->middleware('auth')->name('form/attendance/csv');
-    Route::post('form/attendance/csv', 'uploadCsv')->middleware('auth')->name('form.attendance.upload');
+    Route::post('form/attendance/csv', action: 'uploadCsv')->middleware('auth')->name('form.attendance.upload');
 
     // Route::get('/csvupload', [CsvUploadController::class, 'showUploadForm'])->name('csvupload');
     // Route::post('/csvupload', [CsvUploadController::class, 'uploadCsv'])->name('csvupload.post');
