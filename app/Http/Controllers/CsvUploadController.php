@@ -31,6 +31,8 @@ class CsvUploadController extends Controller
             if (array_key_exists('Date', $row) && array_key_exists('punch_in', $row) && array_key_exists('punch_out', $row)) {
                 $dateTimeStringIn = $row['Date'] . ' ' . $row['punch_in'];
                 $dateTimeStringOut = $row['Date'] . ' ' . $row['punch_out'];
+
+
     
                 // Use Carbon to parse and format punch_in and punch_out
                 $row['punch_in'] = Carbon::createFromFormat('n/j/Y H:i:s', $dateTimeStringIn)->format('Y-m-d H:i:s');
@@ -39,9 +41,9 @@ class CsvUploadController extends Controller
     
             $csv_data[] = array_combine($headings, $row);
         }
+
         // Use insert method to insert multiple records
         CsvData::insert($csv_data);
-        //dd("success");
         // Additional processing or validation if needed
     
         return view('form/csvupload')->with([

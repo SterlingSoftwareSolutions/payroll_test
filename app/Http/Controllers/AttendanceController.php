@@ -487,19 +487,25 @@ class AttendanceController extends Controller
 
     public function uploadCsv(Request $request)
     {
+
+
         $request->validate([
             'csv_file' => 'required|file'
         ]);
-    
+
         // Parse the CSV
         $entries = array_map('str_getcsv', file($request->csv_file->getRealPath()));
+
+
         $headers = array_shift($entries);
         $attendances = [];
         $errors = [];
-    
+
         // Attendances grouped by date.
         foreach ($entries as $row) {
             $entry = array_combine($headers, $row);
+
+
             if (isset($attendances[$entry['Date']][$entry['WorkId']]['punch_in'])) {
                 $attendances[$entry['Date']][$entry['WorkId']]['punch_out'] = $entry['punch_in'];
             } else {
@@ -507,33 +513,41 @@ class AttendanceController extends Controller
                 $attendances[$entry['Date']][$entry['WorkId']]['punch_out'] = null; // Initialize punch_out
             }
         }
-    
+
+
         try {
             foreach ($attendances as $date => $attendances_current_day) {
                 foreach ($attendances_current_day as $WorkId => $attendance) {
+
+
                     $punchIn = Carbon::parse($attendance['punch_in']);
                     $punchOut = isset($attendance['punch_out']) ? Carbon::parse($attendance['punch_out']) : null;
-    
+
                     $employee = Employee::where('work_id', $WorkId)->first();
+
+
                     // Check if punch_out exists and calculate time difference in hours
                     if ($punchOut && $punchIn->diffInHours($punchOut) >= 2) {
-    
+
+
                         // Validate employee existence
                         if (!$employee) {
                             $errors[$date][$WorkId] = "Employee not found.";
                             continue;
                         }
-    
+
                         // Calculate work hours
                         $workHours = $punchOut->diff($punchIn)->format('%H:%I');
                         $dateTime = new DateTime($date);
                         $dayOfWeek = $dateTime->format('l');
                         $isWeekend = $dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday';
                         $holidays = Holiday::all()->pluck('date_holiday')->map->format('Y-m-d');
-    
+
+
                         // Calculate OT and late hours
                         list($OT, $late) = $this->calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
-    
+
+
                         // Create or update attendance entry
                         Attendance::updateOrCreate([
                             'employee_id' => $employee->id,
@@ -554,10 +568,26 @@ class AttendanceController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-    
+
+
+
         return back()->with('import_errors', $errors);
     }
-    
+
+
+
+
+    // Function to normalize date format
+    private function normalizeDate($date)
+    {
+        // Try to parse the date using multiple formats
+        try {
+            return Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
+        } catch (Exception $e) {
+            // Return null if the date format is invalid
+            return null;
+        }
+    }
 
     private function calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend)
     {
