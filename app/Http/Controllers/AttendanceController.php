@@ -485,51 +485,158 @@ class AttendanceController extends Controller
         return view('form.attendanceemployee');
     }
 
+    // public function uploadCsv(Request $request)
+    // {
+
+
+    //     $request->validate([
+    //         'csv_file' => 'required|file'
+    //     ]);
+
+    //     // Parse the CSV
+    //     $entries = array_map('str_getcsv', file($request->csv_file->getRealPath()));
+
+
+    //     $headers = array_shift($entries);
+    //     $attendances = [];
+    //     $errors = [];
+
+    //     // Attendances grouped by date.
+    //     foreach ($entries as $row) {
+    //         $entry = array_combine($headers, $row);
+
+
+    //         if (isset($attendances[$entry['Date']][$entry['WorkId']]['punch_in'])) {
+    //             $attendances[$entry['Date']][$entry['WorkId']]['punch_out'] = $entry['punch_in'];
+    //         } else {
+    //             $attendances[$entry['Date']][$entry['WorkId']]['punch_in'] = $entry['punch_in'];
+    //             $attendances[$entry['Date']][$entry['WorkId']]['punch_out'] = null; // Initialize punch_out
+    //         }
+    //     }
+
+
+    //     try {
+    //         foreach ($attendances as $date => $attendances_current_day) {
+    //             foreach ($attendances_current_day as $WorkId => $attendance) {
+
+
+    //                 $punchIn = Carbon::parse($attendance['punch_in']);
+    //                 $punchOut = isset($attendance['punch_out']) ? Carbon::parse($attendance['punch_out']) : null;
+
+    //                 $employee = Employee::where('work_id', $WorkId)->first();
+
+
+    //                 // Check if punch_out exists and calculate time difference in hours
+    //                 if ($punchOut && $punchIn->diffInHours($punchOut) >= 2) {
+
+
+    //                     // Validate employee existence
+    //                     if (!$employee) {
+    //                         $errors[$date][$WorkId] = "Employee not found.";
+    //                         continue;
+    //                     }
+
+    //                     // Calculate work hours
+    //                     $workHours = $punchOut->diff($punchIn)->format('%H:%I');
+    //                     $dateTime = new DateTime($date);
+    //                     $dayOfWeek = $dateTime->format('l');
+    //                     $isWeekend = $dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday';
+    //                     $holidays = Holiday::all()->pluck('date_holiday')->map->format('Y-m-d');
+
+
+    //                     // Calculate OT and late hours
+    //                     list($OT, $late) = $this->calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
+
+
+    //                     // Create or update attendance entry
+    //                     Attendance::updateOrCreate([
+    //                         'employee_id' => $employee->id,
+    //                         'date' => Carbon::parse($date)
+    //                     ], [
+    //                         'WorkId' => $WorkId,
+    //                         'punch_in' => $attendance['punch_in'],
+    //                         'punch_out' => $attendance['punch_out'],
+    //                         'workHours' => $workHours,
+    //                         'OT' => $OT,
+    //                         'late' => $late,
+    //                     ]);
+    //                 } else {
+    //                     $errors[$date][$WorkId] = "$employee->f_name - Punch out time not found or work hours less than 2 Hours.";
+    //                 }
+    //             }
+    //         }
+    //     } catch (Exception $e) {
+    //         return $e->getMessage();
+    //     }
+
+
+
+    //     return back()->with('import_errors', $errors);
+    // }
+
+
+
     public function uploadCsv(Request $request)
     {
-
-
         $request->validate([
             'csv_file' => 'required|file'
         ]);
 
         // Parse the CSV
         $entries = array_map('str_getcsv', file($request->csv_file->getRealPath()));
-
-
         $headers = array_shift($entries);
         $attendances = [];
         $errors = [];
 
-        // Attendances grouped by date.
+        // Attendances grouped by date
         foreach ($entries as $row) {
             $entry = array_combine($headers, $row);
 
+            // Normalize the Date format to YYYY-MM-DD for Carbon parsing
+            $date = $this->normalizeDate($entry['Date']);
+            if (!$date) {
+                // Try parsing with alternative formats
+                $alternativeFormats = [
+                    'd/m/Y',    // Example: 09/12/2024
+                    'm-d-Y',    // Example: 12-09-2024
+                    'Y/m/d',    // Example: 2024/12/09
+                ];
 
-            if (isset($attendances[$entry['Date']][$entry['WorkId']]['punch_in'])) {
-                $attendances[$entry['Date']][$entry['WorkId']]['punch_out'] = $entry['punch_in'];
+                // Loop through alternative formats
+                foreach ($alternativeFormats as $format) {
+                    $date = $this->normalizeDate($entry['Date'], $format);
+                    if ($date) {
+                        break; // Successfully parsed, exit loop
+                    }
+                }
+
+                // If no valid date format found, use a fallback date or handle the error
+                if (!$date) {
+                    $date = '1970-01-01';  // Default/fallback date
+                    $errors[$entry['Date']] = "Invalid date format, using fallback: {$entry['Date']}";
+                }
+            }
+
+            // Continue processing the data
+            $entry['Date'] = $date;  // Assign the valid or fallback date to the entry
+
+            if (isset($attendances[$date][$entry['WorkId']]['punch_in'])) {
+                $attendances[$date][$entry['WorkId']]['punch_out'] = $entry['punch_in'];
             } else {
-                $attendances[$entry['Date']][$entry['WorkId']]['punch_in'] = $entry['punch_in'];
-                $attendances[$entry['Date']][$entry['WorkId']]['punch_out'] = null; // Initialize punch_out
+                $attendances[$date][$entry['WorkId']]['punch_in'] = $entry['punch_in'];
+                $attendances[$date][$entry['WorkId']]['punch_out'] = null; // Initialize punch_out
             }
         }
-
 
         try {
             foreach ($attendances as $date => $attendances_current_day) {
                 foreach ($attendances_current_day as $WorkId => $attendance) {
-
-
                     $punchIn = Carbon::parse($attendance['punch_in']);
                     $punchOut = isset($attendance['punch_out']) ? Carbon::parse($attendance['punch_out']) : null;
 
                     $employee = Employee::where('work_id', $WorkId)->first();
 
-
-                    // Check if punch_out exists and calculate time difference in hours
                     if ($punchOut && $punchIn->diffInHours($punchOut) >= 2) {
-
-
                         // Validate employee existence
                         if (!$employee) {
                             $errors[$date][$WorkId] = "Employee not found.";
@@ -543,10 +650,8 @@ class AttendanceController extends Controller
                         $isWeekend = $dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday';
                         $holidays = Holiday::all()->pluck('date_holiday')->map->format('Y-m-d');
 
-
                         // Calculate OT and late hours
                         list($OT, $late) = $this->calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
-
 
                         // Create or update attendance entry
                         Attendance::updateOrCreate([
@@ -568,8 +673,6 @@ class AttendanceController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-
-
 
         return back()->with('import_errors', $errors);
     }
