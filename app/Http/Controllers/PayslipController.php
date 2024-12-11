@@ -121,7 +121,7 @@ class PayslipController extends Controller
         // Deductions
         $advance = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
-            ->where('increment_name', 'Advance')
+            ->where('increment_name', 'Advanced')
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
