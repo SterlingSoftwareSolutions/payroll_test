@@ -66,14 +66,14 @@ class PayslipController extends Controller
     }
 
     public function print(Payslip $payslip)
-    { 
-        $job_title=$payslip->employee->j_title;
+    {
+        $job_title = $payslip->employee->j_title;
         $job_title_name = JobTitle::where('id', $job_title)->pluck('title_name')->first();
 
         $currentDate = Carbon::now()->format('F j, Y');
-        $pdf = Pdf::loadView('payslip_pdf', compact('payslip', 'currentDate','job_title_name'))->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('payslip_pdf', compact('payslip', 'currentDate', 'job_title_name'))->setPaper('a4', 'portrait');
         $fileName = strtoupper(preg_split('#\s+#', $payslip->employee->full_name)[0]) . '.pdf';
-          
+
         return $pdf->download($fileName);
     }
 
@@ -81,7 +81,7 @@ class PayslipController extends Controller
     {
         return $this->belongsTo(JobStatus::class, 'j_status');
     }
-    
+
 
     public function create_payslip(AttendanceReport $attendanceReport)
     {
@@ -105,7 +105,7 @@ class PayslipController extends Controller
             ->where('increment_name', 'like', 'Incentive 1')
             ->where('type', 'increments')
             ->sum('increment_amount');
-        
+
         $incentive2 = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'like', 'Incentive 2')
@@ -153,20 +153,19 @@ class PayslipController extends Controller
             // Increments
             $br_allowance = 3500;
         }
-         $Edepartment = $employee->department->department;
+        $Edepartment = $employee->department->department;
         $gross_salary = $basic_salary + $br_allowance;
         // dd($gross_salary);
         $gross_salary_day = $gross_salary / 30;
         // dd($gross_salary_day);
-        if($Edepartment=="Local"){
+        if ($Edepartment == "Local") {
             $gross_salary_hour = $gross_salary_day / 9;
-        }
-        else{
+        } else {
             $gross_salary_hour = $gross_salary_day / 10;
         }
 
         // Holiday payment
-        $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day;
+        $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day * 1.5;
 
         // Extra days payment
         // $extra_days = ($attandance_data['days_worked_weekend'] - $attandance_data['days_worked_holiday_weekend']);
@@ -191,8 +190,8 @@ class PayslipController extends Controller
         } else {
             $annual_leaves_taken = 0;
         }
-        $workdays=$attandance_data['work_days'];
-        $days_worked=$attandance_data['days_worked'];
+        $workdays = $attandance_data['work_days'];
+        $days_worked = $attandance_data['days_worked'];
         // dd($workdays);
         // dd($days_worked);
         $attendance_date = abs($attandance_data['absent_days']);
@@ -225,8 +224,8 @@ class PayslipController extends Controller
             $etf = ($total_basic_pay / 100) * 3;
         }
         // dd($attandance_data['absent_days']);
-        $incentivesF1 = ($incentive1 / 30) * (30-($attandance_data['absent_days']-$half_day));
-        $incentivesF2 = ($incentive2 / 30) * (30-($attandance_data['absent_days']-$half_day));
+        $incentivesF1 = ($incentive1 / 30) * (30 - ($attandance_data['absent_days'] - $half_day));
+        $incentivesF2 = ($incentive2 / 30) * (30 - ($attandance_data['absent_days'] - $half_day));
         // dd($incentivesF);
         $payslip = new Payslip();
 
@@ -235,7 +234,7 @@ class PayslipController extends Controller
 
         // $increments = $holiday_payment  + $incentivesF + $ot + $other_incrmeents ;
         $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF1 + $incentivesF2 + $other_incrmeents;
-        $deductions = $employee_epf + $taxAmount + $advance+ $other_deductions+$Hostal;
+        $deductions = $employee_epf + $taxAmount + $advance + $other_deductions + $Hostal;
         // dd($total_basic_pay);
         $netSalary =  $increments - $deductions;
         $payslip = Payslip::firstOrCreate([
@@ -297,7 +296,6 @@ class PayslipController extends Controller
                 $currentHalfDayCount = $halfDay->half_day_count;
                 $halfDay->half_day_count = ($currentHalfDayCount - $half_day) + 1;
                 $halfDay->save();
-
             }
         }
     }
@@ -331,38 +329,38 @@ class PayslipController extends Controller
             $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
             $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
             $payslips = Payslip::whereBetween('date', [$startOfMonth, $endOfMonth]);
-    
+
             if ($request->filled('department')) {
                 $payslips->whereHas('employee', function ($query) use ($request) {
                     $query->where('d_name', $request->department);
                 });
             }
-    
+
             if ($request->filled('year')) {
                 $payslips->whereYear('date', $request->year);
             }
-    
+
             if ($request->filled('month')) {
                 $payslips->whereMonth('date', $request->month);
             }
-    
+
             $payslips = $payslips->get();
-    
+
             $departments = Department::select('id', 'department')->distinct()->get();
-    
+
             return view('reports/salary-report', compact('departments', 'payslips'));
         } catch (\Exception $e) {
             return view('errors.404');
         }
-
     }
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $pay = Payslip::all();
         $departments = Department::all();
         $year = $request->input('year'); // Assuming the year is sent in the request
         $month = $request->input('month'); // Assuming the month is sent in the request
         $department = $request->input('department');
-        
+
         if ($year != null) {
             $payslips = Payslip::whereRaw('YEAR(date) = ?', [$year])->get();
         }
@@ -379,32 +377,32 @@ class PayslipController extends Controller
         }
         if ($year != null && $department != null) {
             $payslips = Payslip::whereRaw('YEAR(date) = ?', [$year])
-                                ->get()
-                                ->filter(function ($payslip) use ($department) {
-                                    return $payslip->employee->d_name == $department;
-                                });
+                ->get()
+                ->filter(function ($payslip) use ($department) {
+                    return $payslip->employee->d_name == $department;
+                });
         }
         if ($month != null && $department != null) {
             $payslips = Payslip::whereRaw('MONTH(date) = ?', [$month])
-                                ->get()
-                                ->filter(function ($payslip) use ($department) {
-                                    return $payslip->employee->d_name == $department;
-                                });
+                ->get()
+                ->filter(function ($payslip) use ($department) {
+                    return $payslip->employee->d_name == $department;
+                });
         }
         if ($year != null && $month != null && $department != null) {
             $payslips = Payslip::whereRaw('YEAR(date) = ? AND MONTH(date) = ?', [$year, $month])->get()
-                                ->filter(function ($payslip) use ($department) {
-                                    return $payslip->employee->d_name == $department;
-                                });
+                ->filter(function ($payslip) use ($department) {
+                    return $payslip->employee->d_name == $department;
+                });
         }
-        if ($year == null && $month == null){
+        if ($year == null && $month == null) {
             $payslips = Payslip::all();
         }
-        
+
 
         return view('reports/salary-report', compact('departments', 'payslips'));
     }
-    
+
     public function searchPayslip(Request $request)
     {
         // Your logic to search payslips here
@@ -420,14 +418,14 @@ class PayslipController extends Controller
         if ($year != null && $month != null) {
             $payslips = Payslip::whereRaw('YEAR(date) = ? AND MONTH(date) = ?', [$year, $month])->get();
         }
-        if ($year == null && $month == null){
+        if ($year == null && $month == null) {
             $payslips = Payslip::all();
         }
-        if ($year == null && $month == null){
+        if ($year == null && $month == null) {
             $date = now()->startOfMonth()->subMonth();
             $payslips = Payslip::whereDate('date', $date)->get();
         }
-        
+
         return view('reports/payslip-approve', compact(['payslips']));
     }
 
@@ -474,9 +472,13 @@ class PayslipController extends Controller
             ->sum('increment_amount');
 
         return response()->json([
-            'basic_salary' => $basicSalary, 'brAllowance' => $brAllowance,
-            'incentive1' => $incentive1, 'incentive2' => $incentive2, 'increment_others' => $increment_others,
-            'deduction_others' => $deduction_others, 'Advanced' => $Advanced
+            'basic_salary' => $basicSalary,
+            'brAllowance' => $brAllowance,
+            'incentive1' => $incentive1,
+            'incentive2' => $incentive2,
+            'increment_others' => $increment_others,
+            'deduction_others' => $deduction_others,
+            'Advanced' => $Advanced
         ]);
     }
 }
