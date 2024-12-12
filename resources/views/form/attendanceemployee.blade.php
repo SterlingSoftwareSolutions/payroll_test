@@ -486,7 +486,7 @@
         </script>
 
         <!-- Include punch in and punch out time adjust -->
-        <script>
+        {{-- <script>
             $(document).ready(function() {
                 $('#punch_in, #e_punchin').attr('max', getCurrentTime());
 
@@ -513,7 +513,7 @@
                     return currentHour.toString().padStart(2, '0') + ':' + currentMinutes.toString().padStart(2, '0');
                 }
             });
-        </script>
+        </script> --}}
 
         {{-- update js --}}
         <script>
