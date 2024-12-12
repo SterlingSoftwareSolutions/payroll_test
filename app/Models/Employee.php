@@ -220,11 +220,11 @@ class Employee extends Model
         });
 
         $days_worked_holiday_weekend = with(clone $days_worked_holiday)->filter(function ($attendance) use ($department) {
-            
+
             return $attendance->date->isSaturday() || $attendance->date->isSunday();
         });
-        $days_worked=$days_worked+$days_worked_holiday_weekend->count();
-// dd($days_worked_holiday);
+        $days_worked = $days_worked + $days_worked_holiday_weekend->count();
+        // dd($days_worked_holiday);
         $no_pay_leaves = $work_days - $days_worked;
         // dd($no_pay_leaves);
 
@@ -256,7 +256,7 @@ class Employee extends Model
 
         $annualLeaves = $this->calculate_annual_leaves($current->year);
 
-        $days_worked_holiday=$days_worked_holiday->count()-$days_worked_holiday_weekend->count();
+        $days_worked_holiday = $days_worked_holiday->count() - $days_worked_holiday_weekend->count();
 
 
         return compact(
