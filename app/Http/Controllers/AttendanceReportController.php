@@ -78,6 +78,7 @@ class AttendanceReportController extends Controller
             $employees = Employee::where('status', 'active');
         }
 
+       
         $employees->each(function ($employee) use ($request) {
             $attendanceData = $employee->attendance_data($request->year ?? null, $request->month ?? null);
             // dd($employee->id);
@@ -104,6 +105,8 @@ class AttendanceReportController extends Controller
                     "annual_leaves_taken" => 0,
                     "annual_leaves" => $attendanceData["annualLeaves"] ?? 0,
                     "absent_days" => $atten,
+                    "work_half_day" => $attendanceData["work_half_day"],
+                    "remove_late_minutes" => $attendanceData["remove_late_minutes"],
                 ]
             );
             // dd($attendanceReport);

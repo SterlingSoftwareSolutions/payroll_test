@@ -142,6 +142,8 @@ class AttendanceController extends Controller
                 $late = $lateInterval->format('%H:%I');
             }
         }
+        $is_half_day = $workHoursTime <= 6 && $workHoursTime >= 4;
+
         // dd($workHours);
         DB::beginTransaction();
         try {
@@ -154,6 +156,7 @@ class AttendanceController extends Controller
                 'workHours' => $workHours,
                 'OT' => $OT,
                 'late' => $late,
+                'is_half_day' => $is_half_day,
             ]);
             DB::commit();
 
@@ -188,6 +191,7 @@ class AttendanceController extends Controller
             $punchOut = new DateTime($request->punch_out);
             $punchIn = new DateTime($request->punch_in);
             $workHours = $punchOut->diff($punchIn)->format('%H:%I');
+            
             // dd($workHours);
             $dateTime = new DateTime($request->date);
             $dayOfWeek = $dateTime->format('l');
@@ -233,6 +237,8 @@ class AttendanceController extends Controller
                     $late = $lateInterval->format('%H:%I');
                 }
             }
+            $is_half_day = $workHoursTime <= 6 && $workHoursTime >= 4;
+
             // Update the attendance record
             $update = [
                 'employee_id'  => $employee_id,
@@ -242,6 +248,7 @@ class AttendanceController extends Controller
                 'workHours' => $workHours,
                 'OT' => $OT,
                 'late' => $late,
+                'is_half_day' => $is_half_day,
             ];
             // dd($attendance_id);
 
@@ -526,7 +533,9 @@ class AttendanceController extends Controller
                     }
 
                     // Check if punch_out exists and work hours are >= 2
-                    if ($punchOut && $punchIn->diffInHours($punchOut) >= 2) {
+                    if ($punchOut && $punchIn->diffInHours($punchOut) >= 4) {
+
+                        $is_half_day = $punchOut && $punchIn->diffInHours($punchOut) <= 6;
                         // Calculate work hours
                         $workHours = $punchOut->diff($punchIn)->format('%H:%I');
                         $dateTime = new DateTime($date);
@@ -548,6 +557,7 @@ class AttendanceController extends Controller
                             'workHours' => $workHours,
                             'OT' => $OT,
                             'late' => $late,
+                            'is_half_day' => $is_half_day,
                         ]);
                     } else {
                         $errors[$date][$WorkId] = "{$employee->f_name} - Punch out time not found or work hours less than 2 Hours.";

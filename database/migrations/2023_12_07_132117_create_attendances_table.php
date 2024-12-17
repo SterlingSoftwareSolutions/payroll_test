@@ -24,6 +24,7 @@ return new class extends Migration
             $table->time('workHours');
             $table->time('OT');
             $table->time('late');
+            $table->boolean('is_half_day');
             $table->timestamps();
         });
     }
