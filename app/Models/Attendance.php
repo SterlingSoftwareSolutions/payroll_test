@@ -18,6 +18,7 @@ class Attendance extends Model
         'workHours',
         'OT',
         'late',
+        'is_half_day'
     ];
 
     protected $dates = [
