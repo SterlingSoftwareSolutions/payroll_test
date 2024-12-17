@@ -33,6 +33,8 @@ return new class extends Migration
             $table->integer('half_day')->nullable();
             $table->integer('annual_leaves')->nullable();
             $table->decimal('annual_leaves_taken', 10, 1)->default(0);
+            $table->integer('work_half_day')->nullable();
+            $table->decimal('remove_late_minutes', 10, 2)->nullable();
 
             $table->timestamps();
         });

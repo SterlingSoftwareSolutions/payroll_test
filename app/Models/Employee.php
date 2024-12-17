@@ -71,11 +71,37 @@ class Employee extends Model
     //Below functions use to calculate attendance report edit page
     public function attendance_data($year  = null, $month = null)
     {
+        // mata baninna epa sama weena sudesh eka eka welawata eka eka ewa kiyanawa
+        // ekai mehema karanna une , sry....
         $department = $this->department->department;
         // Month details
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
 
+        $remove_late = Attendance::where('employee_id', $this->id)
+            ->whereMonth('date', $current->month)
+            ->whereYear('date', $current->year)
+            ->where('is_half_day', true)
+            ->get();
+
+        // Sum the "late" minutes as decimal values
+        $remove_late_minutes = $remove_late->sum(function ($attendanceRecord) {
+            $lateTime = $attendanceRecord->late;
+
+            // Split the "late" time into hours, minutes, and seconds
+            $timeParts = explode(':', $lateTime);
+
+            // Convert to decimal minutes
+            $totalMinutes = ($timeParts[0] * 60) + $timeParts[1] + ($timeParts[2] / 60);
+
+            return $totalMinutes;
+        });
+
+        $work_half_day = Attendance::where('employee_id', $this->id)
+            ->whereMonth('date', $current->month)
+            ->whereYear('date', $current->year)
+            ->where('is_half_day', true)
+            ->count();
 
         $month_days_count = $current->daysInMonth;
         $firstOfMonth = $current->copy()->firstOfMonth();
@@ -225,6 +251,8 @@ class Employee extends Model
         });
         $days_worked = $days_worked + $days_worked_holiday_weekend->count();
         // dd($days_worked_holiday);
+        $days_worked = $days_worked - ($work_half_day/2);
+
         $no_pay_leaves = $work_days - $days_worked;
         // dd($no_pay_leaves);
 
@@ -258,6 +286,7 @@ class Employee extends Model
 
         $days_worked_holiday = $days_worked_holiday->count() - $days_worked_holiday_weekend->count();
 
+        $late_minutes= $late_minutes - $remove_late_minutes;
 
         return compact(
             'month_days_count',
@@ -273,7 +302,9 @@ class Employee extends Model
             'late_minutes',
             'ot_minutes',
             'annualLeaves',
-            'current'
+            'current',
+            'work_half_day',
+            'remove_late_minutes'
         );
     }
 
