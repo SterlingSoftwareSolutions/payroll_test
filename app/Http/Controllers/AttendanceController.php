@@ -535,12 +535,15 @@ class AttendanceController extends Controller
                     // Check if punch_out exists and work hours are >= 2
                     if ($punchOut && $punchIn->diffInHours($punchOut) >= 4) {
 
-                        $is_half_day = $punchOut && $punchIn->diffInHours($punchOut) <= 6;
+                        // $is_half_day = $punchOut && $punchIn->diffInHours($punchOut) <= 6;
                         // Calculate work hours
                         $workHours = $punchOut->diff($punchIn)->format('%H:%I');
                         $dateTime = new DateTime($date);
                         $dayOfWeek = $dateTime->format('l');
                         $isWeekend = $dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday';
+                        
+                        $is_half_day = $punchOut && $punchIn->diffInHours($punchOut) <= 6 && !in_array($dayOfWeek, ['Saturday', 'Sunday']);
+
                         $holidays = Holiday::all()->pluck('date_holiday')->map->format('Y-m-d');
 
                         // Calculate OT and late hours
