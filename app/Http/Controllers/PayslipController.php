@@ -305,7 +305,13 @@ class PayslipController extends Controller
     {
         $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
         $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
-        $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+
+        // TO Do uncomment
+        // $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+
+        // TO DO Comment
+        $attendanceReports = AttendanceReport::orderBy('created_at', 'desc')->get();
+        
         $attendanceReports->each(function ($attendanceReport) {
             $this->create_payslip($attendanceReport);
         });
