@@ -38,23 +38,28 @@ class AttendanceReportController extends Controller
         try {
             $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
             $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
-            $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth]);
 
-            if ($request->filled('department')) {
-                $attendanceReports->whereHas('employee', function ($query) use ($request) {
-                    $query->where('d_name', $request->department);
-                });
-            }
+            // TO DO comment
+            $attendanceReports = AttendanceReport::orderBy('created_at', 'desc')->get();
 
-            if ($request->filled('year')) {
-                $attendanceReports->whereYear('date', $request->year);
-            }
+            // TO DO uncomment
+            // $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth]);
 
-            if ($request->filled('month')) {
-                $attendanceReports->whereMonth('date', $request->month);
-            }
+            // if ($request->filled('department')) {
+            //     $attendanceReports->whereHas('employee', function ($query) use ($request) {
+            //         $query->where('d_name', $request->department);
+            //     });
+            // }
 
-            $attendanceReports = $attendanceReports->get();
+            // if ($request->filled('year')) {
+            //     $attendanceReports->whereYear('date', $request->year);
+            // }
+
+            // if ($request->filled('month')) {
+            //     $attendanceReports->whereMonth('date', $request->month);
+            // }
+
+            // $attendanceReports = $attendanceReports->get();
 
             $departments = Department::select('id', 'department')->distinct()->get();
 
