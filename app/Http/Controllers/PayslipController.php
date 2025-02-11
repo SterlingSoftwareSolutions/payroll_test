@@ -303,6 +303,8 @@ class PayslipController extends Controller
     // Generate payslips for current month
     public function generate_payslips()
     {
+        // $startOfMonth = Carbon::now()->subMonths(2)->startOfMonth(); // December 1, 2024
+        // $endOfMonth = Carbon::now()->subMonths(2)->endOfMonth(); // December 31, 2024
         $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
         $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
         $attendanceReports = AttendanceReport::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
@@ -459,12 +461,17 @@ class PayslipController extends Controller
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
+        $hostal = SalaryDetail::where('employee_id', $employeeId)
+            ->where('increment_name', 'Hostal')
+            ->where('type', 'deductions')
+            ->sum('increment_amount');
+
         $Others = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Others')
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
-        $deduction_others = $bodim + $Others;
+        $deduction_others = $bodim + $Others+$hostal;
 
         $Advanced = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Advanced')
