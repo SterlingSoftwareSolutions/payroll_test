@@ -75,6 +75,7 @@ class Employee extends Model
         // ekai mehema karanna une , sry....
         $department = $this->department->department;
         // Month details
+        // $current = Carbon::create($year ?? now()->subMonths(2)->year, $month ?? now()->subMonths(2)->month);
         $current = Carbon::create($year ?? now()->subMonth()->year, $month ?? now()->subMonth()->month);
         $attendances = Attendance::where('employee_id', $this->id)->whereMonth('date', $current->month)->whereYear('date', $current);
 
