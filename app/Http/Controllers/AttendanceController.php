@@ -703,60 +703,55 @@ class AttendanceController extends Controller
         }
     }
 
-    private function calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend)
-    {
-        $OT = '00:00';
-        $late = '00:00';
-        $workHoursTime = new DateTime($workHours);
+private function calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend)
+{
+    $OT = '00:00';
+    $late = '00:00';
+    $workHoursTime = new DateTime($workHours);
 
-        // if ($isWeekend || $holidays->contains($dayOfWeek)) {
-
-        //     $otStartTime = new DateTime('00:00');
-        //     if ($workHoursTime > $otStartTime) {
-        //         $OT = $workHoursTime->diff($otStartTime)->format('%H:%I');
-        //     }
-
-        // } else {
-        // dd($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
-
-        switch ($employee->workingHours) {
-
-
-            case '6day':
-
-                if ($dayOfWeek == 'Sunday') {
-                    $otStartTime = new DateTime('00:00');
-                } elseif ($dayOfWeek == 'Saturday') {
-                    // dd($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
-                    $otStartTime = new DateTime('05:00');
-                } else {
-                    $otStartTime = new DateTime('09:00');
-                }
-                break;
-            case '5day':
-                if ($dayOfWeek == 'Sunday') {
-                    $otStartTime = new DateTime('00:00');
-                } elseif ($dayOfWeek == 'Saturday') {
-                    // dd($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
-                    $otStartTime = new DateTime('00:00');
-                } else {
-                    $otStartTime = new DateTime('10:00');
-                }
-                break;
-            default:
+    // Determine the overtime start time based on working hours and day of the week
+    switch ($employee->workingHours) {
+        case '6day':
+            if ($dayOfWeek == 'Sunday') {
+                $otStartTime = new DateTime('00:00');
+            } elseif ($dayOfWeek == 'Saturday') {
+                $otStartTime = new DateTime('05:00');
+            } else {
                 $otStartTime = new DateTime('09:00');
-                break;
-        }
+            }
+            break;
 
-        if ($workHoursTime > $otStartTime) {
-            $OT = $workHoursTime->diff($otStartTime)->format('%H:%I');
-        } else {
-            $late = $otStartTime->diff($workHoursTime)->format('%H:%I');
-        }
-        // }
+        case '5day':
+            if ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday') {
+                $otStartTime = new DateTime('00:00');
+            } else {
+                $otStartTime = new DateTime('10:00');
+            }
+            break;
 
-        return [$OT, $late];
+        default:
+            $otStartTime = new DateTime('09:00');
+            break;
     }
+
+    if ($workHoursTime > $otStartTime) {
+        $otInterval = $workHoursTime->diff($otStartTime);
+        $totalMinutes = ($otInterval->h * 60) + $otInterval->i; // Convert to total minutes
+
+        // Ensure OT is at least 30 minutes and employee's department is 'Local'
+        if ($totalMinutes >= 30 && $employee->department->department == 'Local') {
+            $OT = $otInterval->format('%H:%I');
+        } else {
+            $OT = '00:00';
+        }
+    } else {
+        // Calculate late time if the employee starts late
+        $late = $otStartTime->diff($workHoursTime)->format('%H:%I');
+    }
+
+    return [$OT, $late];
+}
+
 
 
     private function processCsv($filePath)
