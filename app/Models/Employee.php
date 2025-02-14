@@ -257,19 +257,31 @@ class Employee extends Model
         $no_pay_leaves = $work_days - $days_worked;
         // dd($no_pay_leaves);
 
-        $ot_minutes = with(clone $attendances)->get()->sum(function ($attendance) {
-            // Get the "OT" time from the current attendance record
-            $otTime = $attendance->OT;
-
+        $ot_minutesx = with(clone $attendances)->get()->map(function ($attendance) {
+            // Ensure the OT field is not null or empty
+            $otTime = $attendance->OT ?? '00:00:00'; // Default to '00:00:00' if OT is null or empty
+        
             // Split the time into hours, minutes, and seconds
             $timeParts = explode(':', $otTime);
-
-            // Calculate the total overtime minutes
-            $totalMinutes = ($timeParts[0] * 60) + $timeParts[1] + ($timeParts[2] / 60);
+        
+            // Ensure all parts exist (default to 0 if missing)
+            $hours = isset($timeParts[0]) ? (int)$timeParts[0] : 0;
+            $minutes = isset($timeParts[1]) ? (int)$timeParts[1] : 0;
+            $seconds = isset($timeParts[2]) ? (int)$timeParts[2] : 0;
+        
+            // Convert time to total overtime minutes (correctly handling seconds)
+            $totalMinutes = ($hours * 60) + $minutes + round($seconds / 60);
+        
+            // Return the individual overtime minute value
             return $totalMinutes;
-        });
-
-
+        })->toArray();
+        
+        // Calculate the sum of overtime minutes
+        $ot_minutes = array_sum($ot_minutesx);
+        
+        // Dump the array and the sum
+        // dd($ot_minutes, $total_ot_minutes);
+        
         $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) {
             // Get the "late" time from the current attendance record
             $lateTime = $attendance->late;

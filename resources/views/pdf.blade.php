@@ -89,7 +89,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($attendances as $attendance)
+            @foreach (collect($attendances)->sortBy('date') as $attendance)
             <tr>
                 <td>{{ date('Y-m-d', strtotime($attendance['date'])) }}</td>
                 <td>{{ date('H:i:s', strtotime($attendance['punch_in'])) }}</td>
