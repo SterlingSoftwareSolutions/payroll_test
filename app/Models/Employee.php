@@ -252,7 +252,7 @@ class Employee extends Model
         });
         $days_worked = $days_worked + $days_worked_holiday_weekend->count();
         // dd($days_worked_holiday);
-        $days_worked = $days_worked - ($work_half_day/2);
+        $days_worked = $days_worked - ($work_half_day / 2);
 
         $no_pay_leaves = $work_days - $days_worked;
         // dd($no_pay_leaves);
@@ -260,28 +260,30 @@ class Employee extends Model
         $ot_minutesx = with(clone $attendances)->get()->map(function ($attendance) {
             // Ensure the OT field is not null or empty
             $otTime = $attendance->OT ?? '00:00:00'; // Default to '00:00:00' if OT is null or empty
-        
+
             // Split the time into hours, minutes, and seconds
             $timeParts = explode(':', $otTime);
-        
+
             // Ensure all parts exist (default to 0 if missing)
             $hours = isset($timeParts[0]) ? (int)$timeParts[0] : 0;
             $minutes = isset($timeParts[1]) ? (int)$timeParts[1] : 0;
             $seconds = isset($timeParts[2]) ? (int)$timeParts[2] : 0;
-        
+
             // Convert time to total overtime minutes (correctly handling seconds)
             $totalMinutes = ($hours * 60) + $minutes + round($seconds / 60);
-        
+
             // Return the individual overtime minute value
             return $totalMinutes;
         })->toArray();
-        
+
         // Calculate the sum of overtime minutes
         $ot_minutes = array_sum($ot_minutesx);
-        
+        // round up 30 min
+        $ot_minutes = floor($ot_minutes / 30) * 30;
+
         // Dump the array and the sum
-        // dd($ot_minutes, $total_ot_minutes);
-        
+        // dd($ot_minutes, $ot_minutesx);
+
         $late_minutes = with(clone $attendances)->get()->sum(function ($attendance) {
             // Get the "late" time from the current attendance record
             $lateTime = $attendance->late;
@@ -299,7 +301,7 @@ class Employee extends Model
 
         $days_worked_holiday = $days_worked_holiday->count() - $days_worked_holiday_weekend->count();
 
-        $late_minutes= $late_minutes - $remove_late_minutes;
+        $late_minutes = $late_minutes - $remove_late_minutes;
 
         return compact(
             'month_days_count',
