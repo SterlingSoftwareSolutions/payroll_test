@@ -83,13 +83,57 @@ class AttendanceReportController extends Controller
             $employees = Employee::where('status', 'active');
         }
 
-       
+
         $employees->each(function ($employee) use ($request) {
             $attendanceData = $employee->attendance_data($request->year ?? null, $request->month ?? null);
             // dd($employee->id);
             // dd($attendanceData["ot_minutes"],);
             $attendanceData['current'] = Carbon::parse($attendanceData['current'])->format('Y-m-d');
             $atten = abs($attendanceData["no_pay_leaves"]);
+            // 
+            // 
+            // To Do new employee absent day (joindate > weekend+ holiday)
+            $joindates = Employee::where('id', $employee->id)
+                ->whereRaw("DATE_FORMAT(joinedDate, '%Y-%m') = ?", [Carbon::now()->subMonth()->format('Y-m')])
+                ->get();
+
+            $totalWeekends = 0; // Initialize weekend count
+
+            // Check if there's at least one record in $joindates
+            if ($joindates->isNotEmpty()) {
+                $beforeHoliday = Holiday::whereDate('date_holiday', '<', \Carbon\Carbon::parse($joindates->first()->joinedDate)->format('Y-m-d'))
+                    ->where('date_holiday', '>', Carbon::now()->subMonth()->startOfMonth()->format('Y-m-d'))
+                    ->count();
+            } else {
+                $beforeHoliday = 0;
+            }
+
+
+            foreach ($joindates as $employee) {
+                $joinDate = Carbon::parse($employee->joinedDate);
+
+                // Get the first day of the previous month
+                $firstDayOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
+
+                // Determine the employee's weekends based on working hours
+                $weekendDays = ($employee->workingHours == '5day') ? [Carbon::SATURDAY, Carbon::SUNDAY] : [Carbon::SUNDAY];
+
+                // Count weekends before the join date
+                $weekendCount = 0;
+
+                for ($date = $firstDayOfLastMonth; $date->lessThan($joinDate); $date->addDay()) {
+                    if (in_array($date->dayOfWeek, $weekendDays)) {
+                        $weekendCount++;
+                    }
+                }
+                $totalWeekends += $weekendCount; // Add to the total weekend count
+            }
+
+            // Output the total number of weekend days and holidays before join date
+            // dd($totalWeekends + $beforeHoliday);
+
+
+
             $attendanceReport = AttendanceReport::updateOrCreate(
                 [
                     'employee_id' => $employee->id,
@@ -109,7 +153,7 @@ class AttendanceReportController extends Controller
                     "ot_minutes" => $attendanceData["ot_minutes"],
                     "annual_leaves_taken" => 0,
                     "annual_leaves" => $attendanceData["annualLeaves"] ?? 0,
-                    "absent_days" => $atten,
+                    "absent_days" => $atten + $totalWeekends + $beforeHoliday,
                     "work_half_day" => $attendanceData["work_half_day"],
                     "remove_late_minutes" => $attendanceData["remove_late_minutes"],
                 ]
@@ -215,7 +259,8 @@ class AttendanceReportController extends Controller
         // $annualLeave = $this->calculateAnnualLeave($joinedDate);
 
         return view('reports.edit.attendancereportedit', [
-            'employee' => $employee, 'annualLeave' => $annualLeave,
+            'employee' => $employee,
+            'annualLeave' => $annualLeave,
         ]);
     }
 }

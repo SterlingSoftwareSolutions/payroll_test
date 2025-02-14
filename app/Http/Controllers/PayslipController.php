@@ -14,6 +14,7 @@ use App\Models\SalaryDetail;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\AttendanceReport;
+use App\Models\Holiday;
 use Brian2694\Toastr\Facades\Toastr;
 
 class PayslipController extends Controller
@@ -179,10 +180,10 @@ class PayslipController extends Controller
 
         // Overtime
         $ot_hours = $attandance_data['ot_minutes'] / 60;
-        $ot_hours += ($attandance_data['days_worked_holiday']*10);
+        $ot_hours += ($attandance_data['days_worked_holiday'] * 10);
         // dd( $attandance_data['annual_leaves_taken']);
 
-        $ot_rate = ( $gross_salary / 240 ) * 1.5;
+        $ot_rate = ($gross_salary / 240) * 1.5;
         $ot = $ot_rate * $ot_hours;
         // dd($ot);
 
@@ -232,8 +233,10 @@ class PayslipController extends Controller
             $etf = ($total_basic_pay / 100) * 3;
         }
         // dd($attandance_data['absent_days']);
-        $incentivesF1 = ($incentive1 / 30) * (30 - ($attandance_data['absent_days'] - ($half_day + $attandance_data['annual_leaves_taken'])));
-        $incentivesF2 = ($incentive2 / 30) * (30 - ($attandance_data['absent_days'] - ($half_day + $attandance_data['annual_leaves_taken'])));
+        $daysInPreviousMonth = Carbon::now()->subMonth()->daysInMonth;
+
+        $incentivesF1 = ($incentive1 / $daysInPreviousMonth) * ($daysInPreviousMonth - ($attandance_data['absent_days'] - ($half_day + $attandance_data['annual_leaves_taken'])));
+        $incentivesF2 = ($incentive2 / $daysInPreviousMonth) * ($daysInPreviousMonth - ($attandance_data['absent_days'] - ($half_day + $attandance_data['annual_leaves_taken'])));
         // dd($incentivesF);
         $payslip = new Payslip();
 
@@ -245,6 +248,9 @@ class PayslipController extends Controller
         $deductions = $employee_epf + $taxAmount + $advance + $other_deductions + $Hostal + $Bodim;
         // dd($total_basic_pay);
         $netSalary =  $increments - $deductions;
+
+
+
         $payslip = Payslip::firstOrCreate([
             'employee_id' => $employee->id,
             'date' => now()->startOfMonth()->subMonth(),
@@ -321,7 +327,7 @@ class PayslipController extends Controller
 
         // TO DO Comment
         $attendanceReports = AttendanceReport::orderBy('created_at', 'desc')->get();
-        
+
         $attendanceReports->each(function ($attendanceReport) {
             $this->create_payslip($attendanceReport);
         });
@@ -485,7 +491,7 @@ class PayslipController extends Controller
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
-        $deduction_others = $bodim + $Others+$hostal;
+        $deduction_others = $bodim + $Others + $hostal;
 
         $Advanced = SalaryDetail::where('employee_id', $employeeId)
             ->where('increment_name', 'Advanced')
