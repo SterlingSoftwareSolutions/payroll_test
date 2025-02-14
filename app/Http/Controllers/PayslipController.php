@@ -137,6 +137,12 @@ class PayslipController extends Controller
             ->where('type', 'deductions')
             ->sum('increment_amount');
 
+        $Bodim = SalaryDetail::where('employee_id', $employee->employee_id)
+            ->where('active', true)
+            ->where('increment_name', 'Bodim')
+            ->where('type', 'deductions')
+            ->sum('increment_amount');
+
         $other_deductions = SalaryDetail::where('employee_id', $employee->employee_id)
             ->where('active', true)
             ->where('increment_name', 'Other')
@@ -165,7 +171,7 @@ class PayslipController extends Controller
         }
 
         // Holiday payment
-        $holiday_payment = $attandance_data['days_worked_holiday'] * $gross_salary_day * 1.5;
+        $holiday_payment = 0;
 
         // Extra days payment
         // $extra_days = ($attandance_data['days_worked_weekend'] - $attandance_data['days_worked_holiday_weekend']);
@@ -173,10 +179,12 @@ class PayslipController extends Controller
 
         // Overtime
         $ot_hours = $attandance_data['ot_minutes'] / 60;
-        // dd($ot_hours);
+        $ot_hours += ($attandance_data['days_worked_holiday']*10);
         // dd( $attandance_data['annual_leaves_taken']);
-        $ot_rate = $gross_salary / 240 * 1.5;
+
+        $ot_rate = ( $gross_salary / 240 ) * 1.5;
         $ot = $ot_rate * $ot_hours;
+        // dd($ot);
 
         if ($attandance_data['half_day'] != null) {
             $half_day = $attandance_data['half_day'] / 2;
@@ -234,7 +242,7 @@ class PayslipController extends Controller
 
         // $increments = $holiday_payment  + $incentivesF + $ot + $other_incrmeents ;
         $increments = $total_basic_pay + $ot + $holiday_payment + $incentivesF1 + $incentivesF2 + $other_incrmeents;
-        $deductions = $employee_epf + $taxAmount + $advance + $other_deductions + $Hostal;
+        $deductions = $employee_epf + $taxAmount + $advance + $other_deductions + $Hostal + $Bodim;
         // dd($total_basic_pay);
         $netSalary =  $increments - $deductions;
         $payslip = Payslip::firstOrCreate([
@@ -257,7 +265,7 @@ class PayslipController extends Controller
 
             'advance' => $advance,
             'loan' => $loan,
-            'other_deductions' => $other_deductions,
+            'other_deductions' => $other_deductions + $Hostal + $Bodim,
 
             'holiday_payment' => $holiday_payment,
             'extra_days_payment' => 0,

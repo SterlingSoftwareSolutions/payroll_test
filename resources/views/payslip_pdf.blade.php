@@ -281,19 +281,7 @@
                 ) }}
             </td>
         </tr>
-        <tr>
-            <td style="width: 20%;">Earnings for P.A.Y.E</td>
-            <td style="text-align: right;">
-                {{ number_format(
-                    $payslip->basic_salary +
-                        $payslip->br_allowance +
-                        $payslip->fixed_allowance -
-                        $payslip->no_pay_leave_deduction -
-                        $payslip->late_deduction,
-                    2,
-                ) }}
-            </td>
-        </tr>
+
 
 
 
@@ -323,7 +311,7 @@
         <tr style="width: 50%">
             <td style="width: 20%; padding-left: 33.33%;">OT</td>
             <td style="text-align: right; padding-right: 40%;">
-                {{ $payslip->ot ? number_format($payslip->ot, 2) : '-' }}</td>
+                {{ number_format($payslip->ot ?? 0) }}</td>
         </tr>
         <tr style="width: 50%">
             <td style="width: 20%; padding-left: 33.33%;">Holiday Payment</td>
@@ -336,7 +324,26 @@
             <td style="text-align: right; padding-right: 40%;">
                 {{ $payslip->extra_days_payment ? number_format($payslip->extra_days_payment, 2) : '-' }}</td>
         </tr>
-
+        <tr>
+            <td style="width: 20%;">Earnings for P.A.Y.E</td>
+            <td style="text-align: right;">
+                {{ number_format(
+                    $payslip->basic_salary +
+                        $payslip->extra_days_payment +
+                        $payslip->br_allowance +
+                        $payslip->attendance_allowance +
+                        $payslip->other_increments +
+                        $payslip->incentive2 +
+                        $payslip->incentive1 +
+                        $payslip->ot +
+                        $payslip->holiday_payment +
+                        $payslip->fixed_allowance -
+                        $payslip->no_pay_leave_deduction -
+                        $payslip->late_deduction,
+                    2,
+                ) }}
+            </td>
+        </tr>
         <br>
         <tr style="width: 50%">
             <td style="width: 20%;"><b>Deductions</b></td>
@@ -352,9 +359,14 @@
                 {{ $payslip->paye ? number_format($payslip->paye, 2) : '-' }}</td>
         </tr>
         <tr style="width: 50%">
-            <td style="width: 20%; padding-left: 33.33%;">Advance</td>
+            <td style="width: 20%; padding-left: 33.33%;">Salary advance</td>
             <td style="text-align: right; padding-right: 40%;">
                 {{ $payslip->advance ? number_format($payslip->advance, 2) : '-' }}</td>
+        </tr>
+        <tr style="width: 50%">
+            <td style="width: 20%; padding-left: 33.33%;">Other advance</td>
+            <td style="text-align: right; padding-right: 40%;">
+                {{ $payslip->advance ? number_format($payslip->other_deductions, 2) : '-' }}</td>
         </tr>
         <tr style="width: 50%">
             <td style="width: 20%; padding-left: 33.33%;">Loan</td>
