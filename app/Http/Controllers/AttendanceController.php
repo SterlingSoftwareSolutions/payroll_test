@@ -142,7 +142,10 @@ class AttendanceController extends Controller
                 $late = $lateInterval->format('%H:%I');
             }
         }
+        // dd($workHoursTime);
+        $workHoursTime = (int) $workHoursTime->format('H');
         $is_half_day = $workHoursTime <= 6 && $workHoursTime >= 4;
+
 
         // dd($workHours);
         DB::beginTransaction();
@@ -191,7 +194,7 @@ class AttendanceController extends Controller
             $punchOut = new DateTime($request->punch_out);
             $punchIn = new DateTime($request->punch_in);
             $workHours = $punchOut->diff($punchIn)->format('%H:%I');
-            
+
             // dd($workHours);
             $dateTime = new DateTime($request->date);
             $dayOfWeek = $dateTime->format('l');
@@ -237,6 +240,7 @@ class AttendanceController extends Controller
                     $late = $lateInterval->format('%H:%I');
                 }
             }
+            $workHoursTime = (int) $workHoursTime->format('H');
             $is_half_day = $workHoursTime <= 6 && $workHoursTime >= 4;
 
             // Update the attendance record
@@ -256,11 +260,12 @@ class AttendanceController extends Controller
             DB::commit();
             // Use Toastr for flash messages
             Toastr::success('Record updated successfully :)', 'Success');
-            return redirect()->back();
+            return redirect()->route('attendance/employee/page');
         } catch (\Exception $e) {
             // dd($e);
             DB::rollback();
             // Use Toastr for flash messages
+            dd($e);
             Toastr::error('Failed to update record :(', 'Error');
             return redirect()->back();
         }
@@ -541,7 +546,7 @@ class AttendanceController extends Controller
                         $dateTime = new DateTime($date);
                         $dayOfWeek = $dateTime->format('l');
                         $isWeekend = $dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday';
-                        
+
 
                         $holidays = Holiday::all()->pluck('date_holiday')->map->format('Y-m-d');
                         // Fetch all holiday dates and format them as 'Y-m-d'
@@ -703,54 +708,54 @@ class AttendanceController extends Controller
         }
     }
 
-private function calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend)
-{
-    $OT = '00:00';
-    $late = '00:00';
-    $workHoursTime = new DateTime($workHours);
+    private function calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend)
+    {
+        $OT = '00:00';
+        $late = '00:00';
+        $workHoursTime = new DateTime($workHours);
 
-    // Determine the overtime start time based on working hours and day of the week
-    switch ($employee->workingHours) {
-        case '6day':
-            if ($dayOfWeek == 'Sunday') {
-                $otStartTime = new DateTime('00:00');
-            } elseif ($dayOfWeek == 'Saturday') {
-                $otStartTime = new DateTime('05:00');
-            } else {
+        // Determine the overtime start time based on working hours and day of the week
+        switch ($employee->workingHours) {
+            case '6day':
+                if ($dayOfWeek == 'Sunday') {
+                    $otStartTime = new DateTime('00:00');
+                } elseif ($dayOfWeek == 'Saturday') {
+                    $otStartTime = new DateTime('05:00');
+                } else {
+                    $otStartTime = new DateTime('09:00');
+                }
+                break;
+
+            case '5day':
+                if ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday') {
+                    $otStartTime = new DateTime('00:00');
+                } else {
+                    $otStartTime = new DateTime('10:00');
+                }
+                break;
+
+            default:
                 $otStartTime = new DateTime('09:00');
-            }
-            break;
-
-        case '5day':
-            if ($dayOfWeek == 'Sunday' || $dayOfWeek == 'Saturday') {
-                $otStartTime = new DateTime('00:00');
-            } else {
-                $otStartTime = new DateTime('10:00');
-            }
-            break;
-
-        default:
-            $otStartTime = new DateTime('09:00');
-            break;
-    }
-
-    if ($workHoursTime > $otStartTime) {
-        $otInterval = $workHoursTime->diff($otStartTime);
-        $totalMinutes = ($otInterval->h * 60) + $otInterval->i; // Convert to total minutes
-
-        // Ensure OT is at least 30 minutes and employee's department is 'Local'
-        if ($totalMinutes >= 30 && $employee->department->department == 'Local') {
-            $OT = $otInterval->format('%H:%I');
-        } else {
-            $OT = '00:00';
+                break;
         }
-    } else {
-        // Calculate late time if the employee starts late
-        $late = $otStartTime->diff($workHoursTime)->format('%H:%I');
-    }
 
-    return [$OT, $late];
-}
+        if ($workHoursTime > $otStartTime) {
+            $otInterval = $workHoursTime->diff($otStartTime);
+            $totalMinutes = ($otInterval->h * 60) + $otInterval->i; // Convert to total minutes
+
+            // Ensure OT is at least 30 minutes and employee's department is 'Local'
+            if ($totalMinutes >= 30 && $employee->department->department == 'Local') {
+                $OT = $otInterval->format('%H:%I');
+            } else {
+                $OT = '00:00';
+            }
+        } else {
+            // Calculate late time if the employee starts late
+            $late = $otStartTime->diff($workHoursTime)->format('%H:%I');
+        }
+
+        return [$OT, $late];
+    }
 
 
 
