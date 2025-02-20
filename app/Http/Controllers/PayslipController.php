@@ -508,4 +508,17 @@ class PayslipController extends Controller
             'Advanced' => $Advanced
         ]);
     }
+
+    public function masterPayslip()
+    {
+        // Fetch payslips for the previous month
+        $payslips = Payslip::with('employee.department') // eager load employee and department
+            ->get()
+            ->sortBy(function ($payslip) {
+                return $payslip->employee->department->department;
+            });
+
+        // Return the view with the payslips data
+        return view('reports.master-payslip', compact('payslips'));
+    }
 }

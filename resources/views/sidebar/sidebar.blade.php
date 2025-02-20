@@ -193,6 +193,10 @@
                                 href="{{ route('form/payslip/approve') }}"> Payslip Approve </a></li>
                         <li><a class="{{ set_active(['salary/report']) }}" href="{{ route('salary/report') }}">
                                 Salary Report </a></li>
+                        <li><a class="{{ set_active(['master/payslip/download']) }}" href="{{ route('master/payslip/download') }}">
+                            Master Payslip </a></li>
+                        <li><a class="{{ set_active(['master/employee/download']) }}" href="{{ route('master/employee/download') }}">
+                            Master Employee </a></li>
                     </ul>
                 </li>
 
