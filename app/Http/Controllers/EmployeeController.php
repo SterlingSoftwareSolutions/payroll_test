@@ -927,4 +927,23 @@ class EmployeeController extends Controller
         $url = route('save.record'); // Include the correct namespace
 
     }
+
+    public function masterEmployee()
+    {
+        // Get employees with their departments
+        $employees = Employee::with('department') // eager load employee and department
+            ->get()
+            ->sortBy(function ($employee) {
+                return $employee->department->department;
+            });
+    
+        // Get salary details for each employee using employee_id
+        foreach ($employees as $employee) {
+            $employee->salaryDetails = DB::table('salary_details')
+                ->where('employee_id', $employee->employee_id)
+                ->get();
+        }
+    
+        return view('reports.master-employee', compact('employees'));
+    }
 }

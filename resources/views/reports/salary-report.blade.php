@@ -137,6 +137,7 @@
 
                     <tr>
                         <th>Employee ID</th>
+                        <th>ETF No</th>
                         <th>Employee Name</th>
                         <th>Bank Name</th>
                         <th>Branch Name</th>
@@ -148,6 +149,7 @@
                     @foreach ($payslips as $payslip)
                     <tr>
                         <td>{{ $payslip->employee->id }}</td>
+                        <td>{{ $payslip->employee->etf_no }}</td>
                         <td>{{ $payslip->employee->full_name }}</td>
                         <td>{{ $payslip->employee->bank_name }}</td>
                         <td>{{ $payslip->employee->branch }}</td>
@@ -286,7 +288,7 @@
             filename: 'Salary_Report.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', title: 'Salary Report' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', title: 'Salary Report' }
         };
 
         html2pdf(element, options);
