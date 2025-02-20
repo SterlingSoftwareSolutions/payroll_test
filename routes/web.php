@@ -396,6 +396,9 @@ Route::post('/save-record', [EmployeeController::class, 'saveRecord'])->name('li
 Route::get('/some-route', 'App\Http\Controllers\EmployeeController@someMethod');
 Route::get('/employees', [EmployeeController::class, 'cardAllEmployee'])->name('all.employee.card');
 
+Route::controller(EmployeeController::class)->group(function () {
+    Route::get('master/employee/download', 'masterEmployee')->middleware('auth')->name('master/employee/download'); //for employee download
+});
 // post route
 // Route::post('/save-record', 'EmployeeController@saveRecord')->name('save.record');
 
@@ -409,6 +412,7 @@ Route::controller(PayslipController::class)->group(function () {
     Route::get('salary/report', 'get_salary_report')->middleware('auth')->name('salary/report'); //for salary report
     Route::post('form/payslip/update', 'update')->middleware('auth')->name('form/payslip/update');
     Route::get('form/payslip/download', 'downloardfile')->middleware('auth')->name('form/payslip/download'); //for payslip download
+    Route::get('master/payslip/download', 'masterPayslip')->middleware('auth')->name('master/payslip/download'); //for payslip download
 });
 
 Route::get('/getDetails/{employeeId}', [PayslipController::class, 'getDetails'])->name('getDetails');

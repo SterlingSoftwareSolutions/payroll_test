@@ -1,214 +1,256 @@
    @extends('layouts.master')
-@section('content')
-<!-- Add this to the head section of your HTML file -->
-<script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+   @section('content')
+       <!-- Add this to the head section of your HTML file -->
+       <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 
-<!-- jQuery -->
+       <!-- jQuery -->
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Include Bootstrap JS -->
-
-
-
-<!-- Include Bootstrap CSS and JS -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-
-<!-- Include Bootstrap Datepicker CSS and JS -->
-<link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+       <!-- Include Bootstrap JS -->
 
 
 
+       <!-- Include Bootstrap CSS and JS -->
+       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+       <!-- Include Bootstrap Datepicker CSS and JS -->
+       <link rel="stylesheet"
+           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
 
 
-<!-- Page Wrapper -->
-<div class="page-wrapper">
-    <!-- Page Content -->
-    <div class="content container-fluid">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col d-flex justify-content-between">
-                    <div class="d-flex justify-content-between p-3">
-                        <div>
-                            <h3 class="page-title">Attendance Report</h3>
-                            <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Report</a></li>
-                                <li class="breadcrumb-item active">Attendance Report</li>
-                            </ul>
-                        </div>
-
-                        <form method="post" action="/form/attendance/report/generate?department={{ request()?->department }}&year={{ request()?->year }}&month={{ request()?->month }}">
-                            @csrf
-                            <button type="submit" class="btn btn-secondary p-3">Generate</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <form method="get" action="{{ route('form.attendance.index') }}">
-            <div class="row filter-row">
-                <div class="col-sm-6 col-md-3">
-                    <div class="form-group ">
-                        <select class="select form-control floating" name="department">
-                            <option value="" selected> -- Select Department-- </option>
-                            @foreach ($departments as $department)
-                            <option value="{{ $department->id }}" @if (request('department')==$department->id) selected
-                                @endif>
-                                {{ $department->department }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="form-group ">
-                        <input type="number" class="form-control form-control-1 input-sm from-year" name="year"
-                            placeholder="Year" value="{{ request('year') }}">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="form-group ">
-                        <select class="form-control floating" id="monthDropdown" name="month">
-                            <option value=""  selected>--Select Month--</option>
-                            @for ($i = 1; $i <= 12; $i++) <option value="{{ $i }}" @if (request('month')==$i) selected
-                                @endif>
-                                {{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
-                                @endfor
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3 ">
-                    <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
-                        <img src="{{ URL::to('assets/img/search.png') }}" alt="">
-                        &nbsp;&nbsp;Search
-                    </button>
-                </div>
-            </div>
-        </form>
-
-        <!------------------------------------>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="table-responsive">
-                    <table class="table table-striped custom-table datatable border=1" id="attendanceTable">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Department</th>
-                                <th>Year</th>
-                                <th>Month</th>
-                                <th>Number of days</th>
-                                <th>Absent days</th>
-                                <th>WO</th>
-                                <th>Holidays</th>
-                                <th>Working days</th>
-                                <th>OT</th>
-                                <th>Extra days</th>
-                                <th>Annual Leaves</th>
-
-                                <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($attendanceReports as $report)
-                            @if ($report->employee)
-                            <tr data-employee-id="{{ $report->employee->id }}">
-                                <td>{{ $report->employee->full_name }}</td>
-                                <td>{{ $report->employee->department->department }}</td>
-                                <td>{{ $report->date->year }}</td>
-                                <td>{{ $report->date->format('F') }}</td>
-                                <td>{{ $report->month_days }}</td>
-                                <td>{{ $report->absent_days }}</td>
-                                <td>{{ $report->month_weekends}}</td>
-                                <td>{{ $report->month_holidays }}</td>
-                                <td>{{ $report->days_worked }}</td>
-                                @php
-                                    $hours = floor($report->ot_minutes / 60);
-                                    $minutes = $report->ot_minutes % 60;
-                                @endphp
-                                <td>{{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}</td>
-                                <td>{{ $report->days_worked_weekend }}</td>
-                                <td>{{ $report->annual_leaves }}</td> 
-
-                                <td class="text-center">
-                                    <div class="dropdown dropdown-action">
-                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
-                                            aria-expanded="false">
-                                            <i class="material-icons">more_vert</i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                            <a href="/form/attendance/report/edit/{{ $report->id }}?month={{ request()->month }}&year={{ request()->year }}"
-                                                class="dropdown-item userUpdate">
-                                                <i class="fa fa-pencil m-r-5"></i> Edit
-                                            </a>
-
-                                            <a href="{{ route('form.attendance.download', ['employee' => $report->employee->id, 'report' => $report->id]) }}" class="download-link">
-                                                <i class="fa fa-download"></i> Download PDF
-                                            </a>                                            
-                                        </div>
-
-                                    </div>
-                                </td>
-                            </tr>
-                            @endif
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-
-
-<script>
-    $('.from-year').datepicker({
-        autoclose: true,
-        minViewMode: 'years',
-        format: 'yyyy'
-    });
-
-    $('.from-month').datepicker({
-        autoclose: true,
-        minViewMode: 'months',
-        format: 'MM'
-    });
-</script>
-
-
-<script>
-    $(document).ready(function() {
-        $('.action-icon.dropdown-toggle').click(function() {
-            $(this).next('.dropdown-menu').toggleClass('show');
-        });
-
-        $(document).click(function(event) {
-            var dropdown = $('.action-icon.dropdown-toggle');
-            if (!dropdown.is(event.target) && dropdown.has(event.target).length === 0) {
-                $('.dropdown-menu').removeClass('show');
-            }
-        });
-    });
-</script>
-
-@endsection
-
-<!-------------------------------------------------------------------------------------------->
 
 
 
-<!-- /Edit attendance report download Modal -->
-<!------------------------------/date and month pickup ----------------------------->
+       <!-- Page Wrapper -->
+       <div class="page-wrapper">
+           <!-- Page Content -->
+           <div class="content container-fluid">
+               <!-- Page Header -->
+               <div class="page-header">
+                   <div class="row align-items-center">
+                       <div class="col d-flex justify-content-between">
+                           <div class="d-flex justify-content-between p-3">
+                               <div>
+                                   <h3 class="page-title">Attendance Report</h3>
+                                   <ul class="breadcrumb">
+                                       <li class="breadcrumb-item"><a href="{{ route('home') }}">Report</a></li>
+                                       <li class="breadcrumb-item active">Attendance Report</li>
+                                   </ul>
+                               </div>
+                               <form method="post"
+                                   action="/form/attendance/report/generate?department={{ request()?->department }}&year={{ request()?->year }}&month={{ request()?->month }}">
+                                   @csrf
+                                   <button type="button" onclick="downloadPDF()" class="btn btn-primary p-3">Download
+                                       PDF</button>
+                                   <button type="submit" class="btn btn-secondary p-3">Generate</button>
+                               </form>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+
+
+               <form method="get" action="{{ route('form.attendance.index') }}">
+                   <div class="row filter-row">
+                       <div class="col-sm-6 col-md-3">
+                           <div class="form-group ">
+                               <select class="select form-control floating" name="department">
+                                   <option value="" selected> -- Select Department-- </option>
+                                   @foreach ($departments as $department)
+                                       <option value="{{ $department->id }}"
+                                           @if (request('department') == $department->id) selected @endif>
+                                           {{ $department->department }}</option>
+                                   @endforeach
+                               </select>
+                           </div>
+                       </div>
+                       <div class="col-sm-6 col-md-3">
+                           <div class="form-group ">
+                               <input type="number" class="form-control form-control-1 input-sm from-year" name="year"
+                                   placeholder="Year" value="{{ request('year') }}">
+                           </div>
+                       </div>
+                       <div class="col-sm-6 col-md-3">
+                           <div class="form-group ">
+                               <select class="form-control floating" id="monthDropdown" name="month">
+                                   <option value="" selected>--Select Month--</option>
+                                   @for ($i = 1; $i <= 12; $i++)
+                                       <option value="{{ $i }}"
+                                           @if (request('month') == $i) selected @endif>
+                                           {{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+                                   @endfor
+                               </select>
+                           </div>
+                       </div>
+                       <div class="col-sm-6 col-md-3 ">
+                           <button type="submit" class="btn btn-danger btn-block" style="height: 30px;">
+                               <img src="{{ URL::to('assets/img/search.png') }}" alt="">
+                               &nbsp;&nbsp;Search
+                           </button>
+                       </div>
+                   </div>
+               </form>
+
+               <!------------------------------------>
+               <div class="row">
+                   <div class="col-md-12">
+                       <div class="table-responsive">
+                           <table class="table table-striped custom-table datatable border=1" id="attendanceTable">
+                               <thead>
+                                   <tr>
+                                       <th>Name</th>
+                                       <th>Department</th>
+                                       <th>Year</th>
+                                       <th>Month</th>
+                                       <th>Number of days</th>
+                                       <th>Absent days</th>
+                                       <th>WO</th>
+                                       <th>Holidays</th>
+                                       <th>Working days</th>
+                                       <th>OT</th>
+                                       <th>Late</th>
+                                       <th>Extra days</th>
+                                       <th>Annual Leaves</th>
+
+                                       <th class="text-center">Actions</th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                   @foreach ($attendanceReports as $report)
+                                       @if ($report->employee)
+                                           <tr data-employee-id="{{ $report->employee->id }}">
+                                               <td>{{ $report->employee->full_name }}</td>
+                                               <td>{{ $report->employee->department->department }}</td>
+                                               <td>{{ $report->date->year }}</td>
+                                               <td>{{ $report->date->format('F') }}</td>
+                                               <td>{{ $report->month_days }}</td>
+                                               <td>{{ $report->absent_days }}</td>
+                                               <td>{{ $report->month_weekends }}</td>
+                                               <td>{{ $report->days_worked_holiday }}</td>
+                                               <td>{{ $report->days_worked }}</td>
+                                               @php
+                                                   $hours = floor($report->ot_minutes / 60);
+                                                   $minutes = $report->ot_minutes % 60;
+                                               @endphp
+                                               <td>{{ $hours }}:{{ str_pad($minutes, 2, '0', STR_PAD_LEFT) }}</td>
+                                               @php
+                                                   $hoursl = floor($report->late_minutes / 60);
+                                                   $minutesl = $report->late_minutes % 60;
+                                               @endphp
+                                               <td>{{ $hoursl }}:{{ str_pad($minutesl, 2, '0', STR_PAD_LEFT) }}</td>
+                                               <td>{{ $report->days_worked_weekend }}</td>
+                                               <td>{{ $report->annual_leaves }}</td>
+
+                                               <td class="text-center">
+                                                   <div class="dropdown dropdown-action">
+                                                       <a href="#" class="action-icon dropdown-toggle"
+                                                           data-toggle="dropdown" aria-expanded="false">
+                                                           <i class="material-icons">more_vert</i>
+                                                       </a>
+                                                       <div class="dropdown-menu dropdown-menu-right">
+
+                                                           <a href="/form/attendance/report/edit/{{ $report->id }}?month={{ request()->month }}&year={{ request()->year }}"
+                                                               class="dropdown-item userUpdate">
+                                                               <i class="fa fa-pencil m-r-5"></i> Edit
+                                                           </a>
+
+                                                           <a href="{{ route('form.attendance.download', ['employee' => $report->employee->id, 'report' => $report->id]) }}"
+                                                               class="download-link">
+                                                               <i class="fa fa-download"></i> Download PDF
+                                                           </a>
+                                                       </div>
+
+                                                   </div>
+                                               </td>
+                                           </tr>
+                                       @endif
+                                   @endforeach
+                               </tbody>
+                           </table>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       </div>
+
+
+       <script>
+           $('.from-year').datepicker({
+               autoclose: true,
+               minViewMode: 'years',
+               format: 'yyyy'
+           });
+
+           $('.from-month').datepicker({
+               autoclose: true,
+               minViewMode: 'months',
+               format: 'MM'
+           });
+       </script>
+
+
+       <script>
+           $(document).ready(function() {
+               $('.action-icon.dropdown-toggle').click(function() {
+                   $(this).next('.dropdown-menu').toggleClass('show');
+               });
+
+               $(document).click(function(event) {
+                   var dropdown = $('.action-icon.dropdown-toggle');
+                   if (!dropdown.is(event.target) && dropdown.has(event.target).length === 0) {
+                       $('.dropdown-menu').removeClass('show');
+                   }
+               });
+           });
+       </script>
+
+       <script>
+           function downloadPDF() {
+               var element = document.getElementById('attendanceTable');
+
+               // Hide the Actions column before generating the PDF
+               var actionColumns = document.querySelectorAll("#attendanceTable th:last-child, #attendanceTable td:last-child");
+               actionColumns.forEach(col => col.style.display = "none");
+
+               var options = {
+                   margin: 10,
+                   filename: 'Attendance_Master_Report.pdf',
+                   image: {
+                       type: 'jpeg',
+                       quality: 0.98
+                   },
+                   html2canvas: {
+                       scale: 2
+                   },
+                   jsPDF: {
+                       unit: 'mm',
+                       format: 'a3',
+                       orientation: 'landscape',
+                       title: 'Attendance Master Report'
+                   }
+               };
+
+               html2pdf().from(element).set(options).save().then(() => {
+                   // Restore the Actions column after generating the PDF
+                   actionColumns.forEach(col => col.style.display = "");
+               });
+           }
+       </script>
+   @endsection
+
+   <!-------------------------------------------------------------------------------------------->
+
+
+
+   <!-- /Edit attendance report download Modal -->
+   <!------------------------------/date and month pickup ----------------------------->
