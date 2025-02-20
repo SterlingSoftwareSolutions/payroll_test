@@ -52,7 +52,7 @@
                             <th>BR Allowance</th>
                             <th>Total EPF</th>
                             <th>Increments</th>
-                            <th>Deductions</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,13 +65,13 @@
                                 <td>{{ $employee->basic_Salary - 3500 }}</td>
                                 <td>3500</td>
                                 <td>{{ $employee->basic_Salary }}</td>
-                
+
                                 <!-- Increment and Deduction Columns -->
                                 <td>
                                     <!-- Using Flexbox to display increments -->
                                     <div class="d-flex flex-column">
                                         @foreach ($employee->salaryDetails as $salaryDetail)
-                                            @if($salaryDetail->type == 'increments')
+                                            @if ($salaryDetail->type == 'increments')
                                                 <div class="d-flex justify-content-between mb-2">
                                                     <span>{{ $salaryDetail->increment_name }}</span>
                                                     <span>{{ $salaryDetail->increment_amount }}</span>
@@ -80,20 +80,11 @@
                                         @endforeach
                                     </div>
                                 </td>
-                
-                                <td>
-                                    <!-- Using Flexbox to display deductions -->
-                                    <div class="d-flex flex-column">
-                                        @foreach ($employee->salaryDetails as $salaryDetail)
-                                            @if($salaryDetail->type == 'deductions')
-                                                <div class="d-flex justify-content-between mb-2">
-                                                    <span>{{ $salaryDetail->increment_name }}</span>
-                                                    <span>{{ $salaryDetail->increment_amount }}</span>
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </td>
+                                @php
+                                    $totalIncrements = $employee->salaryDetails->where('type', 'increments')->sum('increment_amount');
+
+                                @endphp
+                                <td>{{ $employee->basic_Salary + $totalIncrements }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -102,7 +93,7 @@
                         @endforelse
                     </tbody>
                 </table>
-                
+
             </div>
         </div>
 
