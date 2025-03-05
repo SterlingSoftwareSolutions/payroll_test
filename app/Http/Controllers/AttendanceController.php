@@ -554,12 +554,15 @@ class AttendanceController extends Controller
 
                         // Check if it's a half-day
                         $is_half_day = $punchOut
-                            && $punchIn->diffInHours($punchOut) <= 6
+                            && $punchIn->diffInHours($punchOut) <= 5
                             && !in_array($dayOfWeek, ['Saturday', 'Sunday'])
                             && !in_array(Carbon::parse($date)->format('Y-m-d'), $holi);
 
-                        // Calculate OT and late hours
-                        list($OT, $late) = $this->calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
+                        // Calculate OT and late hours                
+                        if (!$is_half_day) {
+                            // Calculate OT and late hours
+                            list($OT, $late) = $this->calculateOvertimeAndLateHours($employee, $workHours, $dayOfWeek, $holidays, $isWeekend);
+                        }
 
                         // Create or update attendance entry
                         Attendance::updateOrCreate([
